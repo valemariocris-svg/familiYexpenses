@@ -68,18 +68,17 @@ class Top_View_Codes(tk.Toplevel):
         self.geometry(self.Geometry)
 
         self.View_Type  = self.Data.Get_sel_dictionary_value(CODES_VIEW_MODE)
-        self.Combo_View = self.View_Type
 
         # ----------------------------------    B U T T O N S     ---------------------------------
         self.Txt_StrSerch = TheText(self, TXT_DISAB,   580, self.Widg_PosY-35, 26, 4, '')
         self.Txt_FullDesc = TheText(self, TXT_DISAB,    10, self.Widg_PosY-35, 69, 4, '')
         self.View_StrVar  = tk.StringVar()
-        self.Combo_Widgt  = TheCombo(self, self.View_StrVar, 320, self.Widg_PosY+105, 31, 19,
-                                     CODES_VIEW_MODE, self.Combo_View , self.Clk_OnCombo)
-        self.Btn_Groups   = TheButton(self, BTN_DEF_EN,  10, self.Widg_PosY+100, 14,  'show groups ', self.Clk_GR_Mngr)
-        self.Btn_Load     = TheButton(self, BTN_DEF_EN,  10, self.Widg_PosY+60, 14,  'reload ', self.ReloadCodes)
-        self.Txt_Alphab   = TheText(self,   TXT_ENAB,   160, self.Widg_PosY+65, 16 , 1, 'wxyz')
-        self.Btn_Alphab   = TheButton(self, BTN_DEF_EN, 160, self.Widg_PosY+100, 14,  'alphabetically', self.Find_Aplhabet)
+        self.Combo_Widgt  = TheCombo(self, self.View_StrVar, 370, self.Widg_PosY+105, 31, 19,
+                                     CODES_VIEW_SEL, self.View_Type , self.Clk_OnCombo)
+        self.Btn_Groups   = TheButton(self, BTN_DEF_EN,  10, self.Widg_PosY+100, 14,  'mostra gruppi ', self.Clk_GR_Mngr)
+        self.Btn_Load     = TheButton(self, BTN_DEF_EN,  10, self.Widg_PosY+60, 14,  'ricarica ', self.ReloadCodes)
+        self.Txt_Alphab   = TheText(self,   TXT_ENAB,   160, self.Widg_PosY+65,  5, 1, 'pa')
+        self.Btn_Alphab   = TheButton(self, BTN_DEF_EN, 160, self.Widg_PosY+100, 19,  'Ricerca per iniziali', self.Find_Aplhabet)
         self.Btn_Exit     = TheButton(self, BTN_DEF_EN, 650, self.Widg_PosY+100, 14, '  E X I T ', self.Call_OnClose)
 
         self.Create_Lists()

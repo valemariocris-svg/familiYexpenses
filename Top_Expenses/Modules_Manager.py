@@ -124,7 +124,7 @@ class Modules_Manager:
         data = file_dlg.data
         if not status:
             Xlsx_Name = self.Data.Get_sel_dictionary_value(XLSX_FILENAME)
-            statusA, dataA = Gl_Cek_Xlsx_Name(Xlsx_Name)     # self._load_rows_create_code_Nocode_list()
+            statusA, dataA = Gl_Cek_Xlsx_Name(Xlsx_Name)
             if not statusA:
                 msg_dlg = Message_Dlg(MSG_BOX_ERR, f"{data}\n on selecting xlsx file")
                 msg_dlg.wait_window()
