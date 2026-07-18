@@ -147,7 +147,7 @@ class Codes_db(Codes_DB_Private):
     #    ***   Codes  > 10.000   are generic code that can be assigned manually to                #
     #          any Xlsx Record. The assignement must be made for each Xlsx Record                 #
     # ------------------------------------------------------------------------------------------- #
-    def Get_New_Code(self, Table) -> tuple[bool, str|int]:
+    def Get_New_Code(self, Table) -> tuple[bool, int]:
         status = False
         data   = []
         if Table == STANDARD_CODE:
@@ -170,7 +170,7 @@ class Codes_db(Codes_DB_Private):
             print(f"Il codice trovato è: {found_code}")
             return True, found_code
         else:
-            return False, "None code found withh SELECT"
+            return False, 0
 
     # -----------------------   Add  transaction code record         ------------------------
     def Add_DB_TR_Record(self, Record):
@@ -215,7 +215,7 @@ class Codes_db(Codes_DB_Private):
         parameters = (CAcode, CAdesc)
         return self._query_execute(CODES_FILENAME, sql, parameters, CLOSE_DB)
 
-
+    # -----------------------------------------------------------------------------------
     def Del_CA_Record(self, CAcode):
         sql = """ DELETE FROM CATEGORY_CODES WHERE CA_Code = ?"""
         parameters = (CAcode,)
@@ -227,16 +227,20 @@ class Codes_db(Codes_DB_Private):
         parameters = (GRcode, GRdesc, CAcode)
         return self._query_execute(CODES_FILE, sql, parameters, CLOSE_DB)
 
+    # -----------------------------------------------------------------------------------
     def Del_GR_Record(self, GRcode):
         sql = """DELETE FROM GROUP_CODES WHERE GR_Code = ?"""
         parameters = (GRcode,)
         return self._query_execute(CODES_FILENAME, sql, parameters, CLOSE_DB)
 
+    # -----------------------------------------------------------------------------------
     def Update_GR_CA_Rec(self, GRcode, GRdesc, CAcode, CAdesc):
         sql = "UPDATE GROUP_CODES SET GR_Descr=?, CA_Code=?, CAdesc=? WHERE GR_Code = ?"
         parameters = (GRdesc, CAcode, CAdesc, GRcode)
         return self._query_execute(CODES_FILE, sql, parameters, CLOSE_DB)
 
+    # -----------------------------------------------------------------------------------
+    # remember :  strToFind_list = [str1, str2, str3]   StringToFind = "#xxx"yyy"
     def Check_if_stringToFind_matches(self, strToFind_list, TR_code):
         for record in self._TR_Codes_Table:
             if record[IX_TR_TR_CODE] != TR_code:

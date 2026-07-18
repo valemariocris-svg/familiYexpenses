@@ -24,8 +24,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.Rec_Candidate = []
         self.Rec_Cand_For_ViewList = []
         self.Top_View_Type         = VIEW_ALL_LARGE
-        self.Code_Request          = None
-        self.New_Code_for_insert   = 0
+        # self.New_Code_for_insert   = 0
 
         self.GR_List = self.Data.Get_GR_Codes_Table()
         # --------------------------- Group Select Combo  -----------------------------------------------------------
@@ -175,10 +174,9 @@ class Top_Codes_Mngr(Super_Top_Mngr):
                         if not Tot_NoCode:
                             self.Mod_Mngr.Top_Launcher(TOP_CODES_VIEW, TOP_CODES_MNGR, [VIEW_ALL_REDUC])  # Close the reduced Codes View
 
-                        self.Try_To_Insert_Rec_On_Db(TR_Full_List)
-
-                        self.Row_WithoutCode = None
-                        self.Load_Trees()
+                        if self.Try_To_Insert_Rec_On_Db(TR_Full_List):
+                            self.Row_WithoutCode = None
+                            self.Load_Trees()
                     else:
                         pass    # NO  Code to Insert
                 else:
@@ -277,46 +275,41 @@ class Top_Codes_Mngr(Super_Top_Mngr):
     #          any Xlsx Record. The assignement must be done for each Xlsx Row                    #
     # ------------------------------------------------------------------------------------------- #
     def Clk_Add_Generic(self):
-        if self.Code_Request != BTN_ADD_GEN:
-            Result = self.Data.Get_New_Code(GENERICCODE)
-            if Result[0] != OK:
-                Msg_Dlg = Message_Dlg(MSG_BOX_ERR, Result[1])
-                Msg_Dlg.wait_window()
-                return
-            self.New_Code_for_insert = Result[1]
-            self.Txt_TR_Code1.Set_Text(str(Result[1]))
-            # self.Set_Button_Status(BTN_ADD_GEN)
-            self.Row_WithoutCode = None
-            self.Frame_WithCodes.Clear_Focus()
-        else:
-            if self.Add_Code():
-                self.Code_Request = None
-                # self.Set_Button_Status(BTN_RESET)
+        status, data = self.Data.Get_New_Code(GENERICCODE)
+        if not status:
+            msg_dlg = Message_Dlg(MSG_BOX_ERR, "Generic new code not found")
+            msg_dlg.wait_window()
+            return
+        self.TR_Code             = data
+        # self.New_Code_for_insert = data
+        self.Txt_TR_Code1.Set_Text(str(data))
+        self.Row_WithoutCode = None
+        self.Frame_WithCodes.Clear_Focus()
+        if not self.Get_Confirm('Add'):
+            return
+        self. Add_Code()
+        pass
 
     # ---------------------------------------------------------------------------------------------
     def Clk_Add_Std(self):
-        if self.Code_Request != BTN_ADD:
-            Result = self.Data.Get_New_Code(NORMAL_CODE)
-            if Result[0] != OK:
-                Msg_Dlg = Message_Dlg(MSG_BOX_ERR, Result[1])
-                Msg_Dlg.wait_window()
-                return
-            self.New_Code_for_insert = Result[1]
-            self.Txt_TR_Code1.Set_Text(str(Result[1]))
-            # self.Set_Button_Status(BTN_ADD)
-            self.Row_WithoutCode = None
-            self.Frame_WithCodes.Clear_Focus()
-        else:
-            if self.Add_Code():
-                self.Code_Request = None
-                # self.Set_Button_Status(BTN_RESET)
+        status, data = self.Data.Get_New_Code(NORMAL_CODE)
+        if not status:
+            Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
+            Msg_Dlg.wait_window()
+            return
+        self.TR_Code = data
+        self.Txt_TR_Code1.Set_Text(str(data))
+        self.Row_WithoutCode = None
+        self.Frame_WithCodes.Clear_Focus()
+        if not self.Get_Confirm('Add'):
+            return
+        self. Add_Code()
 
     # ------------     ***   Add new normal or generic  record  ***     ---------------------------
     def Add_Code(self):
-        self.Row_WithoutCode = None
         self.Txt_TR_Code1.Set_Text(str(self.New_Code_for_insert))
         self.Frame_WithCodes.Clear_Focus()
-        status, data = self.Check_Codes_Items_Is_OK()
+        status, data = self.Check_codes_record()
         if not status:
             Msg_Dld = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dld.wait_window()
@@ -330,10 +323,6 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             Msg_Dld = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dld.wait_window()
             return False
-
-        # elif status and data ==  MULTI:
-        #     self.Mod_Mngr.View_Codes_Match_Error(MULTI)
-        #     return False
 
         if self.Mod_Mngr.Load_Codes_Mngr(TOP_CODES_MNGR):
             # EXISTS: False, Error  : True, True exists   : True, False  NOT exists
@@ -354,7 +343,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         if not self.Check_TRcode_Desc(BOTH_TR_GR):
             return
         self.Row_WithoutCode = None
-        status, data = self.Check_Codes_Items_Is_OK()  # Check if data of record are OK
+        status, data = self.Check_codes_record()  # Check if data of record are OK
         if not status:
             Msg_Dld = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dld.wait_window()
@@ -378,7 +367,6 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             if self.Update_Record_Code():
                 self.Frames_Refresh()
                 self.Chat.Tx_Request([TOP_CODES_MNGR, [TOP_CODES_VIEW], CODES_DB_UPDATED, self.Rec_Cand_For_ViewList])
-                # self.Set_Button_Status(BTN_RESET)
 
     # ------------------------     ***   Update TR code Record      -------------------------------
     def Update_Record_Code(self):
@@ -397,34 +385,17 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             return False
         return True
 
-    # ------------------------     ***   Delete  the last TR Record      --------------------------
+    # ------------------------     ***   Delete  a code record on codes Db    --------------------------
     def Clk_Delete(self):
-        if not self.Check_TRcode_Desc(BOTH_TR_GR):
-            return
-        self.Row_WithoutCode = None
-        status, data = self.Check_Codes_Items_Is_OK()  # Check if data of record are OK
-        if not status:
-            Msg_Dld = Message_Dlg(MSG_BOX_ERR, data)
-            Msg_Dld.wait_window()
-            return  # Record Data not OK
         if not self.Get_Confirm('Delete'):
             return
-
-    # ------------------------     ***   Delete  the last TR Record      --------------------------
-    def Delete_Code(self):
-        Result = self.Data.Delete_DB_TR_Record(self.TR_Code) # return [OK,[]] or [STRING, [Diagn]]
-        if Result[0] == STRING:
-            Msg_Dld = Message_Dlg(MSG_BOX_ERR, Result[1])
-            Msg_Dld.wait_window()
-            return False
+        status, data = self.Data.Delete_DB_TR_Record(self.TR_Code)
+        if not status:
+            msg_dlg = Message_Dlg(MSG_BOX_ERR, f"FATAL ERROR 16:\n on deleteng code record\n {data}")
+            msg_dlg.wait_window()
         else:           # Result[0] == OK:
-            if self.Mod_Mngr.Load_Codes_Mngr(TOP_CODES_MNGR):
-                if self.Data.Check_If_Code_Exist(self.TR_Code):    # check if record has canceled
-                    Messg = ('Code ' + str(self.TR_Code) + '  ' + self.TR_Desc + '\n NOT  deleted ???')
-                    Msg_Dld = Message_Dlg(MSG_BOX_ERR, Messg)
-                    Msg_Dld.wait_window()
-                    return False
-        return True
+            msg_dlg = Message_Dlg(MSG_BOX_INFO, " code record deleted")
+            msg_dlg.wait_window()
 
     # ---------------------------------------------------------------------------------------------
     def Check_TRcode_Desc(self, Action):
@@ -443,9 +414,14 @@ class Top_Codes_Mngr(Super_Top_Mngr):
 
     # ---------------------------------------------------------------------------------------------
     def Get_Confirm(self, strOper):     # "Delete"  "Update"  "add"
+        if type(self.TR_Code) is None or type(self.TR_Code) != int or self.TR_Code <= 0:
+            msg_dlg = Message_Dlg(MSG_BOX_INFO, "select a code number")
+            msg_dlg.wait_window()
+            return False
+        TR_Desc = self.Data.Get_Text(self.TR_Code)
         Msg = ('Confirm to ' + strOper +'\n'
                 'Code:        ') + str(self.TR_Code)
-        Msg += '\nDescription: ' + str(self.TR_Desc)
+        Msg += '\nDescription: ' + str(TR_Desc)
         Msg_Dlg = Message_Dlg(MSG_BOX_ASK, Msg)
         Msg_Dlg.wait_window()
         Reply = Msg_Dlg.data
@@ -462,45 +438,52 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         return True
 
      # ----------------------------------------------------------------------------------------
-    def Check_Codes_Items_Is_OK(self) -> tuple[bool, str]:
+    def Check_codes_record(self) -> bool:
+        strError = ''
         StrToFind     = self.Txt_StrToFind1.Get_Text(STRING).replace('\n', '', 5)
         if StrToFind == STRTOFIND:
-            return False, 'Please set String to find'
-
-        StringToFind_List = GetStrList_ForFind_Checked(StrToFind)
-        if not StrToFind:
-            return False, 'String to find NOT correct'
-        self.TR_Code      = self.Txt_TR_Code1.Get_Text(INTEGER)
-        self.TR_Desc      = self.Txt_TR_Desc1.Get_Text(STRING).replace('\n', '', 5)
-        self.GR_Code      = self.Txt_GR_Code1.Get_Text(INTEGER)
-        self.GR_Desc      = self.GR_Combo1.GetValue()
-        self.CA_Desc      = self.Txt_CAdesc1.Get_Text(STRING)
-        self.FullDesc     = self.Txt_StrFullDesc1.Get_Text(STRING)
-
-        if not Check_strDate(self.FullDesc[0:10]):
-            return False, 'Date on Full Desription NOT OK'
-
-        if self.TR_Code == 0 or self.TR_Desc == TRDESC:
-            return False, 'Code / Tr description NOT OK'
-
-        if len(self.TR_Desc) <= 6:
-            return False, 'TR description too short'
-
-        if self.GR_Code == 0 or self.GR_Desc == GROUPSEL:
-            return False, 'Group NOT OK'
-
-        if not StrToFind_in_Fulldescr(StringToFind_List, self.FullDesc):
-            return False, 'String To Find:\n' + str(StrToFind) + \
+            strError = 'Please set String to find'
+        if strError == '':
+            StringToFind_List = GetStrList_ForFind_Checked(StrToFind)
+            if not StrToFind:
+                strError =  'String to find NOT correct'
+        if strError == '':
+            self.TR_Code      = self.Txt_TR_Code1.Get_Text(INTEGER)
+            self.TR_Desc      = self.Txt_TR_Desc1.Get_Text(STRING).replace('\n', '', 5)
+            self.GR_Code      = self.Txt_GR_Code1.Get_Text(INTEGER)
+            self.GR_Desc      = self.GR_Combo1.GetValue()
+            self.CA_Desc      = self.Txt_CAdesc1.Get_Text(STRING)
+            self.FullDesc     = self.Txt_StrFullDesc1.Get_Text(STRING)
+            if not Check_strDate(self.FullDesc[0:10]):
+                strError = 'Date on Full Desription NOT OK'
+        if strError == '':
+            if self.TR_Code == 0 or self.TR_Desc == TRDESC:
+                strError = 'Code / Tr description NOT OK'
+        if strError == '':
+            if len(self.TR_Desc) <= 6:
+                strError = 'TR description too short'
+        if strError == '':
+            if self.GR_Code == 0 or self.GR_Desc == GROUPSEL:
+                strError = 'Group NOT OK'
+        if strError == '':
+            if not StrToFind_in_Fulldescr([], self.FullDesc):
+                strError = 'String To Find:\n' + str(StrToFind) + \
                 '\n\ndoes not match with Full Desription:\n' + self.FullDesc
+
 
         status, data = self.Data.Check_if_stringToFind_matches(StringToFind_List, self.TR_Code)
         if status:
-            return False, data
+            return False
+
+        if strError != '':
+            Msg_Dld = Message_Dlg(MSG_BOX_ERR, strError)
+            Msg_Dld.wait_window()
+            return False
 
         self.Rec_Candidate  = [self.TR_Code, self.GR_Code, 0,
                                self.TR_Desc, str(StrToFind), self.FullDesc]
         self.Rec_Cand_For_ViewList = [self.TR_Code, self.TR_Desc, self.GR_Desc, self.CA_Desc, StrToFind]
-        return True, ''
+        return True
 
  
 # ==============================================================================================================

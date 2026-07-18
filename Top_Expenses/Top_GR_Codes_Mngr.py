@@ -52,8 +52,8 @@ class Top_GR_Codes_Mngr(tk.Toplevel):
         self.CAcode   = 0
         self.CAdesc   = ''
 
-        # self.New_GRcode_Selected = False
-        # self.New_CAcode_Selected = False
+        self.New_GRcode_Selected = False
+        self.New_CAcode_Selected = False
 
         # --------------------------------  for updating Group vs. Category  --------------------------------
         self.Txt_GRcode = TheText(self, TXT_DISAB, 100, 815, 4, 1, '0')

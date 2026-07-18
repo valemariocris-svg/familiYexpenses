@@ -138,7 +138,6 @@ class Super_Top_Mngr(tk.Toplevel):
         self.View_Descr_Text(self.TR_Code, self.GR_Combo1)
         self.View_Descr_Text(self.TR_Code, self.GR_Combo1)
 
-        # self.Btn_SelGeneric.Btn_Disable()
         self.Frame_NoCodes.Clear_Focus()
         self.Child_ClkWithCode()
 
