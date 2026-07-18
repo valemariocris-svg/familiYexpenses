@@ -200,6 +200,7 @@ class Xlsx_Manager(Codes_db):
     #                       self._Xlsx_Rows_Compact                                           #
     # --------------------------------------------------------------------------------------- #
     def  Load_Xlsx_Rows(self) -> tuple[bool, str | list]:
+        self._Init_Xlsx_Data()
         Filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
         if not Gl_Cek_Xlsx_Name(Filename):
             return False, "FATAL ERROR 12:\nxlsx filename not OK"
@@ -212,6 +213,7 @@ class Xlsx_Manager(Codes_db):
         self._Set_Xlsx_Conto_Year_Month()
         if self._tXlsx_Year is None or self._tXlsx_Conto is None or self._tXlsx_Month is None:
             return False, "FATAL ERROR 13\non extracting Year, Conto , Month from xlsx file"
+
         for nRow in range(1, self._tTot_Rows+1):    # the first row is "1"
             XlsxRow_AsItIs = self._Get_xlsx_Row_AsIs(nRow)
             Checked_Row = self._Check_Values(XlsxRow_AsItIs)
