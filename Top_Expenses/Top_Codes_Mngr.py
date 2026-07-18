@@ -131,48 +131,45 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         # in Sel_Codes_Mngr
 
     # ---------------------------------------------------------------------------------------------
-    def _load_rows_create_code_Nocode_list(self):
-        status, data = self.Data.Load_Xlsx_Rows()
-        if not status:
-            msg_dlg = Message_Dlg(MSG_BOX_ERR, data)
-            msg_dlg.wait_window()
-            return False
-        status, TRlist, xlsx_row = self.Data.Create_Code_NoCode_List()
-        if not status:
-            print(TRlist, xlsx_row[IX_ROW_COMP_FULLDES])
-            message = f"la descrizione completa per la riga={str(xlsx_row[IX_ROW_COMP_NROW])}\n"
-            message += f"data={xlsx_row[IX_ROW_COMP_CONT]}  addeb={str(xlsx_row[IX_ROW_COMP_ADDEB])}\n\n"
-            message += f"combacia con piu stringhe per la ricerca\n\n"
-
-            message += f"{xlsx_row[IX_ROW_COMP_FULLDES]}\n"
-            list_for_select = [NOSELECT]
-            for code in TRlist:
-                strList =  f"{str(code)}  {self.Data.Get_TrDesc_FromCode(code)}  {self.Data.Get_strToFind_FromCode(code)} "
-                list_for_select.append(strList)
-            dlg_select = View_Message_Select(message, list_for_select)
-            dlg_select.wait_window()
-            reply = dlg_select.data
-            print(f"selezionato: {str(reply)}")
-            if reply == NOSELECT:
-                pass
-            else:
-                pass
-                print("INSERIRE ROW IN ROW CON CODICI")
-        return True
+    # def _load_rows_create_code_Nocode_list(self):
+    #     status, data = self.Data.Load_Xlsx_Rows()
+        # if not status:
+        #     msg_dlg = Message_Dlg(MSG_BOX_ERR, data)
+        #     msg_dlg.wait_window()
+        #     return False
+        # status, TRlist, xlsx_row = self.Data.Create_Code_NoCode_List()
+        # if not status:
+        #     print(TRlist, xlsx_row[IX_ROW_COMP_FULLDES])
+        #     message = f"la descrizione completa per la riga={str(xlsx_row[IX_ROW_COMP_NROW])}\n"
+        #     message += f"data={xlsx_row[IX_ROW_COMP_CONT]}  addeb={str(xlsx_row[IX_ROW_COMP_ADDEB])}\n\n"
+        #     message += f"combacia con piu stringhe per la ricerca\n\n"
+        #
+        #     message += f"{xlsx_row[IX_ROW_COMP_FULLDES]}\n"
+        #     list_for_select = [NOSELECT]
+        #     for code in TRlist:
+        #         strList =  f"{str(code)}  {self.Data.Get_TrDesc_FromCode(cLoad_Xlsx_Rowsode)}  {self.Data.Get_strToFind_FromCode(code)} "
+        #         list_for_select.append(strList)
+        #     dlg_select = View_Message_Select(message, list_for_select)
+        #     dlg_select.wait_window()
+        #     reply = dlg_select.data
+        #     print(f"selezionato: {str(reply)}")
+        #     if reply == NOSELECT:
+        #         pass
+        #     else:
+        #         pass
+        #         print("INSERIRE ROW IN ROW CON CODICI")
+        # return True
 
     # ---------------------------------------------------------------------------------------------
     def Clk_Sel_xlsx(self):
-        self.Row_WithoutCode = None
+        if not self.Mod_Mngr.Sel_Xlsx_Mngr(TOP_CODES_MNGR):
+            return
         self.Frame_NoCodes.Clear_Focus()
         self.Frame_WithCodes.Clear_Focus()
-        if self.Mod_Mngr.Sel_Xlsx_Mngr(TOP_CODES_MNGR):
-            self._load_rows_create_code_Nocode_list()
-            self.Load_Trees()
+        self.Load_Trees()
 
     # --------------------------------------------------------------------------------------------
     def Clk_View_Xlsx(self):
-        # if self._load_rows_create_code_Nocode_list():
-        #     self.Load_Trees()
         self.Mod_Mngr.Top_Launcher(TOP_XLSX_VIEW, TOP_CODES_MNGR, [])
 
     # ********************************************************************************************

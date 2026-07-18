@@ -7,9 +7,6 @@
 import sqlite3
 from openpyxl import load_workbook
 import warnings
-# from datetime import datetime
-
-from Widgt.Dialogs import *
 from Data_Classes.Codes_DB import *
 
 class Xlsx_Manager(Codes_db):
@@ -30,18 +27,12 @@ class Xlsx_Manager(Codes_db):
         self._Des1   = None     # str
         self._Accr   = None     # float
         self._Addeb  = None     # float
-        self._Des2    = None     # str
-
-        self._normalized_row  = [] # [Nrow, 'contab', 'valuta', 'Desc1', 0.0, -0,0, 'Desc2']
+        self._Des2   = None     # str
 
         # ------------------------             A      B      C      D      E     F  ---------------
         self._Xlsx_Rows_From_Sheet     = []  # _Contab _Valuta _Des1 Accred _Addeb _Des2
         self._Xlsx_Rows_Desc_Compact   = []  #   ""     ""     comp     ""    ""   comp
         self._Xlsx_Rows_Compact        = []  # _Contab _Valuta Accrd  _Addeb  Full_Desc
-
-        self._Xlsx_Rows_NOK_List       = []  # Not Used
-        self.Xlsx_Rows_MultiMatch_List = [] # [Row, [TRrec, .., TRrec], .., Row, [] ]
-
         # ------------------------
         self._Tot_Rows        = 0
         self._Tot_NOK         = 0
@@ -78,8 +69,6 @@ class Xlsx_Manager(Codes_db):
         self._Xlsx_Month_Valuta_List         = []
         self._Xlsx_Month_Generic_Valuta_List = []
         self._Xlsx_Month_Generic_Contab_List = []
-        self._Xlsx_Alarm_For_Dates           = []
-
 
         # ------------------------------------------------------------ #
         #  -----  the values  are filled  from  Transact_DB.py  ------ #
@@ -114,16 +103,6 @@ class Xlsx_Manager(Codes_db):
     # List_Rows_WithoutCode : nRow  _Contab  _Valuta  _Accr     _Addeb   FullDes          #
     # List_Rows_WithCode    : nRow  _Contab  _Valuta  TR_Desc  Accred  _Addeb    TRcode   #
     # ----------------------------------------------------------------------------------- #
-    # def _Add_Row_WithCode_FromNoCode(self, Row_WithoutCode, TRcode, TRdesc):
-    #     nRow        = int(Row_WithoutCode[IX_NO_CODE_NROW])
-    #     _Contab     = Row_WithoutCode[IX_NO_CODE_CONTAB]
-    #     _Valuta     = Row_WithoutCode[IX_NO_CODE_VALUTA]
-    #     Accred      = Row_WithoutCode[IX_NO_CODE_ACCRED]
-    #     _Addeb      = Row_WithoutCode[IX_NO_CODE_ADDEB]
-    #     FullDesc    = Row_WithoutCode[IX_NO_CODE_FULL_DESCR]
-    #     Row_ToAdd   = [nRow, _Contab, _Valuta, Accred, _Addeb, TRdesc, TRcode, FullDesc]
-    #     self._With_Code_Tree_List.append(Row_ToAdd)
-    #     self._TotWith_Code += 1
 
     # ---------------------------------------------------------------------------------------------
     def _Delete_Row_NoCode(self, Row_WithoutCode):
@@ -141,10 +120,6 @@ class Xlsx_Manager(Codes_db):
         return False, f"Error:\n{Row_WithoutCode[IX_NO_CODE_FULL_DESCR]}\n\nNOT in list "
 
     # -------------------------------------------------------------------------------------
-    # def Get_Xlsx_Conto_Year_Month(self):
-    #     return [self._Xlsx_Conto, self._Xlsx_Year, self._Xlsx_Month]
-
-    # -------------------------------------------------------------------------------------
     def Get_WithCodeList(self):
         return self._With_Code_Tree_List
 
@@ -154,11 +129,6 @@ class Xlsx_Manager(Codes_db):
 
     def Get_Xlsx_Rows_From_Sheet(self):
         return self._Xlsx_Rows_From_Sheet
-
-    # def Get_Xlsx_Compact_Desc(self):
-    #     return self._tXLSX_Rows_Desc_Compact
-    # def Get_Xlsx_Rows_Compact(self):
-    #     return self._Xlsx_Rows_Compact
 
     def Clear_Xlsx_Conto_Year_Month(self):
         self._tXlsx_Conto = None
@@ -187,8 +157,7 @@ class Xlsx_Manager(Codes_db):
 
         self._tWith_Code_Tree_List    = []  # nRow Contabile _Valuta Accred _Addeb TRdesc TRcode
         self._tWihtout_Code_Tree_List = []  # nRow Contabile _Valuta Accred _Addeb FullDesc
-        self.Xlsx_Rows_MultiMatch_List= []  # [Row, [TRrec, .., TRrec], .., Row, [] ]
-                                            # this list is implemented in Codes_DB
+
         # ------------------------
         self._tTot_Rows        = 0
         self._tTot_OK          = 0
@@ -262,21 +231,20 @@ class Xlsx_Manager(Codes_db):
         if self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA or self._tXlsx_Conto == POSTA:
             self._Adjust_Rows_MostToLess()    # Invert order from Most Recent to Less
 
-        self._Create_Xlsx_Codes_Lists()
+        status, data = self._create_With_Out_codes_lists()
+        if not status:
+            return False, data
         self._Save_Xlsx_Data()
         return True, ''
 
-    # ---------------------------------------------------------------------------------------------
-    def _Set_Year_Contab_Valuta(self, Date):
-        self.Dummy = 0
-        iYear = int(Date[0:4])
-        if len(self._tiYear_List) < 2 and not iYear in self._iYear_List:
-            self._tiYear_List.append(iYear)
     # --------------------------------------------------------------------------------------------- #
     # _With_Code_Tree_List   : nRow   Contab  Valuta  TR_Desc   Accred  Addeb   TRcode  RowFullDes 
-    def _Create_Xlsx_Codes_Lists(self):
+    def _create_With_Out_codes_lists(self) -> tuple[bool, str]:
         self._tWihtout_Code_Tree_List = []
         self._tWith_Code_Tree_List    = []
+        self._tTotWith_Code           = 0
+        self._tTotWithout_Code        = 0
+
 
         for Row in self._tXlsx_Rows_Compact:
             Full_Desc = Row[IX_ROW_COMP_FULLDES]
@@ -285,23 +253,26 @@ class Xlsx_Manager(Codes_db):
             if nCode == 1:                          # Unic code found for Row
                 self.Insert_On_WithCode_List(Row, TRcodeList[0])
 
-            elif nCode > 1:                         # Multiple codes found for Row
-                if self._Transact_DbFile_Exists():
-                    TRcodeFound = self._RowIsIn_Transactions(Row, TRcodeList)
-                    if TRcodeFound:
-                        self.Insert_On_WithCode_List(Row, TRcodeFound)
-                    else:
-                        TRcode = self._Code_SelectOnMulti(Row, TRcodeList)
-                        if TRcode:
-                            self.Insert_On_WithCode_List(Row, TRcode)
+            elif nCode > 1:                         # Multiple codes found for a xlsx row
+                print(TRcodeList, Row[IX_ROW_COMP_FULLDES])
+                message  = f"la descrizione completa per la riga={str(Row[IX_ROW_COMP_NROW])}\n"
+                message += f"{Row[IX_ROW_COMP_FULLDES]}\n\n"
+                message += f"Contab: {Row[IX_ROW_COMP_CONT]}  Valuta: {Row[IX_ROW_COMP_VAL]}  "
+                message += f"Accred: {Row[IX_ROW_COMP_ACCR]}  Addeb: {Row[IX_ROW_COMP_ADDEB]}\n"
+                message += f"combacia con piu stringhe per la ricerca\n\n"
+                for code in TRcodeList:
+                    strFound =  f"\n{str(code)}:  {self.Get_TrDesc_FromCode(code)}\n{self.Get_strToFind_FromCode(code)}"
+                    message += strFound        # dlg_select = View_Messa
+                return False, message
 
-            else:                                    # Code NOT found             
+            else:  # Code NOT found
                 self._tWihtout_Code_Tree_List.append(Row)
                 self._tTotWithout_Code += 1
                 pass
-        pass      
+        return True, ''
 
-        # -----------------------------Code(TRcode)---------------------------------------------------------------
+
+    # -----------------------------Code(TRcode)---------------------------------------------------------------
     def Insert_On_WithCode_List(self, Row, TRcode):
         TRdesc = self.Get_TrDesc_FromCode(TRcode)
         RecForIns   = [Row[IX_ROW_COMP_NROW], Row[IX_ROW_COMP_CONT], Row[IX_ROW_COMP_VAL],
@@ -313,81 +284,11 @@ class Xlsx_Manager(Codes_db):
         pass
 
     # ---------------------------------------------------------------------------------------------
-    # /home/mario/bExpenses/bFiles/bXLSX_Files/FIDEU/FIDEU_2025/FIDEU_2025_01_Test.xlsx', 'Lista Movimenti',
-    # /home/mario/bExpenses/bFiles/bXLSX_Files/TRANSACTIONS/Transact_2025.db'
-    # ---------------------------------------------------------------------------------------------
-    def _Transact_DbFile_Exists(self):
-        Full_TransactDb_filename = self.Get_sel_dictionary_value(TRANSACT_FILENAME)
-        if Full_TransactDb_filename == UNKNOWN:
-            return False
-        XLSX_Dir  = " "  #Get_Common_Dir_Xlsx_DbTransat(Full_Xlsx_filename)
-        Transact_Filename = XLSX_Dir + '/' + TRANSACT_ID + str(self._tXlsx_Year) + '.db'
-        
-        # /home/mario/bExpenses/bFiles/bXLSX_Files/TRANSACTIONS/Transact_2026.db
-        if os.path.isfile(Transact_Filename):
-            self._Transact_DB_Filename = Transact_Filename
-            return True
-        self._Transact_DB_Filename = "" 
-        return False
-
-    # ---------------------------------------------------------------------------------------------
-    def _RowIsIn_Transactions(self, Row, Code_List):
-        # if not self._Load_Transact_Table():
-        #     return False
-        Contab   = Row[IX_ROW_COMP_CONT]
-        Valuta   = Row[IX_ROW_COMP_VAL]
-        Accred   = Row[IX_ROW_COMP_ACCR]
-        Debit    = Row[IX_ROW_COMP_ADDEB]
-        FullDesc = Row[IX_ROW_COMP_FULLDES]    # (Descr1 // Descr2)
-        for Code in Code_List:
-            for Transact_Rec in self.Fetched_List:
-                if Transact_Rec[IX_TRANSACT_TR_CODE] == 558 or Transact_Rec[IX_TRANSACT_TR_CODE] == 572:
-                    pass
-                    pass
-
-                if  Transact_Rec[IX_TRANSACT_TR_CODE]   == Code and \
-                    Transact_Rec[IX_TRANSACT_CONTAB]    == Contab and \
-                    Transact_Rec[IX_TRANSACT_VALUTA]    == Valuta and \
-                    Transact_Rec[IX_TRANSACT_ACCRED]    == Accred and \
-                    Transact_Rec[IX_TRANSACT_ADDEB]     == Debit  and \
-                    Transact_Rec[IX_TRANSACT_FULL_DESC] == FullDesc:
-                    return Code 
-        return 0
-
-    # ---------------------------------------------------------------------------------------------
-    def _Code_SelectOnMulti(self, Row, TRcodeList):
-        Nrow   = str(Row[IX_ROW_COMP_NROW])
-        Date   = str(Row[IX_ROW_COMP_CONT])
-        Descr  = str(Row[IX_ROW_COMP_FULLDES])
-        Accred  = Row[IX_ROW_COMP_ACCR]
-        Addeb   = Row[IX_ROW_COMP_ADDEB] 
-        Message = f'Code Multi match found \n\nTHE BEST WAY TO ELIMINATE THIS OCCURENCE IS TO ELIMINTA ONE CODE\
-            \nSELECT EXIT, THEN ELIMINATE CODE\n\nIn Xlsx file for:\n\nRow: {Nrow}\nDate: {Date}\nAccred: {Accred}    Addeb: {Addeb}\
-            \nDescr: {Descr}\n\nFound:\n'
-  
-        ListFor_Select = [NONE]
-        for TRcode in TRcodeList:
-            FullTRrec = self.Get_TR_Codes_Full(TRcode)
-            TRdescr   = FullTRrec[IX_TR_FULL_TR_DESC] 
-            # strToFind = FullTRrec[IX_TR_FULL_STR_TO_FIND]
-            FullDesc  = FullTRrec[IX_TR_FULL_FULL_DESC]
-            strToFind = self.Get_strToFind_FromCode(TRcode)
-  
-            Msg_Append = f'\nCode: {str(TRcode)}   Descr: {TRdescr}\nStrToFind:\n{strToFind}\nFull Descr:\n{FullDesc}\n\n'       
-            Message  += Msg_Append
-            pass
-
-        Mesg_Sel = View_Message_Select(Message, ListFor_Select)
-        Mesg_Sel.wait_window()
-        Reply = Mesg_Sel.data
-        if Reply == NONE:
-            return NONE
-        else:
-            Result, Code = GetNum_fromString(Reply)
-            if Result == OK:
-                return Code
-            return 0
-        
+    def _Set_Year_Contab_Valuta(self, Date):
+        self.Dummy = 0
+        iYear = int(Date[0:4])
+        if len(self._tiYear_List) < 2 and not iYear in self._iYear_List:
+            self._tiYear_List.append(iYear)
 
     # ---------------------------------------------------------------------------------------------
     # NB: the full year list should contains all months + full january of next year
@@ -559,7 +460,6 @@ class Xlsx_Manager(Codes_db):
             self.XLSX_Rows_From_Sheet.append(Sheet_Copy[Index])
             self._Xlsx_Rows_Desc_Compact.append(Desc_Comp_Copy[Index])
             self._Xlsx_Rows_Compact.append(Row_Comp_Copy[Index])
-            Index -= 1
 
     # --------------------------------------------------------------------------------- #
     #  Workbook is the container of all Worksheets                                      #
@@ -608,45 +508,6 @@ class Xlsx_Manager(Codes_db):
         return myDate
 
 
-    # ----------------------------------------------------------------------------------------------- #
-    # Get Xlsx Rows for compare Xlsx versus Transatcions                                              #
-    # Conto is selected from Xlsx_Filename                                                            #
-    # Year  is selected from Xlsx_Filenmame                                                           #
-    # The months lists are filled for each month                                                      #
-    # ----------------------------------------------------------------------------------------------- #
-    def Get_Xlsx_Rows_WithCode_for_Check(self):
-        self._Xlsx_Month_Contab_List =  [ [], [], [], [], [], [], [], [], [], [], [], [] ]
-        self._Xlsx_Month_Valuta_List =  [ [], [], [], [], [], [], [], [], [], [], [], [] ]
-        self._Xlsx_Alarm_For_Dates   =  []
-
-        for Row in self._With_Code_Tree_List:
-            Contab = Row[IX_WITH_CODE_CONTAB]
-            Valuta = Row[IX_WITH_CODE_VALUTA]
-            Delta_Days = Calc_Delta_Time(Contab, Valuta)
-            if Delta_Days > 10:
-                self._Xlsx_Alarm_For_Dates.append(Row)
-                # print(Contab, Valuta, Delta_Days)
-            strToFind = self.Get_TR_Rec_From_Code(Row[IX_WITH_CODE_TR_CODE])
-            GenericCode = False
-            if GENERICCODE in strToFind:
-                GenericCode = True
-
-            RowList = list(Row)
-            if int(Contab[:4]) == self._Xlsx_Year:
-                intMonth = int(Contab[5:7]) - 1
-                if GenericCode:
-                    self._Xlsx_Month_Generic_Contab_List[intMonth].append(RowList)
-                else:
-                    self._Xlsx_Month_Contab_List[intMonth].append(RowList)
-
-            if int(Valuta[:4]) == self._Xlsx_Year:
-                intMonth = int(Contab[5:7]) - 1
-                if GenericCode:
-                    self._Xlsx_Month_Generic_Valuta_List[intMonth].append(RowList)
-                else:
-                    self._Xlsx_Month_Valuta_List[intMonth].append(RowList)
-        return [self._Xlsx_Month_Contab_List,         self._Xlsx_Month_Valuta_List]
-
     # ------------------------------------------------------------------------------------- #
     # List_Rows_WithoutCode : nRow  Contab  Valuta  Accr(str) Addeb(str)   FullDes          #
     # List_Rows_WithCode    : nRow  Contab  Valuta  TR_Desc  Accr(str)  Addeb(str) TRcode   #
@@ -664,10 +525,5 @@ class Xlsx_Manager(Codes_db):
         self._TotWihtout_Code -= 1
         if self._TotWith_Code < 0:
             self._TotWith_Code = 0
-
-    # -----------------------------------------------------------------------------------
-    def Get_Xlsx_Alarm_For_Dates(self):
-        return self._Xlsx_Alarm_For_Dates
-
 
 # =======================================================================================

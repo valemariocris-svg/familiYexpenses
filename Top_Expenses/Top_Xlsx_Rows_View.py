@@ -65,16 +65,6 @@ class Top_XLSX_Rows_View(tk.Toplevel):
             pass
 
     # ---------------------------------------------------------------------------------------------
-    # def Clk_Sel_Xlsx(self):
-    #     self.Mod_Mngr.Sel_Xlsx_Mngr(TOP_XLSX_VIEW)
-    #     TotalRows = self.Data.Get_Total_Rows()
-    #     if TotalRows[IX_TOT_ROWS_OK] != 0:
-    #         self.Frame_Sheets_Rows_View()
-    #     else:
-    #         Msg_Dlg = Message_Dlg(MSG_BOX_INFO, 'No rows OK on Xlsx file')
-    #         Msg_Dlg.wait_window()
-
-    # ---------------------------------------------------------------------------------------------
     def Clk_On_Sheets_Row(self, Values):
         if len(Values) == 7:
             self.Txt1.Set_Text(Values[IX_ROW_DESCR1])

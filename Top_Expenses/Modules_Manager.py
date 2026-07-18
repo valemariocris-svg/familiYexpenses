@@ -88,9 +88,13 @@ class Modules_Manager:
         status = file_dlg.status
         data   = file_dlg.data
         if not status:
-            msg_dlg = Message_Dlg(MSG_BOX_ERR, data)
-            msg_dlg.wait_window()
-            return False
+            dbCodesName = self.Data.Get_sel_dictionary_value(CODES_FILENAME)
+            statusA, dataA = Gl_Cek_Codes_Name(dbCodesName)
+            if not statusA:
+                msg_dlg = Message_Dlg(MSG_BOX_ERR, f"{data}\n on selecting a codes database")
+                msg_dlg.wait_window()
+                return False
+            return True
         else:
             self.Chat.Tx_Request([Origin, [MAIN_WIND], VIEW_SELECTIONS, []])
             return True
@@ -102,7 +106,7 @@ class Modules_Manager:
             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dlg.wait_window()
             return False, data        # Error on loading codes database
-        self.Chat.Tx_Request([self._check_Origin(Origin), [ANY], CODES_DB_LOADED, []])
+        self.Chat.Tx_Request([Origin, [ANY], CODES_DB_LOADED, []])
         return True, ''
 
     # =============================================================================================
@@ -116,13 +120,18 @@ class Modules_Manager:
     # ---------------------------------------------------------------------------------------------
     def Sel_Xlsx_Mngr(self, Origin):
         file_dlg = File_Dialog(XLSX_FILENAME)
-        status   = file_dlg.status
-        data     = file_dlg.data
+        status = file_dlg.status
+        data = file_dlg.data
         if not status:
-            msg_dlg = Message_Dlg(MSG_BOX_ERR, data)
-            msg_dlg.wait_window()
-            return False
+            Xlsx_Name = self.Data.Get_sel_dictionary_value(XLSX_FILENAME)
+            statusA, dataA = Gl_Cek_Xlsx_Name(Xlsx_Name)     # self._load_rows_create_code_Nocode_list()
+            if not statusA:
+                msg_dlg = Message_Dlg(MSG_BOX_ERR, f"{data}\n on selecting xlsx file")
+                msg_dlg.wait_window()
+                return False
+            return True
         else:
+            self.Data.Load_Xlsx_Rows()
             self.Chat.Tx_Request([Origin, [MAIN_WIND], VIEW_SELECTIONS, []])
             return True
 
@@ -242,23 +251,23 @@ class Modules_Manager:
         return None
 
     # --------------------------------------------------------------------------------------------
-    def _check_Origin(self, Origin):
-        self.dummy = 0
-        # Controlla se Origin è già una stringa
-        if isinstance(Origin, str):
-            return Origin
-
-        # Se non è una stringa, prova a convertirla
-        try:
-            pass
-            # Assumendo che get_name_module accetti l'istanza
-            # return 'not found'  # get_name_module(Origin)
-        except Exception:
-            pass
-            # Se fallisce, restituisci un valore di fallback sicuro
-            # return "UNKNOWN_MODULE"
-        finally:
-            pass
+    # def _check_Origin(self, Origin):
+    #     self.dummy = 0
+    #     # Controlla se Origin è già una stringa
+    #     if isinstance(Origin, str):
+    #         return Origin
+    #
+    #     # Se non è una stringa, prova a convertirla
+    #     try:
+    #         pass
+    #         # Assumendo che get_name_module accetti l'istanza
+    #         # return 'not found'  # get_name_module(Origin)
+    #     except Exception:
+    #         pass
+    #         # Se fallisce, restituisci un valore di fallback sicuro
+    #         # return "UNKNOWN_MODULE"
+    #     finally:
+    #         pass
 
 # =================================================================================================
 

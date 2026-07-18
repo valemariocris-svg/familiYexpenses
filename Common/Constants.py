@@ -258,7 +258,8 @@ CATEG_CODES_TABLE    = 'Categories Codes Table'
 
 LEN_CODES_FILENAME_MIN  = 22
 LEN_XLSX_FILENAME_MIN   = 17
-IDENT_CODES_FILENAME= 'Codes_DB/Codes_DB_20'
+IDENT_CODES_FILENAME    = 'Codes_DB/Codes_DB_20'
+IDENT_XLSX_FILENAME     = 'Codes_DB/Codes_DB_20'
 GENERICCODEstr      = 'GENERICCODE'
 IX_TR_TR_CODE       = 0  # UNIC TR CODE
 IX_TR_GR_CODE       = 1
@@ -366,8 +367,7 @@ NOSELECT      = 'nessuna scelta'
 # XLS_Row_List           : nRow   Contab  Valuta  Des1      Accr    Addeb   Des2      as in xlsx File       #
 # XLS_Row_Compact        : nRow   Contab  Valuta  Des1Comp  Accr    Addeb   Des2Comp                        #
 # _Wihtout_Code_Tree_List: nRow   Contab  Valuta  Accr      Addeb   FullDes             7          8        #
-# _With_Code_Tree_List   : nRow   Contab  Valuta  TR_Desc   Accred  Addeb   TRcode  RowFullDes              #
-# Xlsx_Rows_MultiMatch_List : [Row, [TRrec, .., TRrec], .., Row, [] ]                                       #
+# _With_Code_Tree_List   : nRow   Contab  Valuta  TR_Desc   Accred  Addeb   TRcode  RowFullDes              #                                 #
 #                                                                                                           #
 # Query_View_List        : Date    TR_Desc   Accred    Addeb                                                #
 # ========================================================================================================= #

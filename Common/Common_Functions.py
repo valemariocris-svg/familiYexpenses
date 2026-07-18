@@ -38,18 +38,17 @@ def Gl_Cek_Codes_Name(Full_Filename):
     else:
         Dirname = Get_Dir_Name(Full_Filename)
         filename = Get_File_Name(Full_Filename)
-        if len(filename) < LEN_CODES_FILENAME_MIN:
+        if len(filename) < LEN_XLSX_FILENAME_MIN:
             errMessage = 'Len of Codes filename INCORRECT'
             return False, errMessage
         else:
             iLastBar = int(Full_Filename.rfind("/") + 1)
-            strCodes = Full_Filename[(iLastBar - 9):(iLastBar + 11)]
-            if strCodes != IDENT_CODES_FILENAME:
+            strXlsx = Full_Filename[(iLastBar - 9):(iLastBar + 11)]
+            if strXlsx != IDENT_CODES_FILENAME:
                 errMessage = 'DBcodes filename ERROR:\n\n'
                 errMessage += filename + '\n' + Dirname + '\n\nexpected:  ' + IDENT_CODES_FILENAME
                 return False, errMessage
         return True, ''
-
 
 # ---------------------------------------------------------------------------------------
 def Gl_Cek_Xlsx_Name(Full_Filename):
