@@ -127,14 +127,6 @@ def Check_strYear(strYear, Min, Max):
         return False
     return True
 
-# def Check_strMonth(strMonth):
-#     for Digit in strMonth:
-#         if Digit < '0' or Digit > '9':
-#             return False
-#     intMonth = int(strMonth)
-#     if intMonth < 1 or intMonth > 12:
-#         return False
-#     return True
 
 def SetNoZero(Value):
     if type(Value) is float:
@@ -168,15 +160,6 @@ def Print_Received_Message(Txtr, Recvr, Request, Values_List):
     strToPrint += '   VALUES: ' + str(Values_List)
     # PRINT(strToPrint)
 
-# -------------------------------------------------------------------------------------
-# def Get_List_Index(List, Ncol_For_Find, ValueToFind, default):
-#     index = -1
-#     for Rec in List:
-#         index += 1
-#         if Rec[Ncol_For_Find] == ValueToFind:
-#             return index
-#     return default
-
 def Get_List_Item(List, Ncol_For_Find, ValueToFind, Ncol_To_Get, default):
     index = -1
     for Rec in List:
@@ -193,32 +176,6 @@ def Get_List_Record(List, Ncol_For_Find, ValueToFind, default):
         if Value == ValueToFind:
             return Rec
     return default
-
-# -----------------------------------------------------------------------------
-# def Get_Conto_Xlsx_Year(Xlsx_Name):
-#     pass
-#     # FIDEU_2024_09-1.xlsx
-#     Filename = Get_File_Name(Xlsx_Name)
-#     Conto    = Filename[:5]
-#     Year     = Filename[6:10]
-#     return [Conto, int(Year)]
-#
-# def Get_Year_Conto_transactFfilename_from_Xlsx(Xlsx_filename):
-#     # /home/mario/bExp_Files/bXLSX_Files/FIDEU/FIDEU_2026/FIDEU_2026-01-04.xlsx
-#     # /home/mario/bExp_Files/bXLSX_Files/TRANSACTIONS
-#     # Test if Transact_filename exists
-#     Filename = Get_File_Name(Xlsx_filename)  # FIDEU_2026-01-04.xlsx
-#     strYear  = Filename[6:10]
-#     Conto    = Filename[:5]
-#
-#     full_path = Path(Xlsx_filename)
-#     # .parents[n] ti permette di risalire la struttura (0 è la cartella attuale, 1 è quella sopra, ecc.)
-#     # Nel tuo caso, per tornare indietro di 2 livelli:
-#     target_path = full_path.parents[2]
-#     Transact_filename = str(target_path)
-#     Transact_filename += TRANSACT_ID + strYear + '.db'
-#     return strYear, Conto, Transact_filename
-
 
 # -----------------------------------------------------------------------------
 def Get_Xlsx_FullMonth(Xlsx_Name):
@@ -267,23 +224,6 @@ def Calc_Delta_Time(Contabile, Valuta):
     Delta = Progress_Contab_Day - Progress_Valuta_Day
     return Delta
 
-# 2024-06-07
-# def Get_iMonth(FullDate):
-#     if not Check_strDate(FullDate):
-#         return -1Get_
-#     else:
-#         strMonth = FullDate[5:7]
-#         return int(strMonth) - 1
-
-# def Conv_En_To_It_Date(Eng_Date):
-#     # 2023/01/31
-#     # 0123456789
-#     Day   = Eng_Date[8:10]    # 31
-#     Month = Eng_Date[5:7]     # 05
-#     Year  = Eng_Date[2:4]     # 24
-#     Italian_Date = Day + '/' + Month + '/' + Year
-#     return Italian_Date
-
 # ---------------------------------------------------------------------------------------------
 def Set_Month_Day(FullDate, Counts):
     iMonth    = int(FullDate[5:7]) -1
@@ -318,52 +258,6 @@ def convert_rcord_toView(template, Rec):
             return '????'
     return converted_record
 
-# -------------------------------------------------------------------------------------------------
-# def Create_Compct_Date(Normal_Date, Year, Cont_Last_Month, Val_Last_Month):
-#     # ---------------------------------------------------------------------------------------------
-#     # 2025-01-28
-#     # def Create_Compct_Date(self, Normal_Date):
-#     Contab = Normal_Date[0]
-#     Valuta = Normal_Date[1]
-#
-#     ContabYear = int(Contab[0:4])
-#     ValYear = int(Valuta[0:4])
-#     # ["Gen 04",  "*Dic 31"]
-#     StrInit = " "
-#     if ContabYear != Year or ValYear != Year:
-#         StrInit = "*"
-#     #  -----------------------------------------------------------
-#     Cont_Month = int(Contab[5:7])
-#     strCoMonth = MONTHS_NAMES_COMPACT[Cont_Month - 1]
-#     if Cont_Month == Cont_Last_Month:
-#             strCoMonth = "  "
-#     else:
-#         pass
-#         # Cont_Last_Month = Cont_Month
-#     strCont_Day = Contab[8:10]
-#
-#     #  -----------------------------------------------------------
-#     Val_Month = int(Valuta[5:7])
-#     strValMonth = MONTHS_NAMES_COMPACT[Val_Month - 1]
-#     if Val_Month == Val_Last_Month:
-#         strValMonth = "  "
-#     else:
-#         pass
-#         # Val_Last_Month = Val_Month
-#     strVal_Day = Valuta[8:10]
-#     return [StrInit + strCoMonth + strCont_Day, strValMonth + strVal_Day]
-
-# ---------------------------------------------------------------------------------------------
-# def Create_Compact_AccAdd(AccAdd):
-#     Accred = Float_ToString_Setup(AccAdd[0])
-#     Addeb  = Float_ToString_Setup(AccAdd[1])
-#     return [Accred, Addeb]
-#
-# # ---------------------------------------------------------------------------------------------
-# def Get_Compct_Full_Desc(FullDesc):
-#     iPosSlash = int(FullDesc.rfind('/') + 2)
-#     CompDesc  = FullDesc[iPosSlash:]
-#     return CompDesc
 
 # ----------------------------------------------------------------------------#
 def TestForSign(Sign, FoundNotZ):
@@ -372,19 +266,6 @@ def TestForSign(Sign, FoundNotZ):
     else:
         return ''
 
-# -----------------------------------------------------------------------------------
-# def check_row_date(date_Tocheck):
-#     date_type = type(date_Tocheck)
-#     if date_type is datetime:
-#         # Year    = date_Tocheck.strftime('%Y')
-#         # Month   = date_Tocheck.strftime('%m')
-#         # Day     = date_Tocheck.strftime('%d')
-#         # Hour    = date_Tocheck.strftime("%H")
-#         # Minutes = date_Tocheck.strftime("%M")
-#         # Seconds = date_Tocheck.strftime("%S")
-#
-#         return True, date_Tocheck.strftime("%Y-%m-%d %H:%M:%S")
-#     return False, "date type is not datetime"
 
 # -------------------------------------------------------------------------------------------------------------
 # strVal = '(-)DDD.DD   Called from reading Xlsx Rows
@@ -399,51 +280,8 @@ def Convert_Str_To_Float(Value):
     except (ValueError, TypeError):
         # Se la conversione fallisce (es: c'è del testo o simboli strani)
         return 0.0
-    
-    # if Value is None:
-    #     return 0.0
-
-    # # 2. Per controllare se è un numero (int o float)
-    # if isinstance(Value, (int, float)):
-    #     return float(Value)
-    
-    # for Char in Value:
-    #     if '0' <= Char <= '9':
-    #         pass
-    #     elif Char == '.':
-    #         pass
-    #     elif Char == '-':
-    #         pass
-    #     else:
-    #         return 0.00
-    #     return float(Value)
-    # return None
-
-
-# -------------------------------------------------------------------------------------------------------------
-# def Convert_Str_To_FloatSpace(Value):
-#     Type = type(Value)
-#     if not Type is str or len(Value) <= 1:
-#         return 0.00
-#     iLastSpace = int(Value.rfind(" ") + 1)
-#     cmpctString = Value[iLastSpace:]
-#     strFloat    = ''
-#     DigitFound = False
-#     for Char in cmpctString:
-#         if '0' <= Char <= '9':
-#             DigitFound = True
-#             strFloat += Char
-#         elif Char == '.':
-#             pass
-#         elif Char == '-':
-#             strFloat += Char
-#             pass
-#         else:
-#             return 0.00
-#     if DigitFound:
-#         return float(strFloat)
-#     else:
-#         return 0.00
+    finally:
+        pass
 
 # -------------------------------------------------------------------------------------------------------------
 def Convert_To_Float(Value):    # return always a float (0.00) in case of not number
@@ -605,16 +443,6 @@ def StrToFind_in_Fulldescr(strToFind_List, FullDesc):
             else:
                 CurrIndex = Index
         return True
-
-# -------------------------------------------------------------------------------------
-# def Db_Error(e):
-#     Error = str(e)
-#     NewErr = '\n'
-#     for Char in Error:
-#         NewErr += Char
-#         if Char == ':' or Char == '/' :
-#             NewErr += '\n'
-#     return NewErr
 
 # -------------------------------------------------------------------------------------
 def GetNum_fromString(String):
