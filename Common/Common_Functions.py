@@ -194,7 +194,6 @@ def Get_List_Record(List, Ncol_For_Find, ValueToFind, default):
             return Rec
     return default
 
-
 # -----------------------------------------------------------------------------
 # def Get_Conto_Xlsx_Year(Xlsx_Name):
 #     pass
