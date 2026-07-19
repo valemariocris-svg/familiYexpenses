@@ -65,7 +65,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.Canv_CodFile = CreateCanvas(self,   450, 640, 170, 130)
         TheLable(self.Canv_CodFile, LAB_BLUE,     15,   1,  16, "gestione Db codici ")
         TheButton(self.Canv_CodFile, BTN_DEF_EN,  10,  30,  18, "seleziona Db codici", self.Clk_Sel_Codes)
-        TheButton(self.Canv_CodFile, BTN_DEF_EN,  10,  75,  18, "visualizza codici",        self.Clk_View_Codes)
+        TheButton(self.Canv_CodFile, BTN_DEF_EN,  10,  75,  18, "visualizza codici",   self.Clk_View_Codes)
 
         self.Canv_XlsxFile = CreateCanvas(self,  670, 640, 160, 130)
         TheLable(self.Canv_XlsxFile, LAB_BLUE,    15,  1, 15, "  gestione  file xlsx ")
@@ -126,9 +126,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.Frame_NoCodes.Clear_Focus()
         self.Frame_WithCodes.Clear_Focus()
         self.Mod_Mngr.Sel_Codes_Mngr(TOP_CODES_MNGR)
-        # in case of error the diagnostic is made
-        # in Sel_Codes_Mngr
-
+        self.Mod_Mngr.Initialize_codes_xlsx_transact(TOP_CODES_MNGR)
 
     # ---------------------------------------------------------------------------------------------
     def Clk_Sel_xlsx(self):
@@ -173,8 +171,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
                         Tot_NoCode = Total[IX_TOT_ROWS_WITHOUT_CODE]
                         if not Tot_NoCode:
                             self.Mod_Mngr.Top_Launcher(TOP_CODES_VIEW, TOP_CODES_MNGR, [VIEW_ALL_REDUC])  # Close the reduced Codes View
-
-                        if self.Try_To_Insert_Rec_On_Db(TR_Full_List):
+                        if self.Insert_codeRec_onDb(TR_Full_List):
                             self.Row_WithoutCode = None
                             self.Load_Trees()
                     else:
@@ -187,8 +184,10 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         else:
             self.Frame_WithCodes.Clear_Focus()           # === Clicked On Codes View No Code Waiting
             self.Row_WithoutCode = None
-            self.Txt_TR_Code1.Set_Text(TR_Full_List[IX_TR_FULL_TR_CODE])
-            self.Txt_TR_Desc1.Set_Text(TR_Full_List[IX_TR_FULL_TR_DESC])
+            self.TR_Code   = TR_Full_List[IX_TR_FULL_TR_CODE]
+            self.TR_Desc   = TR_Full_List[IX_TR_FULL_TR_DESC]
+            self.Txt_TR_Code1.Set_Text(self.TR_Code)
+            self.Txt_TR_Desc1.Set_Text(self.TR_Desc)
             self.Txt_GR_Code1.Set_Text( TR_Full_List[IX_TR_FULL_GR_CODE])
             self.GR_Combo1.SetSelText(TR_Full_List[IX_TR_FULL_GR_DESC])
             self.Txt_CA_Code1.Set_Text(TR_Full_List[IX_TR_FULL_CA_CODE])
@@ -197,7 +196,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             self.Txt_StrFullDesc1.Set_Text(TR_Full_List[IX_TR_FULL_FULL_DESC])
 
     # ---------------------------------------------------------------------------------------------
-    def Try_To_Insert_Rec_On_Db(self, TR_Full_List):
+    def Insert_codeRec_onDb(self, TR_Full_List):
         #                          1      2     3      4        5      6      7     8
         # Record_List :  (Ident) Conto Contab Valuta  Accred Addeb TRdesc TRcode FullDes
         Conto  = self.LocConto
@@ -219,9 +218,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
 
         Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
         Msg_Dlg.wait_window()
-        self.Data.Close_Transactions_Database()
         return False
-
 
     # ---------------------------------------------------------------------------------------------
     def Clk_Generic_Select(self):   # from Button  Select a generic Code
@@ -280,13 +277,10 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             msg_dlg = Message_Dlg(MSG_BOX_ERR, "Generic new code not found")
             msg_dlg.wait_window()
             return
-        self.TR_Code             = data
-        # self.New_Code_for_insert = data
+        self.TR_Code = data
         self.Txt_TR_Code1.Set_Text(str(data))
         self.Row_WithoutCode = None
         self.Frame_WithCodes.Clear_Focus()
-        if not self.Get_Confirm('Add'):
-            return
         self. Add_Code()
         pass
 
@@ -301,42 +295,37 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.Txt_TR_Code1.Set_Text(str(data))
         self.Row_WithoutCode = None
         self.Frame_WithCodes.Clear_Focus()
-        if not self.Get_Confirm('Add'):
-            return
         self. Add_Code()
 
     # ------------     ***   Add new normal or generic  record  ***     ---------------------------
     def Add_Code(self):
-        self.Txt_TR_Code1.Set_Text(str(self.New_Code_for_insert))
+        self.Txt_TR_Code1.Set_Text(str(self.TR_Code))
         self.Frame_WithCodes.Clear_Focus()
-        status, data = self.Check_codes_record()
-        if not status:
-            Msg_Dld = Message_Dlg(MSG_BOX_ERR, data)
-            Msg_Dld.wait_window()
-            return  False    # Record Data not OK
-
+        if not self.Check_codes_record():
+            return
         if not self.Get_Confirm('Add'):
-            return False
+            return
 
         status, data = self.Data.Add_DB_TR_Record(self.Rec_Candidate)
         if not status:
             Msg_Dld = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dld.wait_window()
-            return False
+            return
 
         if self.Mod_Mngr.Load_Codes_Mngr(TOP_CODES_MNGR):
             # EXISTS: False, Error  : True, True exists   : True, False  NOT exists
-            status, data = self.Data.Check_If_Code_Exist(self.New_Code_for_insert)
+            status, data = self.Data.Check_If_Code_Exist(self.TR_Code)
             if not status:
-                Messg = f"Fatal error on add new code: {str(self.New_Code_for_insert)}\n{self.TR_Desc}"
+                Messg = f"Fatal error on add new code: {str(self.TR_Code)}\n{self.TR_Desc}"
                 Msg_Dld = Message_Dlg(MSG_BOX_ERR, Messg)
                 Msg_Dld.wait_window()
-                return False
+                return
             else:
+                Messg = f"New code recored: {str(self.TR_Code)}\n{self.TR_Desc}\ncreated"
+                Msg_Dld = Message_Dlg(MSG_BOX_INFO, Messg)
+                Msg_Dld.wait_window()
                 self.Frames_Refresh()
-                if data:
-                    return True     # exists
-        return False                # NOT exist
+        return
 
     # ------------------------     ***   Update TR code Record      -------------------------------
     def Clk_Update(self):
@@ -354,36 +343,29 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         status, data = self.Data.Update_DB_TR_Record(self.Rec_Candidate)
         if status:
             if not self.Mod_Mngr.Load_Codes_Mngr(TOP_CODES_MNGR):
-                Msg_Dld = Message_Dlg(MSG_BOX_ERR, "error on reloading ")
+                Msg_Dld = Message_Dlg(MSG_BOX_ERR, "error on reloading codes Db")
                 Msg_Dld.wait_window()
             else:
                 Msg_Dld = Message_Dlg(MSG_BOX_INFO, "code record correctly updated")
                 Msg_Dld.wait_window()
-        else:
-            if not self.Check_IfCodeExists():
-                return
-            if not self.Get_Confirm('Update'):
-                return
-            if self.Update_Record_Code():
                 self.Frames_Refresh()
-                self.Chat.Tx_Request([TOP_CODES_MNGR, [TOP_CODES_VIEW], CODES_DB_UPDATED, self.Rec_Cand_For_ViewList])
 
-    # ------------------------     ***   Update TR code Record      -------------------------------
-    def Update_Record_Code(self):
-        Update_Result = self.Data.Update_DB_TR_Record(self.Rec_Candidate)
-        Result = Update_Result[0]
-        if Result == MULTI:
-            Msg_Dld = Message_Dlg(MSG_BOX_INFO, 'Multimatching!\nTransaction code\nRecord NOT updated')
-            Msg_Dld.wait_window()
-            self.Mod_Mngr.View_Codes_Match_Error(Update_Result[1])
-            return False
-        elif Result != OK:
-            Msg_Dld = Message_Dlg(MSG_BOX_ERR, Result[1])
-            Msg_Dld.wait_window()
-            return False
-        if not self.Mod_Mngr.Load_Codes_Mngr(TOP_CODES_MNGR):
-            return False
-        return True
+     # ------------------------     ***   Update TR code Record      -------------------------------
+    # def Update_Record_Code(self):
+    #     Update_Result = self.Data.Update_DB_TR_Record(self.Rec_Candidate)
+    #     Result = Update_Result[0]
+    #     if Result == MULTI:
+    #         Msg_Dld = Message_Dlg(MSG_BOX_INFO, 'Multimatching!\nTransaction code\nRecord NOT updated')
+    #         Msg_Dld.wait_window()
+    #         self.Mod_Mngr.View_Codes_Match_Error(Update_Result[1])
+    #         return False
+    #     elif Result != OK:
+    #         Msg_Dld = Message_Dlg(MSG_BOX_ERR, Result[1])
+    #         Msg_Dld.wait_window()
+    #         return False
+    #     if not self.Mod_Mngr.Load_Codes_Mngr(TOP_CODES_MNGR):
+    #         return False
+    #     return True
 
     # ------------------------     ***   Delete  a code record on codes Db    --------------------------
     def Clk_Delete(self):
@@ -393,14 +375,13 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         if not status:
             msg_dlg = Message_Dlg(MSG_BOX_ERR, f"FATAL ERROR 16:\n on deleteng code record\n {data}")
             msg_dlg.wait_window()
-        else:           # Result[0] == OK:
+        else:
             msg_dlg = Message_Dlg(MSG_BOX_INFO, " code record deleted")
             msg_dlg.wait_window()
+            self.Frames_Refresh()
 
     # ---------------------------------------------------------------------------------------------
     def Check_TRcode_Desc(self, Action):
-        self.TR_Code = self.Txt_TR_Code1.Get_Text(INTEGER)
-        self.TR_Desc = self.Txt_TR_Desc1.Get_Text(STRING)
         if self.TR_Code == 0:
             Msg_Dlg = Message_Dlg(MSG_BOX_INFO, "Select a non zero code")
             Msg_Dlg.wait_window()
@@ -418,10 +399,10 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             msg_dlg = Message_Dlg(MSG_BOX_INFO, "select a code number")
             msg_dlg.wait_window()
             return False
-        TR_Desc = self.Data.Get_Text(self.TR_Code)
+        # TRdesc = self.Txt_TR_Desc1.Get_Text(STRING)
         Msg = ('Confirm to ' + strOper +'\n'
                 'Code:        ') + str(self.TR_Code)
-        Msg += '\nDescription: ' + str(TR_Desc)
+        Msg += '\nDescription: ' + self.TR_Desc
         Msg_Dlg = Message_Dlg(MSG_BOX_ASK, Msg)
         Msg_Dlg.wait_window()
         Reply = Msg_Dlg.data
@@ -440,12 +421,13 @@ class Top_Codes_Mngr(Super_Top_Mngr):
      # ----------------------------------------------------------------------------------------
     def Check_codes_record(self) -> bool:
         strError = ''
-        StrToFind     = self.Txt_StrToFind1.Get_Text(STRING).replace('\n', '', 5)
+        StringToFind_List = []
+        StrToFind         = self.Txt_StrToFind1.Get_Text(STRING).replace('\n', '', 5)
         if StrToFind == STRTOFIND:
             strError = 'Please set String to find'
         if strError == '':
             StringToFind_List = GetStrList_ForFind_Checked(StrToFind)
-            if not StrToFind:
+            if not StringToFind_List:
                 strError =  'String to find NOT correct'
         if strError == '':
             self.TR_Code      = self.Txt_TR_Code1.Get_Text(INTEGER)
@@ -466,14 +448,9 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             if self.GR_Code == 0 or self.GR_Desc == GROUPSEL:
                 strError = 'Group NOT OK'
         if strError == '':
-            if not StrToFind_in_Fulldescr([], self.FullDesc):
+           if not StrToFind_in_Fulldescr(StringToFind_List, self.FullDesc):
                 strError = 'String To Find:\n' + str(StrToFind) + \
                 '\n\ndoes not match with Full Desription:\n' + self.FullDesc
-
-
-        status, data = self.Data.Check_if_stringToFind_matches(StringToFind_List, self.TR_Code)
-        if status:
-            return False
 
         if strError != '':
             Msg_Dld = Message_Dlg(MSG_BOX_ERR, strError)
@@ -485,5 +462,4 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.Rec_Cand_For_ViewList = [self.TR_Code, self.TR_Desc, self.GR_Desc, self.CA_Desc, StrToFind]
         return True
 
- 
 # ==============================================================================================================

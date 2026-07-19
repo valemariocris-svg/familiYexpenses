@@ -222,19 +222,17 @@ class Top_Insert(tk.Toplevel):
                 if Result != OK:
                     Msg_Dlg = Message_Dlg(MSG_BOX_ERR, Result)
                     Msg_Dlg.wait_window()
-                    self.Data.Close_Transactions_Database()
                     return
                 del self.Remain_List[0]
                 self.Load_Tree(self.Remain_List)
             else:
                 break
-        self.Data.Close_Transactions_Database()
 
         # Reload Rows etc for Insert --------------------
         self.Records_ToIns_List = self.Remain_List
         self.Set_Data()
         self.Set_Texts()
-        self.Mod_Mngr.Init_CodesMngr_and_Insert(TOP_INS)
+        self.Mod_Mngr.Initialize_codes_xlsx_transact(TOP_INS)
         self.Set_Frame_Rows()
         self.Ins_Btn.Btn_Enable()
 
@@ -303,29 +301,6 @@ class Top_Insert(tk.Toplevel):
     # -------------------------------------------------------------------------------------------------
     def Clk_View_Transact(self):
         self.Mod_Mngr.Top_Launcher(TOP_VIEW_TRANSACT, TOP_INS, [])
-
-    # -------------------------------------------------------------------------------------------------
-    def Clk_Clear_Transactions_Db(self):
-        pass
-        # if not self.intYear:
-        #     return
-        # Message = 'Cofirm to clear TRANSACT table\nYear:  ' + str(self.intYear)
-        # Msg_dlg = Message_Dlg(MSG_BOX_ASK, Message)
-        # Msg_dlg.wait_window()
-        # Reply = Msg_dlg.data
-        # if Reply == YES:
-        #     FullTransactFileName = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
-        #     if not os.path.isfile(FullTransactFileName):
-        #         Msg_dlg = Message_Dlg(MSG_BOX_ERR, "TRANSACT Table don't exist")
-        #         Msg_dlg.wait_window()
-        #         return
-        # Result = self.Data.Clear_Transact_Table()
-        # if Result == OK:
-        #     # self.Mod_Mngr.Init_CodesMngr_and_Insert(TOP_INS)
-        #     self.Load_Tree(self.Records_ToIns_List)
-        # else:
-        #     Msg_Dlg = Message_Dlg(MSG_BOX_ERR, Result)
-        #     Msg_Dlg.wait_window()
 
     # -------------------------------------------------------------------------------------------------------
     def Clk_Verify(self):

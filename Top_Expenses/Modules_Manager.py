@@ -250,25 +250,23 @@ class Modules_Manager:
                 return Id[IX_TOP_CLASS]
         return None
 
-    # --------------------------------------------------------------------------------------------
-    # def _check_Origin(self, Origin):
-    #     self.dummy = 0
-    #     # Controlla se Origin è già una stringa
-    #     if isinstance(Origin, str):
-    #         return Origin
-    #
-    #     # Se non è una stringa, prova a convertirla
-    #     try:
-    #         pass
-    #         # Assumendo che get_name_module accetti l'istanza
-    #         # return 'not found'  # get_name_module(Origin)
-    #     except Exception:
-    #         pass
-    #         # Se fallisce, restituisci un valore di fallback sicuro
-    #         # return "UNKNOWN_MODULE"
-    #     finally:
-    #         pass
-
+    # ---------------------------------------------------------------------------------------------
+    # invoked on  sel_Codes_Db  Delete  Add Update  code   sel_xlsx  Insert  (Queries....)
+    def Initialize_codes_xlsx_transact(self, Origin):
+        self.Chat.Tx_Request([TOP_CODES_MNGR, [ANY], CODE_TO_CLOSE, []])
+        if not self.Load_Transact_Mngr(Origin):
+            dlg_msg = Message_Dlg(MSG_BOX_ERR, f"FATAL ERROR 21\non loading codes Db")
+            dlg_msg.wait_window()
+            return False
+        elif not self.Load_xlsx_Mngr(Origin):
+            dlg_msg = Message_Dlg(MSG_BOX_ERR, f"FATAL ERROR 21\non loading xlsx rows Db")
+            dlg_msg.wait_window()
+            return False
+        elif not self.Load_Transact_Mngr(Origin):
+            dlg_msg = Message_Dlg(MSG_BOX_ERR, f"FATAL ERROR 21\non loading transactions Db")
+            dlg_msg.wait_window()
+            return False
+        return True
 # =================================================================================================
 
 

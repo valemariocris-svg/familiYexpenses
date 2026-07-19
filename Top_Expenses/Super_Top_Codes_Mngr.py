@@ -162,10 +162,10 @@ class Super_Top_Mngr(tk.Toplevel):
                 self.Frame_WithCodes.Clear_Focus()
 
     # -------------------------------------------------------------------------------------------------
-    # invoked on  Delete  Add  and Update  Record
     def Frames_Refresh(self):
-        self.Mod_Mngr.Load_xlsx_Mngr(TOP_CODES_MNGR)
-        self.Mod_Mngr.Init_CodesMngr_and_Insert(TOP_CODES_MNGR)
+        # [Txr, [RecList], Request, [Values]]
+        if not self.Mod_Mngr.Initialize_codes_xlsx_transact(TOP_CODES_MNGR):
+            return
         self.Load_Trees()
         self.View_Frames(-1)
 
@@ -219,20 +219,6 @@ class Super_Top_Mngr(tk.Toplevel):
         self.Txt_CA_Code1.Set_Text(TRfullRec[IX_TR_FULL_CA_CODE])
         self.Txt_TR_Desc1.Set_Text(TRfullRec[IX_TR_FULL_TR_DESC])
         self.Txt_StrToFind1.Set_Text(TRfullRec[IX_TR_FULL_STR_TO_FIND])
-
-        self.Txt_TR_Code1.Set_Text(self.TR_Code)
-        self.Txt_GR_Code1.Set_Text(TRfullRec[IX_TR_FULL_GR_CODE])
-        self.Txt_CA_Code1.Set_Text(TRfullRec[IX_TR_FULL_CA_CODE])
-        self.Txt_TR_Desc1.Set_Text(TRfullRec[IX_TR_FULL_TR_DESC])
-        self.Txt_StrToFind1.Set_Text(TRfullRec[IX_TR_FULL_STR_TO_FIND])
-
-        self.Txt_TR_Code1.Set_Text(self.TR_Code)
-        self.Txt_GR_Code1.Set_Text(TRfullRec[IX_TR_FULL_GR_CODE])
-        self.Txt_CA_Code1.Set_Text(TRfullRec[IX_TR_FULL_CA_CODE])
-        self.Txt_TR_Desc1.Set_Text(TRfullRec[IX_TR_FULL_TR_DESC])
-        self.Txt_StrToFind1.Set_Text(TRfullRec[IX_TR_FULL_STR_TO_FIND])
-        self.Txt_StrFullDesc1.Set_Text(TRfullRec[IX_TR_FULL_FULL_DESC])
-
         self.Txt_CA_Code1.Set_Text(TRfullRec[IX_TR_FULL_CA_CODE])
         self.Txt_CAdesc1.Set_Text(TRfullRec[IX_TR_FULL_CA_DESC])
 

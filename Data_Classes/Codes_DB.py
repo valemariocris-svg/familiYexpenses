@@ -166,8 +166,7 @@ class Codes_db(Codes_DB_Private):
 
         # risultato sarà una lista di tuple, es: [(9998,)] oppure [(None,)]
         if status and data[0][0] is not None:
-            found_code = data[0][0]
-            print(f"Il codice trovato è: {found_code}")
+            found_code = data[0][0] + 1
             return True, found_code
         else:
             return False, 0
