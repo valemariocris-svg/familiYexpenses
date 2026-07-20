@@ -57,7 +57,7 @@ class Main_Window(tk.Tk):
         elif result == OK:
             pass
         else:
-            Msg = Message_Dlg(MSG_BOX_INFO, "FATAL ERROR 1 on creating\nnew selections dictionary")
+            Msg = Message_Dlg(MSG_BOX_ERR, "FATAL ERROR 1 on creating\nnew selections dictionary")
             Msg.wait_window()
             self.Call_OnClose()
         self.Top_Level_Id_Create_List()
@@ -69,7 +69,7 @@ class Main_Window(tk.Tk):
         else:
             status, data = self.Mod_Mngr.Load_Codes_Mngr(MAIN_WIND)
             if not status:
-                Msg = Message_Dlg(MSG_BOX_INFO, "FATAL ERROR 2:\ncodes database corrupted\nExit")
+                Msg = Message_Dlg(MSG_BOX_ERR, "FATAL ERROR 2:\ncodes database corrupted\nExit")
                 Msg.wait_window()
                 self.Call_OnClose()
                 return

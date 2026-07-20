@@ -217,7 +217,6 @@ class Files_Names_Manager:
 
     # ----------------------------------------------------------------------------------------
     def _Load_dictionary(self):
-        Result = OK
         if not os.path.exists(DICTIONARY_FULL_NAME):
             self._sel_dictionary = Default_selections_dictionary
             with open(DICTIONARY_FULL_NAME, "w", encoding="utf-8") as f:
@@ -228,9 +227,9 @@ class Files_Names_Manager:
         try:
             with open(DICTIONARY_FULL_NAME, "r", encoding="utf-8") as f:
                 self._sel_dictionary = json.load(f)
-            return Result
+            return OK
         except Exception as e:
-            print(f"Error on lading selections dictionary : {e}")
+            print(f"New dictionary : {e}")
             return NEW
 
 # =======================================================================================

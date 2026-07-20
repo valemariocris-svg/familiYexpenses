@@ -271,35 +271,28 @@ class Top_Codes_Mngr(Super_Top_Mngr):
     #          any Xlsx Record. The assignement must be done for each Xlsx Row                    #
     # ------------------------------------------------------------------------------------------- #
     def Clk_Add_Generic(self):
-        status, data = self.Data.Get_New_Code(GENERICCODE)
+        status, data = self.Data.Get_New_Code(GENERIC_CODE)
         if not status:
             msg_dlg = Message_Dlg(MSG_BOX_ERR, "Generic new code not found")
             msg_dlg.wait_window()
             return
         self.TR_Code = data
-        self.Txt_TR_Code1.Set_Text(str(data))
-        self.Row_WithoutCode = None
-        self.Frame_WithCodes.Clear_Focus()
         self. Add_Code()
         pass
 
     # ---------------------------------------------------------------------------------------------
     def Clk_Add_Std(self):
-        status, data = self.Data.Get_New_Code(NORMAL_CODE)
+        status, data = self.Data.Get_New_Code(STANDARD_CODE)
         if not status:
             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dlg.wait_window()
             return
         self.TR_Code = data
-        self.Txt_TR_Code1.Set_Text(str(data))
-        self.Row_WithoutCode = None
-        self.Frame_WithCodes.Clear_Focus()
         self. Add_Code()
 
     # ------------     ***   Add new normal or generic  record  ***     ---------------------------
     def Add_Code(self):
         self.Txt_TR_Code1.Set_Text(str(self.TR_Code))
-        self.Frame_WithCodes.Clear_Focus()
         if not self.Check_codes_record():
             return
         if not self.Get_Confirm('Add'):
@@ -324,6 +317,8 @@ class Top_Codes_Mngr(Super_Top_Mngr):
                 Msg_Dld = Message_Dlg(MSG_BOX_INFO, Messg)
                 Msg_Dld.wait_window()
                 self.Frames_Refresh()
+        self.Row_WithoutCode = None
+        self.Frame_WithCodes.Clear_Focus()
         return
 
     # ------------------------     ***   Update TR code Record      -------------------------------
@@ -378,7 +373,6 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             msg_dlg = Message_Dlg(MSG_BOX_INFO, "select a code number")
             msg_dlg.wait_window()
             return False
-        # TRdesc = self.Txt_TR_Desc1.Get_Text(STRING)
         Msg = ('Confirm to ' + strOper +'\n'
                 'Code:        ') + str(self.TR_Code)
         Msg += '\nDescription: ' + self.TR_Desc
@@ -386,7 +380,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         Msg_Dlg.wait_window()
         Reply = Msg_Dlg.data
         if Reply == NO:
-            return False # No Action
+            return False
         return True
 
     # ---------------------------------------------------------------------------------------------

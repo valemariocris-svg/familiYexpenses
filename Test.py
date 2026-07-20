@@ -33,7 +33,7 @@ def Load_dictionary():
     try:
         with open(DICTIONARY_FILE, "r", encoding="utf-8") as f:
             ditcionary = json.load(f)
-        print("Dizionario caricato correttamente dal disco!")
+        # print("Dizionario caricato correttamente dal disco!")
         return ditcionary
     except Exception as e:
         print(f"Errore durante la lettura del file: {e}")

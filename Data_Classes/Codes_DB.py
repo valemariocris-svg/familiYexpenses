@@ -154,7 +154,7 @@ class Codes_db(Codes_DB_Private):
             sql_query = "SELECT MAX(TR_Code) FROM TRANSACT_CODES WHERE TR_Code < ?"
             status, data = self._query_execute(CODES_FILE, sql_query, (10000,), CLOSE_DB)
 
-        elif Table == GENERICCODE:
+        elif Table == GENERIC_CODE:
             sql_query = "SELECT MAX(TR_Code) FROM TRANSACT_CODES WHERE TR_Code > ?"
             status, data = self._query_execute(CODES_FILE, sql_query, (10000,), CLOSE_DB)
 

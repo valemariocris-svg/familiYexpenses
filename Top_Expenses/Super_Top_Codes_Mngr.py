@@ -174,7 +174,6 @@ class Super_Top_Mngr(tk.Toplevel):
         Total            = self.Data.Get_Total_Rows()
         Total_WthoutCode = Total[IX_TOT_ROWS_WITHOUT_CODE]
         Total_WithCode   = Total[IX_TOT_ROWS_WITH_CODE]
-        self.Generic_Codes = self.Data.Get_Transact_GenericCode_List()
 
         TitleNoCode  = '   ' + XlsxFilename + '       senza codice:  ' + str(Total_WthoutCode)
         TitleNoCode += '   con codice:  ' +  str(Total[IX_TOT_ROWS_WITH_CODE]) + '   '

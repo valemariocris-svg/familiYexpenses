@@ -53,7 +53,12 @@ class Modules_Manager:
 
             if not self.Check_create_transact_database_for_xlsx_filename():
                return
+            File_Name = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
 
+            if File_Name == UNKNOWN:
+                dlg_msg = Message_Dlg(MSG_BOX_ERR, "FATAL ERROR 26:\nthe transactions file not find ")
+                dlg_msg.wait_window()
+                return
             if not self.Load_Transact_Mngr(Origin):
                 return
 
@@ -173,7 +178,7 @@ class Modules_Manager:
             Msg_Dlg.wait_window()
             return False
         self.Data.Create_records_to_insert_list()
-        self.Chat.Tx_Request([Origin, [ANY], VIEW_SELECTIONS, []])
+        self.Chat.Tx_Request([Origin, MAIN_WIND, VIEW_SELECTIONS, []])
         return True
 
     # --------------------------------------------------------------------------------------------------
@@ -222,6 +227,7 @@ class Modules_Manager:
                 return False
         # is it necessary to compare transactions and xlsx years ?
         # NO: full_transact_filename = Transactions_Dir + TRANSACT_ID + str(xlsx_Year) + '.db'
+        self.Data.Update_key_dictionary(TRANSACT_FILENAME, full_transact_filename)
         return  True
 
     # --------------------------------------------------------------------------------------------

@@ -107,7 +107,7 @@ class Top_View_Transact(tk.Toplevel):
              Title = '     movimenti ordinato-i per contabile'
              List = self.Data.Get_Transact_recs_ordered()
 
-        elif self.View_Transact == TRANSACT_VIEW_NORMAL_CODE:
+        elif self.View_Transact == TRANSACT_VIEW_STANDARD_CODE:
              Title = '     movimenti con codice normale'
              List  = self.Data.Get_Transac
 

@@ -141,7 +141,7 @@ class Transact_Db(Xlsx_Manager):
         # 1. Inizializzi la mappa come dizionario vuoto
         self._transactions_map = {}
 
-        print(f"\n=================== dictionary  ===========================")
+        # print(f"\n=================== dictionary  ===========================")
         # 2. Cicli sui record caricati dal DB
         for record in []:  #self._Transact_Recods:
             # Assegni dei nomi parlanti alle colonne per non fare confusione con gli indici
@@ -150,8 +150,8 @@ class Transact_Db(Xlsx_Manager):
             dateValuta = record[IX_TRANSACT_VALUTA]     # data valuta
             credit     = record[IX_TRANSACT_ACCRED]     # accredito
             debit      = record[IX_TRANSACT_ADDEB]      # debito
-            print(
-                f"{type(conto)},{conto}  {type(dateContab)},{dateContab}  {type(dateValuta)},{dateValuta}  {type(credit)},{credit}  {type(debit)},{debit}")
+            # print(
+            #     f"{type(conto)},{conto}  {type(dateContab)},{dateContab}  {type(dateValuta)},{dateValuta}  {type(credit)},{credit}  {type(debit)},{debit}")
 
             # 3. Crei la chiave unica (una tupla)
             key = (conto, dateContab, dateValuta, credit, debit)
@@ -161,7 +161,7 @@ class Transact_Db(Xlsx_Manager):
             self._transactions_map[key] = record[IX_TRANSACT_TR_CODE]  # codice
 
         pass
-        print(f"\n=================== records  ==============================")
+        # print(f"\n=================== records  ==============================")
         # creazione della lista dei record caricati da .XLSX ma non presenti nel database
         for row in self._tWith_Code_Tree_List:
             # print(row)
@@ -174,8 +174,8 @@ class Transact_Db(Xlsx_Manager):
             # se il record non e' presente nel database lo metto in lista
             # il motivo e' che cosi posso caricare i movimenti mese per mese
             # con file xlsx che patono sempre da gennaio fino al mese corrente
-            print(
-            f"{type(conto)},{conto}  {type(dateContab)},{dateContab}  {type(dateValuta)},{dateValuta}  {type(credit)},{credit}  {type(debit)},{debit}")
+            # print(
+            # f"{type(conto)},{conto}  {type(dateContab)},{dateContab}  {type(dateValuta)},{dateValuta}  {type(credit)},{credit}  {type(debit)},{debit}")
 
             pass
             if not (conto, dateContab, dateValuta, credit, debit) in self._transactions_map:

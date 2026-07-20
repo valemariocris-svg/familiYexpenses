@@ -226,18 +226,22 @@ GENERIC_BYNAME      = 'vis. generici per nome'
 VIEW_EXTRAORDOIN    = 'vis. mov. straordinari'
 VIEW_STRTOSERCH_LEN = 'vis. per lungh. stringa ricerca'
 
-GENERICCODE         = 'GENERICCODE'
-STANDARD_CODE       = 'STANDARD_CODE'
+GENERIC_CODE_INIT    = int(10000)       #  NEVER NEVER CHANGE this CONSTANT variable
+TRANSACT_CODES_TABLE = 'Transactions Codes Table'
+GROUPS_CODES_TABLE   = 'Groups Codes Table'
+CATEG_CODES_TABLE    = 'Categories Codes Table'
+GENERIC_CODE         = 'GENERIC CODE'
+STANDARD_CODE       = 'STANDARD CODE'
 CODES_VIEW_SEL      = [VIEW_BY_CODE, VIEW_BYNAME, VIEW_SEARCH, GENERIC_BYCODE, GENERIC_BYNAME,
                        VIEW_STRTOSERCH_LEN, VIEW_EXTRAORDOIN]
 
 TRANSACT_VIEW_ALL          = 'mostra mov. come nel Db'
 TRANSACT_VIEW_CONTAB_ASC   = 'mostra mov. ord. per contab.'
-TRANSACT_VIEW_NORMAL_CODE  = 'mostra mov. con codice normale'
+TRANSACT_VIEW_STANDARD_CODE  = 'mostra mov. con codice standard'
 TRANSACT_VIEW_GENERIC      = 'mostra mov. con codice generico'
 TRANSACT_VIEW_AS_IS        = 'View transactions as is'
 TRANSACT_VIEW_SEL = [TRANSACT_VIEW_ALL, TRANSACT_VIEW_CONTAB_ASC,
-                     TRANSACT_VIEW_NORMAL_CODE, TRANSACT_VIEW_GENERIC]
+                     TRANSACT_VIEW_STANDARD_CODE, TRANSACT_VIEW_GENERIC]
 
 # =========================================================== #
 #             DATA BASES  STRUCTURE                           #
@@ -250,17 +254,11 @@ EXTRAORDINARY_CAT_CODE = 7  # ***    DO NOT CHANGE  THIS CODE ***** #
 # ***************************************************************=* #
 
 #   -----  Database  Codes_DB_yyy-mm-dd.db -----------------
-NORMAL_CODE          = 'New Transaction Cod < 10.000'
-GENERIC_CODE_INIT    = int(10000)       #  NEVER NEVER CHANGE this CONSTANT variable
-TRANSACT_CODES_TABLE = 'Transactions Codes Table'
-GROUPS_CODES_TABLE   = 'Groups Codes Table'
-CATEG_CODES_TABLE    = 'Categories Codes Table'
-
 LEN_CODES_FILENAME_MIN  = 22
 LEN_XLSX_FILENAME_MIN   = 17
 IDENT_CODES_FILENAME    = 'Codes_DB/Codes_DB_20'
 IDENT_XLSX_FILENAME     = 'Codes_DB/Codes_DB_20'
-GENERICCODEstr      = 'GENERICCODE'
+
 IX_TR_TR_CODE       = 0  # UNIC TR CODE
 IX_TR_GR_CODE       = 1
 IX_TR_CA_CODE       = 2  # selected from GROUPS_TABLE

@@ -42,22 +42,22 @@ class Codes_DB_Private(Files_Names_Manager):
         self._Multi_Codes_Matching_List = []  # full descriptions matching with the same StrToFind
 
     # -----------------------------------------------------------------------------------
-    def _open_database(self, database):
+    def _open_database(self, database) -> tuple[bool, str]:
         # -----------------------   DATABASE SELECTIONS    --------------------------
         if database == CODES_FILE:
             _filename = self.Get_sel_dictionary_value(CODES_FILENAME)
             status, data = Gl_Cek_Codes_Name(_filename)
             if not status:
-                return False, "Codes filename corrupted!\nReselect Codes filename"
+                return False, "FATAL ERROR 21:\nfile database codici corrotto\nBisogna aggiustarlo"
             sql ="SELECT * FROM TRANSACT_CODES"
 
         else:
             _filename = self.Get_sel_dictionary_value(TRANSACT_FILENAME)
             if _filename == UNKNOWN:
-                pass
+                return False, "FATAL ERROR 22:\nfile database movimenti sconosciuto\nBisogna crearlo"
             status, data = Gl_Cek_Transactions_Name(_filename)
             if not status:
-                return False, "Transactions filename corrupted!\nSelect transactions filename"
+                return False, "FATAL ERROR 21:\nfile database movimenti corrotto\nBisogna aggiustarlo"
             sql = "SELECT * FROM TRANSACT"
 
         # ----------   COMMON  CODE   ------------------------------------------
@@ -77,7 +77,7 @@ class Codes_DB_Private(Files_Names_Manager):
             self._database_cursor = self._database_connect.cursor()
             return True, ''
         except sqlite3.Error as e:
-            return False, f"Errore apertura database: {e}"
+            return False, f"FATAL ERROR 23:\nErrore apertura database: {e}"
         finally:
             pass
 
@@ -97,8 +97,9 @@ class Codes_DB_Private(Files_Names_Manager):
         if database not in [CODES_FILE, TRANSACT_FILE]:
             return False, f"Error: Database {database} not recognized"
         # 1. Open
-        if not self._open_database(database):  # it remains open whith NO_CLOSE request
-            return False, "Impossible to open\n database"
+        status, data = self._open_database(database)  # it remains open whith NO_CLOSE request
+        if not status:
+            return False, data
         try:
             # 2. Esecuzione
             self._database_cursor.execute(sql, parameters)
@@ -118,17 +119,17 @@ class Codes_DB_Private(Files_Names_Manager):
                 # CASO B: È una SELECT normale
                 else:
                     data = self._database_cursor.fetchall()
-                    if not data:
-                        return True, []
-                    else:
-                        return True, data
+                    # if not data:
+                    #     return True, []
+                    # else:
+                    return True, data
             else:
                 # Se è INSERT/UPDATE/DELETE, CREATE  salviamo le modifiche
                 self._database_connect.commit()
                 return True, ''
 
         except sqlite3.Error as e:
-            str_Err = f"Error on codes database:\n{e}"
+            str_Err = f"FATAL ERROR 24:\nError on fetching codes records:\n{e}"
             return False, str_Err
         finally:
             # 3. Chiusura garantita (anche in caso di errore)
@@ -178,7 +179,7 @@ class Codes_DB_Private(Files_Names_Manager):
             # Code_ToCheck = Rec_To_Check[IX_TR_TR_CODE]
             StrToCek      = Rec_To_Check[IX_TR_TR_STR_TO_FIND]
 
-            if not GENERICCODEstr in StrToCek:
+            if not GENERIC_CODE in StrToCek:
                 StrToCek_List = GetStrList_ForFind(StrToCek)
                 # second loop to compare Rec_To_Check with the remanent Codes  ============
                 for Rec in TR_Codes_Table:

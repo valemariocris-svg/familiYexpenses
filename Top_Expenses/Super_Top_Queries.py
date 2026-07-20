@@ -46,7 +46,7 @@ class Super_Top_Queries(tk.Toplevel):
             File_Dlg = File_Dialog(TRANSACT_FILENAME)                                                       #
             Full_Filename = File_Dlg.FileName                                                           #
             if not Full_Filename:                                                                       #
-                Msg_Dlg = Message_Dlg(MSG_BOX_INFO, 'queries are impossible')                           #
+                Msg_Dlg = Message_Dlg(MSG_BOX_ERR, 'queries are impossible')                           #
                 Msg_Dlg.wait_window()                                                                   #
                 self.Call_OnClose()                                                                     #
             else:                                                                                       #
