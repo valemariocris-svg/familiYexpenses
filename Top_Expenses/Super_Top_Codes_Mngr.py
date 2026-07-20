@@ -40,8 +40,6 @@ class Super_Top_Mngr(tk.Toplevel):
         self.CA_Desc     = None
         self.FullDesc    = None
 
-        self.Generic_Codes = []
-
         self.Child_ClkNoCode   = Child_ClkNoCode
         self.Child_ClkWithCode = Child_ClkWithCode
         self.View_Without_Code = True
@@ -177,7 +175,6 @@ class Super_Top_Mngr(tk.Toplevel):
         Total_WthoutCode = Total[IX_TOT_ROWS_WITHOUT_CODE]
         Total_WithCode   = Total[IX_TOT_ROWS_WITH_CODE]
         self.Generic_Codes = self.Data.Get_Transact_GenericCode_List()
-        Generic_Len = self.Generic_Codes[0]
 
         TitleNoCode  = '   ' + XlsxFilename + '       senza codice:  ' + str(Total_WthoutCode)
         TitleNoCode += '   con codice:  ' +  str(Total[IX_TOT_ROWS_WITH_CODE]) + '   '

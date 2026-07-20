@@ -172,6 +172,7 @@ class Modules_Manager:
             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dlg.wait_window()
             return False
+        self.Data.Create_records_to_insert_list()
         self.Chat.Tx_Request([Origin, [ANY], VIEW_SELECTIONS, []])
         return True
 
