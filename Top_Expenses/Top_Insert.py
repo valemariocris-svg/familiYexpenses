@@ -64,7 +64,7 @@ class Top_Insert(tk.Toplevel):
         self.OptMenu_Cont  = TheCombo(self, self.StrVar_Conto, 260, 820, 15, 24, CONTINUE_LIST,
                                       self.Continue, self.Clk_Continue)
         self.Ins_Btn      = TheButton(self, BTN_DEF_DIS,       260, 860, 23, 'Insert Transaction on Db', self.Clk_Insert)
-        self.Btn_Clear_Db = TheButton(self, BTN_DEF_EN,        260, 900, 23, '',          self.Clk_Clear_Transactions_Db)
+        # self.Btn_Clear_Db = TheButton(self, BTN_DEF_EN,        260, 900, 23, '',          self.Clk_Clear_Transactions_Db)
 
         self.Check_Verify = TheButton(self, BTN_DEF_EN,       500, 860, 23, 'check xlsx / transact.', self.Clk_Verify)
         self.nTotRows_Text= TheText(self, TXT_ENAB,            490, 820,  5,  1, self.nRows_Default)
@@ -102,10 +102,6 @@ class Top_Insert(tk.Toplevel):
         Print_Received_Message(Transmitter_Name, TOP_CODES_MNGR, Request_Code, Values_List)
         if Request_Code == CODE_TO_CLOSE:               # Close
             self.Call_OnClose()
-        # elif Request_Code == CODE_CLEAR_FOCUS:          # Clear Focus
-        #     pass
-        # elif Request_Code == CODE_CLIK_ON_XLSX:         # Clicked on Xlsx Tree  [nRow, Date]
-        #     pass
 
     # -------------------------------------------------------------------------------------------------
     def Set_Buttons(self):

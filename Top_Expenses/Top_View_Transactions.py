@@ -32,29 +32,29 @@ class Top_View_Transact(tk.Toplevel):
         # --------------------------   Create Treeview Frame   ------------------------------------
         self.Frame_Transactions  = TheFrame(self, 10, 20, self.Clk_On_Transaction)
         self.Frame_Transactions_Setup()
+        self.Frame_Transactions.Frame_View()
 
         self.Txt_dates    = TheText(self, TXT_DISAB,      10, 870,  21, 2, '')
         self.Txt_FullDesc = TheText(self, TXT_DISAB,     220, 870,  76, 3, '')
         self.Txt_Code     = TheText(self, TXT_DISAB,      10, 950,  13, 1, '')
         self.Txt_TrDesc   = TheText(self, TXT_DISAB,     150, 950,  28, 1, '')
-        # self.BtnDelet     = TheButton(self, BTN_DEF_DIS, 620, 950,   15, ' Delete Record',  self.Clk_Delete_Transact)
 
         self.StrVar_List  = tk.StringVar
         self.OptMenu_List = TheCombo(self,  self.StrVar_List, 550, 950, 210, 20,
                                      TRANSACT_VIEW_SEL, TRANSACT_VIEW_ALL, self.Clk_ListSel)
-        self.Btn_Exit = TheButton(self, BTN_DEF_EN, 770, 945, 13, '  E X I T  ',               self.Call_OnClose)
+        self.Btn_Exit = TheButton(self, BTN_DEF_EN, 770, 945, 13, '  E S C I  ', self.Call_OnClose)
 
-        self.Transact_Record = None
-        self.TR_Code          = 0
-        self.TRdesc          = ''
-        self.View_Transact   = TRANSACT_VIEW_ALL
+        self.Transact_Record   = None
+        self.TR_Code           = 0
+        self.TRdesc            = ''
+        self.View_Transact_mde = self.Data.Get_sel_dictionary_value(TRANSACT_VIEW_MODE)
 
         self.All_Transact_as_is= []
         self.All_TR_Contab_ASC = []
         self.TR_Normal_Code    = []
         self.TR_Generic_Code   = []
 
-        # self.Fill_Transactions_Frame()
+        self.Fill_Transactions_Frame()
         self.Transact_Id_Selcted = None
 
     # ---------------------------------------------------------------------------------------------
@@ -68,17 +68,21 @@ class Top_View_Transact(tk.Toplevel):
         if Request_Code == CODE_TO_CLOSE:           # Close
             self.Call_OnClose()
 
+    # --------------------------------------------------------------------------------------------
+    def Fill_Transactions_Frame(self):
+        transact_list = self.Data.Get_Transact_recs_asis()
+        self.Frame_Transactifons_Load()
+        pass
+
     # ---------------------------------------------------------------------------------------------
     def Clear_Sel_Updt_Btn(self):
         self.Txt_Code.Clear_Text()
-        # self.BtnDelet.Btn_Disable()
 
     # ---------------------------------------------------------------------------------------------
     def Clk_ListSel(self, Value):
         self.View_Transact = Value
-        self.Frame_Transactions_Load()
+        self.Frame_Transactifons_Load()
         self.Transact_Id_Selcted = None
-        # self.BtnDelet.Btn_Disable()
 
     # ---------------------------------------------------------------------------------------------
     def Clk_Delete_Transact(self):
@@ -93,26 +97,25 @@ class Top_View_Transact(tk.Toplevel):
                 self.Data.Delete_Transact_Rec(self.Transact_Id_Selcted)
 
     # ---------------------------------------------------------------------------------------------
-    def Frame_Transactions_Load(self):
+    def Frame_Transactifons_Load(self):
         TR_Name = Get_File_Name(self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME))
         if self.View_Transact == TRANSACT_VIEW_AS_IS:
-             Title = '     transactions as is'
-             Len = len(self.All_Transact_as_is)
-             List = self.All_Transact_as_is
+             Title = '     movimenti come in Db'
+             List = self.Data.Get_Transact_recs_asis()
+
         elif self.View_Transact == TRANSACT_VIEW_CONTAB_ASC:
-             Title = '     Transactions Contab ASC'
-             Len = len(self.All_TR_Contab_ASC)
-             List = self.All_TR_Contab_ASC
+             Title = '     movimenti ordinato-i per contabile'
+             List = self.Data.Get_Transact_recs_ordered()
+
         elif self.View_Transact == TRANSACT_VIEW_NORMAL_CODE:
-             Title = '     Transactions normal code'
-             Len = len(self.TR_Normal_Code)
-             List = self.TR_Normal_Code
+             Title = '     movimenti con codice normale'
+             List  = self.Data.Get_Transac
+
         else:
-            Title = '     Transactions generic code'
-            Len = len(self.TR_Generic_Code)
-            List = self.TR_Generic_Code
+            Title = '     movimenti con codici generici'
+            List = self.Data.Get_Transact_GenericCode_List()
         #
-        FrameText = ('      ' + TR_Name + '     ' + str(Len) + str(Title))
+        FrameText = ('      ' + TR_Name + '     ' + str(List) + str(Title))
         template = [INT_TOSTRING, SIC, YMD, YMD, FLOAT_TOSTR, FLOAT_TOSTR, SIC, INT_TOSTRING, SIC]
 
         view_list = []
@@ -121,7 +124,6 @@ class Top_View_Transact(tk.Toplevel):
             view_list.append(rec_toView)
         #
         self.Frame_Transactions.Frame_Title(FrameText)
-        # self.Frame_Transactions.Load_Row_Values(Correct_List)
         self.Frame_Transactions.Frame_View()
 
     # ---------------------------------------------------------------------------------------------
@@ -139,18 +141,18 @@ class Top_View_Transact(tk.Toplevel):
         pass
 
     # ---------------------------------------------------------------------------------------------
-    #                      0     1      2     3      4      5      6      7     8
-    # List_Transact_DB :  nRow  Conto Contab Valuta Accred  Addeb  TR_Desc TRcode FullDesc
-    # Rec in view         Ident Conto Contab Valuta TR_Desc Accred Addeb  Full_Desc 'x']
+    #                     0    1     2      3      4      5      6      7        8      9
+    # List_Transact_DB :  Id  nRow  Conto Contab Valuta Accred  Addeb  TR_Desc TRcode FullDesc
     # ----------------------------------------------------------------------------------------------
     def Frame_Transactions_Setup(self):
         Nrow = 39
-        Ncol = 9
-        Headings = ['#0','Ident','Conto','Contab','Valuta','Description','Accred  ','Addebit  ', 'Full_Description', 'x']
-        Anchor   = ['c', 'c',    'c',    'c',     'c',     'w',          'e',       'e',         'w',                'c']
-        Width    = [ 0,   45,     70,     80,      80,      160,          80,        80,          300,                0 ]
+        Ncol = 10
+        Headings = ['#0','Ident', 'Riga', 'Conto', 'Contab', 'Valuta', 'Accred  ','Addeb  ', 'Descrizione', ' Codice ', 'Descizione Compl.']
+        Anchor   = ['c', 'c',     'c',    'c',     'c',      'c',      'e',       'e',         'w',         'c',        'w']
+        Width    = [ 0,   30,      30,     80,      80,       80,       80,        80,         100,         80,         200 ]
         Form_List = [Nrow, Ncol, Headings, Anchor, Width]
-        self.Frame_Transactions.Tree_Setup_Strech(Form_List, ['#9'])
+        self.Frame_Transactions.Tree_Setup_Strech(Form_List, ['#10'])
+        pass
 
     # ---------------------------------------------------------------------------------------------
     def Set_Focus_On_Row(self, Values):

@@ -33,8 +33,8 @@ class Top_Codes_Mngr(Super_Top_Mngr):
                                   self.ComboList, GROUPSEL, self.Clk_Combo)
 
         # --------------------------         B U T T O N S        ---------------------------------------------------
-        self.Btn_SelGeneric.Set_Text('Seleziona un codice')    # defined on Super for Ena/Disab for Clk on Frames
-        self.Btn_SelGeneric.configure(command=self.Clk_Generic_Select)
+        # self.Btn_SelGeneric.Set_Text('Seleziona un codice')    # defined on Super for Ena/Disab for Clk on Frames
+        # self.Btn_SelGeneric.configure(command=self.Clk_Generic_Select)
 
         self.geometry(TOP_MNGR_GEOMETRY)
 
@@ -56,7 +56,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         #    canvas on Super_Top_Codes_Mngr.py
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,   10,   30,  19, "inserisci mov. nel Db", self.Clk_launch_top_insert)
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,   10,   75,  19, "visualizza movimenti",  self.Clk_ViewTransact)
-        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  220,   30,  19, "seleziona un codice",self.Clk_Generic_Select)
+        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  220,   30,  19, "seleziona un codice",self.Clk_code_sel)
 
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  200,  75,  21, "<<<<  button for test >>>", self.Clk_Canv_Test)
@@ -169,9 +169,8 @@ class Top_Codes_Mngr(Super_Top_Mngr):
                         self.Data.Delete_Row_NoCode(self.Row_WithoutCode)
                         Total      = self.Data.Get_Total_Rows()
                         Tot_NoCode = Total[IX_TOT_ROWS_WITHOUT_CODE]
-                        if not Tot_NoCode:
-                            self.Mod_Mngr.Top_Launcher(TOP_CODES_VIEW, TOP_CODES_MNGR, [VIEW_ALL_REDUC])  # Close the reduced Codes View
-                        if self.Insert_codeRec_onDb(TR_Full_List):
+                        if Tot_NoCode:
+                            # self.Mod_Mngr.Top_Launcher(TOP_CODES_VIEW, TOP_CODES_MNGR, [VIEW_ALL_REDUC])  # Close the reduced Codes View
                             self.Row_WithoutCode = None
                             self.Load_Trees()
                     else:
@@ -221,7 +220,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         return False
 
     # ---------------------------------------------------------------------------------------------
-    def Clk_Generic_Select(self):   # from Button  Select a generic Code
+    def Clk_code_sel(self):   # from Button  Select a generic Code
         if not self.Row_WithoutCode:
             Msg_Dlg = Message_Dlg(MSG_BOX_INFO, 'Please select a Row without Code')
             Msg_Dlg.wait_window()
@@ -244,7 +243,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
     def Set_Selected_Code(self, TRfull_Rec):
         self.TR_Code  = int(TRfull_Rec[IX_TR_FULL_TR_CODE])
         TR_Desc = TRfull_Rec[IX_TR_FULL_TR_DESC]
-        Messg   = 'Select Code: ' + str(self.TR_Code) + '\nDescription: ' + TR_Desc + '  '
+        Messg   = 'Confirm selected code: ' + str(self.TR_Code) + '\nDescription: ' + TR_Desc + '  '
         Msg_Dlg = Message_Dlg(MSG_BOX_ASK, Messg)
         Msg_Dlg.wait_window()
         Reply   = Msg_Dlg.data
@@ -332,10 +331,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         if not self.Check_TRcode_Desc(BOTH_TR_GR):
             return
         self.Row_WithoutCode = None
-        status, data = self.Check_codes_record()  # Check if data of record are OK
-        if not status:
-            Msg_Dld = Message_Dlg(MSG_BOX_ERR, data)
-            Msg_Dld.wait_window()
+        if not self.Check_codes_record():  # Check if data of record are OK
             return                                     # Record Data not OK
         if not self.Get_Confirm('Update'):
             return
@@ -350,23 +346,6 @@ class Top_Codes_Mngr(Super_Top_Mngr):
                 Msg_Dld.wait_window()
                 self.Frames_Refresh()
 
-     # ------------------------     ***   Update TR code Record      -------------------------------
-    # def Update_Record_Code(self):
-    #     Update_Result = self.Data.Update_DB_TR_Record(self.Rec_Candidate)
-    #     Result = Update_Result[0]
-    #     if Result == MULTI:
-    #         Msg_Dld = Message_Dlg(MSG_BOX_INFO, 'Multimatching!\nTransaction code\nRecord NOT updated')
-    #         Msg_Dld.wait_window()
-    #         self.Mod_Mngr.View_Codes_Match_Error(Update_Result[1])
-    #         return False
-    #     elif Result != OK:
-    #         Msg_Dld = Message_Dlg(MSG_BOX_ERR, Result[1])
-    #         Msg_Dld.wait_window()
-    #         return False
-    #     if not self.Mod_Mngr.Load_Codes_Mngr(TOP_CODES_MNGR):
-    #         return False
-    #     return True
-
     # ------------------------     ***   Delete  a code record on codes Db    --------------------------
     def Clk_Delete(self):
         if not self.Get_Confirm('Delete'):
@@ -376,7 +355,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             msg_dlg = Message_Dlg(MSG_BOX_ERR, f"FATAL ERROR 16:\n on deleteng code record\n {data}")
             msg_dlg.wait_window()
         else:
-            msg_dlg = Message_Dlg(MSG_BOX_INFO, " code record deleted")
+            msg_dlg = Message_Dlg(MSG_BOX_INFO, "code record deleted")
             msg_dlg.wait_window()
             self.Frames_Refresh()
 

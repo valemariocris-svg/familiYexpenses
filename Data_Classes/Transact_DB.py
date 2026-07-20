@@ -62,13 +62,25 @@ class Transact_Db(Xlsx_Manager):
         return [self._Xlsx_Conto, self._Xlsx_Year, self._Xlsx_Month, self._Transact_Year]
 
     # -------------------------------------------------------------------------------------------------
-    def Get_Generic_Codes_List(self):
-        return[len(self._Generic_Code_List), self._Generic_Code_List]
+    def Get_Transact_recs_ordered(self):
+        return self._Transact_Table_Order
 
     # -------------------------------------------------------------------------------------------------
-    #                      0     1      2     3      4        5      6      7     8
-    # List_Transact_DB :  nRow Conto Contab Valuta TR_Desc Accred Addeb  TRcode FullDesc
+    def Get_Transact_recs_asis(self):
+        return self._Transact_Records_as_is
+
     # -------------------------------------------------------------------------------------------------
+    def Get_Transact_NormalCode_List(self):
+        return self._Transact_Records_NormalCode
+
+    # -------------------------------------------------------------------------------------------------
+    def Get_Transact_GenericCode_List(self):
+        return self._Transact_Records_GenericCode
+
+    # ---------------------------------------------------------------------------------------------
+    #                     0    1     2      3      4      5      6      7        8      9
+    # List_Transact_DB :  Id  nRow  Conto Contab Valuta Accred  Addeb  TR_Desc TRcode FullDesc
+    # ----------------------------------------------------------------------------------------------
     def Load_Transactions_Table(self) -> tuple[bool, str | list]:
         _filename = self.Get_sel_dictionary_value(TRANSACT_FILENAME)
         if not Gl_Cek_Transactions_Name(_filename):
@@ -79,7 +91,7 @@ class Transact_Db(Xlsx_Manager):
 
         self._tTransact_Year               = Get_Transactions_Year(_filename)
         self._Transact_Records_as_is       = []    # TRANSACT table as in Database
-        self._Transact_Records_NormalCode  = []    # TRANSACT table normal code
+        self._Transact_Records_NormalCode  = []    #9 TRANSACT table normal code
         self._Transact_Records_GenericCode = []    # TRANSACT table GENERICCODE
         #
         sql = "SELECT * FROM TRANSACT"
@@ -95,7 +107,7 @@ class Transact_Db(Xlsx_Manager):
             self._Transact_Year          = self._tTransact_Year     # new Year
 
             sql = "SELECT * FROM TRANSACT ORDER BY Contab ASC"
-            status, data = self._query_execute(TRANSACT_FILENAME, sql, (), CLOSE_DB)
+            status, data = self._query_execute(TRANSACT_FILE, sql, (), CLOSE_DB)
             if not status:
                 strErr = f"{data}\nOn loading orderedtransactions from database"
                 return False, strErr
@@ -167,9 +179,10 @@ class Transact_Db(Xlsx_Manager):
 
             pass
             if not (conto, dateContab, dateValuta, credit, debit) in self._transactions_map:
-                # IX_TRANSACT_IDENT = 0, IX_TRANSACT_CONTO = 1, IX_TRANSACT_CONTAB = 2, IX_TRANSACT_VALUTA = 3
-                # IX_TRANSACT_ACCRED= 4, IX_TRANSACT_ADDEB = 5, IX_TRANSACT_TR_DESC= 6, IX_TRANSACT_TR_CODE= 7
-                # IX_TRANSACT_FULL_DESC= 8
+                # IX_TRANSACT_IDENT  = 0, IX_TRANSACT_NROW   = 1,  IX_TRANSACT_CONTO = 2,
+                # IX_TRANSACT_CONTAB = 3, IX_TRANSACT_VALUTA = 4
+                # IX_TRANSACT_ACCRED= 5, IX_TRANSACT_ADDEB   = 6, IX_TRANSACT_TR_DESC= 7,
+                # IX_TRANSACT_TR_CODE= 8,  IX_TRANSACT_FULL_DESC = 9
 
                 record = [row[IX_WITH_CODE_NROW], conto, dateContab, dateValuta, credit, debit, row[IX_XLSX_WITH_TRDESC],
                           row[IX_WITH_CODE_TR_CODE], row[IX_WITH_CODE_FULL_DESCR] ]
@@ -180,88 +193,10 @@ class Transact_Db(Xlsx_Manager):
             pass
         pass
 
-
-    # -------------------------------------------------------------------------------------------------
-    # def Get_Transact_AllCode_List(self):
-    #     pass
-    #     # return self._Transact_Records_as_is
-
-    # -------------------------------------------------------------------------------------------------
-    def Get_Transact_Contabile_ASC_List(self):
-        return self._Transact_Table_Order
-
-    # -------------------------------------------------------------------------------------------------
-    def Get_Transact_NormalCode_List(self):
-        return self._Transact_Records_NormalCode
-
-    # -------------------------------------------------------------------------------------------------
-    def Get_Transact_GenericCode_List(self):
-        return self._Transact_Records_GenericCode
-
-
-    # -------------------------------------------------------------------------------------------------
-    #                      0     1      2     3      4        5      6      7     8
-    # List_Transact_DB :  nRow Conto Contab Valuta TR_Desc Accred Addeb  TRcode FullDesc
-    # -------------------------------------------------------------------------------------------------
-    def _Load_Transactions_Table(self, TransacFilename):         # return  OK  or  'Diagnostic '
-        pass
-        # Filename = TransacFilename
-
-        #     Filename = self.Get_sel_dictionary_value(TRANSACT_FILENAME)
-        #
-        # Result = self._Connect_Transact_Db(Filename)
-        # if Result != OK:
-        #     return Result
-        # self._tTransact_Year = Get_Transactions_Year(Filename)
-        #
-        # self._Transact_Records_as_is         = []        # TRANSACT table as in Database
-        # self._Transact_Table_Order     = []        # TRANSACT table ordered by Contabile ASC
-        # self._Transact_Records_NormalCode  = []    # TRANSACT table normal code
-        # self._Transact_Records_GenericCode = []    # TRANSACT table GENERICCODE
-        #
-        # Sql_Select = """SELECT * FROM TRANSACT ORDER BY Contab ASC"""
-        # Result     = self._Make_Select_All(Sql_Select)
-        # if Result[0] != OK:
-        #     self._Close_Transact_DataBase()
-        #     return Result[1]
-        # self._tTransact_Table = Result[1]
-        # self._Transact_Table_Order  = self._tTransact_Table    # TRANSACT table ordered by Valuta ASC
-        # self._Transact_Year         = self._tTransact_Year     # new Year
-        #
-        # for Rec in self._Transact_Records_as_is:
-        #     try:
-        #         if Rec[IX_TRANSACT_TR_CODE] < GENERIC_CODE_INIT:
-        #             self._Transact_Records_NormalCode.append(Rec)
-        #         else:
-        #             self._Transact_Records_GenericCode.append(Rec)
-        #     except Exception as e:
-        #         print(Rec)
-        #         strErr = Db_Error(e)
-        #         PRINT('Error on separating Normal and Generic Codes from TRANSACT Table\n' + strErr)
-        #
-        #
-        # # the Selections are upadated because TransacFilename can be origened from Search on TRANSACTIONS
-        # self.Update_key_dictionary(TRANSACT_FILENAME, Filename)
-        # Sql_Select = """SELECT * FROM TRANSACT"""
-        # Result = self._Make_Select_All(Sql_Select)
-        # if Result[0] != OK:
-        #     self._Close_Transact_DataBase()
-        #     return Result[1]
-        # self._Transact_Records_as_is = Result[1]      # TRANSACT table as in Database
-        # self._Close_Transact_DataBase()                                           # CHANGE CLOSE
-        # return OK
-
-    # -------------------------------------------------------------------------------------------------
-    def Clear_Transact_Year(self):
-        self._Transact_Year = None
-
     # -------------------------------------------------------------------------------------------------
     def _Set_Transact_Year(self):
         # asTransact_2024.db
-
         FullFilename = self.Get_sel_dictionary_value(TRANSACT_FILENAME)
-        # FullFilename = self.Get_Selections_Member(IX_TRANSACT_FILE)
-
         if FullFilename != UNKNOWN:
             filename = Get_File_Name(FullFilename)
             self._tTransact_Year = int(filename[9:13])
@@ -269,53 +204,13 @@ class Transact_Db(Xlsx_Manager):
             self._tTransact_Year = None
 
     # -------------------------------------------------------------------------------------------------
+    #   (auto)  Id, riga, conto, contab, valuta, accred, addeb, TRdesc, TRcode, full_desc
     def Get_Transact_Table(self):
-        Transact_Descr_OK = []
-        for Rec in self._Transact_Table_Order:
-            RecList = list(Rec)
-            TRcode  = RecList[IX_TRANSACT_TR_CODE]
-            TRdesc  = self.Get_TrDesc_FromCode(TRcode)        # The Descr was inserted in Database at
-            # Accred  = SetNoZero(RecList[IX_TRANSACT_ACCRED])  # inserting but it could be modified later
-            # Addeb   = SetNoZero(RecList[IX_TRANSACT_ADDEB])
-            RecList[IX_TRANSACT_TR_DESC] = TRdesc
-            # TrFull  = self.RecList(IX_TRANSACT_FULL_DESC)
-            # RecList[IX_TRANSACT_ACCRED]  = Accred
-            # RecList[IX_TRANSACT_ADDEB]   = Addeb
-            Transact_Descr_OK.append(RecList)
-        return Transact_Descr_OK
-
-    # -------------------------------------------------------------------------------------------------
-    def Get_Transact_Table_x_Conto(self, Conto):
-        pass
-        # Transact_Conto = []
-        # for Rec in self._Transact_Records_as_is:
-        #     RecList = list(Rec)
-        #     if RecList[IX_TRANSACT_CONTO] == Conto:
-        #         Transact_Conto.append(RecList)
-        # return Transact_Conto
+        return self.Get_Transact_recs_asis()
 
     # -------------------------------------------------------------------------------------------------
     def Get_Len_Transact_Table(self):
         return len(self._Transact_Table_Order)
-
-    # -------------------------------------------------------------------------------------------------
-    # def Find_Xlsx_In_Db(self, Conto, Contab, Valuta, Accred, Addeb, FullDesc):
-        # for Transact in self._Transact_Records_as_is:
-        #     if (Conto    == Transact[IX_TRANSACT_CONTO] and
-        #         Contab   == Transact[IX_TRANSACT_CONTAB] and
-        #         Valuta   == Transact[IX_TRANSACT_VALUTA] and
-        #         Accred   == Transact[IX_TRANSACT_ACCRED] and
-        #         Addeb    == Transact[IX_TRANSACT_ADDEB] and
-        #         FullDesc == Transact[IX_TRANSACT_FULL_DESC]):
-        #         pass
-        #         return list(Transact)
-        # return None
-
-    # -------------------------------------------------------------------------------------------------
-    # def Create_Transact_Filename(self, Year):
-    #     Xlsx_CommonDir = self.Get_Xls_CommonDir()
-    #     Fullname       = Xlsx_CommonDir + '/' + TRANSACTIONS + '/' + TRANSACT_ + str(Year) + '.db'
-    #     return Fullname
 
     # -------------------------------------------------------------------------------------------------
     def Create_Transact_Table(self) -> tuple[bool, str]:

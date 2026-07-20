@@ -231,13 +231,13 @@ STANDARD_CODE       = 'STANDARD_CODE'
 CODES_VIEW_SEL      = [VIEW_BY_CODE, VIEW_BYNAME, VIEW_SEARCH, GENERIC_BYCODE, GENERIC_BYNAME,
                        VIEW_STRTOSERCH_LEN, VIEW_EXTRAORDOIN]
 
-TRANSACT_VIEW_ALL          = 'View all transactions'
-TRANSACT_VIEW_CONTAB_ASC   = 'View transact Contab ASC'
-TRANSACT_VIEW_NORMAL_CODE  = 'normal code transactions'
-TRANSACT_VIEW_GENERIC      = 'generic code transactions'
+TRANSACT_VIEW_ALL          = 'mostra mov. come nel Db'
+TRANSACT_VIEW_CONTAB_ASC   = 'mostra mov. ord. per contab.'
+TRANSACT_VIEW_NORMAL_CODE  = 'mostra mov. con codice normale'
+TRANSACT_VIEW_GENERIC      = 'mostra mov. con codice generico'
 TRANSACT_VIEW_AS_IS        = 'View transactions as is'
-TRANSACT_VIEW_SEL = [TRANSACT_VIEW_CONTAB_ASC, TRANSACT_VIEW_NORMAL_CODE,
-                     TRANSACT_VIEW_GENERIC, TRANSACT_VIEW_AS_IS ]
+TRANSACT_VIEW_SEL = [TRANSACT_VIEW_ALL, TRANSACT_VIEW_CONTAB_ASC,
+                     TRANSACT_VIEW_NORMAL_CODE, TRANSACT_VIEW_GENERIC]
 
 # =========================================================== #
 #             DATA BASES  STRUCTURE                           #
@@ -322,14 +322,15 @@ TRANSACT     = 'TRANSACT'
 TRANSACT_ID  = 'TRANSACTIONS/Transact_'
 LEN_TRANSACT_FILENAME= 16
 IX_TRANSACT_IDENT    = 0
-IX_TRANSACT_CONTO    = 1
-IX_TRANSACT_CONTAB   = 2
-IX_TRANSACT_VALUTA   = 3
-IX_TRANSACT_ACCRED   = 4
-IX_TRANSACT_ADDEB    = 5
-IX_TRANSACT_TR_DESC  = 6
-IX_TRANSACT_TR_CODE  = 7
-IX_TRANSACT_FULL_DESC= 8  # DESC1 / DESC2
+IX_TRANSACT_NROW     = 1
+IX_TRANSACT_CONTO    = 2
+IX_TRANSACT_CONTAB   = 3
+IX_TRANSACT_VALUTA   = 4
+IX_TRANSACT_ACCRED   = 5
+IX_TRANSACT_ADDEB    = 6
+IX_TRANSACT_TR_DESC  = 7
+IX_TRANSACT_TR_CODE  = 8
+IX_TRANSACT_FULL_DESC= 9  # DESC1 / DESC2
 
 FIDEU       = 'FIDEU'      # Fideuram Account    Must be 5 chars length
 FLASH       = 'FLASH'      # Flash Card          Must be 5 chars length
@@ -516,16 +517,16 @@ QUERY_CATEGORY_SEL   = 'query_category_selection'
 
 CODES_VIEW_MODE      = 'codes_view_mode'
 TRANSACT_INSERT_MODE = 'transact_insert_mode'
+TRANSACT_VIEW_MODE   = 'transact_view_mode'
 
 CLOSE_DB  = True
 KEEP_OPEN = False
 
 Dict_Keys_List = [
     CODES_FILENAME, XLSX_FILENAME, TRANSACT_FILENAME, CODES_DIRECTORY, XLSX_FILENAME, TRANSACT_DIRECTORY,
-	CODES_VIEW_MODE, TRANSACT_INSERT_MODE,  QUERY_CONTO, QUERY_START_MONTH,
+	CODES_VIEW_MODE, TRANSACT_INSERT_MODE, TRANSACT_VIEW_MODE, QUERY_CONTO, QUERY_START_MONTH,
     QUERY_TOT_MONTHS, QUERY_VAL_CONT_DATE, QUERY_CODE_SEL, QUERY_GROUP_SEL, QUERY_CATEGORY_SEL,
     CODES_VIEW_MODE, TRANSACT_INSERT_MODE]
-
 
 #  -------------------------------------------
 Default_selections_dictionary  = {
@@ -538,7 +539,7 @@ Default_selections_dictionary  = {
     #
     CODES_VIEW_MODE:        VIEW_BYNAME,
     TRANSACT_INSERT_MODE:   STEP,
-
+    TRANSACT_VIEW_MODE:     TRANSACT_VIEW_AS_IS,
     QUERY_CONTO:            FIDEU,
     QUERY_START_MONTH:      JAN,
     QUERY_TOT_MONTHS:       ONE_MONTH,

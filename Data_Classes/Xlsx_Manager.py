@@ -99,26 +99,6 @@ class Xlsx_Manager(Codes_db):
     def Delete_Row_NoCode(self, Row_WithoutCode):
         return self._Delete_Row_NoCode(Row_WithoutCode)
 
-    # ----------------------------------------------------------------------------------- #
-    # List_Rows_WithoutCode : nRow  _Contab  _Valuta  _Accr     _Addeb   FullDes          #
-    # List_Rows_WithCode    : nRow  _Contab  _Valuta  TR_Desc  Accred  _Addeb    TRcode   #
-    # ----------------------------------------------------------------------------------- #
-
-    # ---------------------------------------------------------------------------------------------
-    def _Delete_Row_NoCode(self, Row_WithoutCode):
-        if Row_WithoutCode in self._Wihtout_Code_Tree_List:
-            try:
-                self._Wihtout_Code_Tree_List.remove(Row_WithoutCode)
-                self._TotWihtout_Code -= 1
-                if self._TotWihtout_Code < 0:
-                    self._TotWihtout_Code = 0
-                return True, ''
-            except Exception as e:
-                return False, f"Error on deleting row:\n{Row_WithoutCode[IX_NO_CODE_FULL_DESCR]}\n\n {e} "
-            finally:
-                pass
-        return False, f"Error:\n{Row_WithoutCode[IX_NO_CODE_FULL_DESCR]}\n\nNOT in list "
-
     # -------------------------------------------------------------------------------------
     def Get_WithCodeList(self):
         return self._With_Code_Tree_List
@@ -524,8 +504,24 @@ class Xlsx_Manager(Codes_db):
         Row_ToAdd = [nRow, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDesc]
         self._With_Code_Tree_List.append(Row_ToAdd)
         self._TotWith_Code += 1
-        self._TotWihtout_Code -= 1
-        if self._TotWith_Code < 0:
-            self._TotWith_Code = 0
+
+    # ----------------------------------------------------------------------------------- #
+    # List_Rows_WithoutCode : nRow  _Contab  _Valuta  _Accr     _Addeb   FullDes          #
+    # List_Rows_WithCode    : nRow  _Contab  _Valuta  TR_Desc  Accred  _Addeb    TRcode   #
+    # ----------------------------------------------------------------------------------- #
+    # ---------------------------------------------------------------------------------------------
+    def _Delete_Row_NoCode(self, Row_WithoutCode):
+        if Row_WithoutCode in self._Wihtout_Code_Tree_List:
+            try:
+                self._Wihtout_Code_Tree_List.remove(Row_WithoutCode)
+                self._TotWihtout_Code -= 1
+                if self._TotWihtout_Code < 0:
+                    self._TotWihtout_Code = 0
+                return True, ''
+            except Exception as e:
+                return False, f"Error on deleting row:\n{Row_WithoutCode[IX_NO_CODE_FULL_DESCR]}\n\n {e} "
+            finally:
+                pass
+        return False, f"Error:\n{Row_WithoutCode[IX_NO_CODE_FULL_DESCR]}\n\nNOT in list "
 
 # =======================================================================================

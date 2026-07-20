@@ -70,16 +70,16 @@ class Top_View_Codes(tk.Toplevel):
         self.View_Type  = self.Data.Get_sel_dictionary_value(CODES_VIEW_MODE)
 
         # ----------------------------------    B U T T O N S     ---------------------------------
-        self.Txt_StrSerch = TheText(self, TXT_DISAB,   580, self.Widg_PosY-35, 26, 4, '')
-        self.Txt_FullDesc = TheText(self, TXT_DISAB,    10, self.Widg_PosY-35, 69, 4, '')
+        self.Txt_StrSerch = TheText(self, TXT_DISAB,   600, self.Widg_PosY-35, 21, 4, '')
+        self.Txt_FullDesc = TheText(self, TXT_DISAB,    10, self.Widg_PosY-35, 63, 4, '')
         self.View_StrVar  = tk.StringVar()
         self.Combo_Widgt  = TheCombo(self, self.View_StrVar, 370, self.Widg_PosY+105, 31, 19,
                                      CODES_VIEW_SEL, self.View_Type , self.Clk_OnCombo)
         self.Btn_Groups   = TheButton(self, BTN_DEF_EN,  10, self.Widg_PosY+100, 14,  'mostra gruppi ', self.Clk_GR_Mngr)
         self.Btn_Load     = TheButton(self, BTN_DEF_EN,  10, self.Widg_PosY+60, 14,  'ricarica ', self.ReloadCodes)
-        self.Txt_Alphab   = TheText(self,   TXT_ENAB,   160, self.Widg_PosY+65,  5, 1, 'pa')
+        self.Txt_Alphab   = TheText(self,   TXT_ENAB,   160, self.Widg_PosY+65,  5, 1, 'A')
         self.Btn_Alphab   = TheButton(self, BTN_DEF_EN, 160, self.Widg_PosY+100, 19,  'Ricerca per iniziali', self.Find_Aplhabet)
-        self.Btn_Exit     = TheButton(self, BTN_DEF_EN, 650, self.Widg_PosY+100, 14, '  E X I T ', self.Call_OnClose)
+        self.Btn_Exit     = TheButton(self, BTN_DEF_EN, 650, self.Widg_PosY+100, 14, '  E S C I ', self.Call_OnClose)
 
         self.Create_Lists()
         # ---------------------------------    T R E E   of  Codes    -----------------------------
@@ -133,7 +133,6 @@ class Top_View_Codes(tk.Toplevel):
     def Find_Aplhabet(self):
         myString = self.Txt_Alphab.Get_Text(STRING)
         Alphab_List = self.Data.Get_Codes_Alpabet(myString)
-        pass
         self.Frame_Codes.Load_Row_Values(Alphab_List)
 
     # ---------------------------------------------------------------------------------------------

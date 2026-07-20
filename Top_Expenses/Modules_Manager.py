@@ -146,7 +146,6 @@ class Modules_Manager:
             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dlg.wait_window()
             return False
-        self.Chat.Tx_Request([Origin, [ANY], XLSX_UPDATED, []])
         return True
 
     # ---------------------------------------------------------------------------------------------
@@ -254,7 +253,7 @@ class Modules_Manager:
     # invoked on  sel_Codes_Db  Delete  Add Update  code   sel_xlsx  Insert  (Queries....)
     def Initialize_codes_xlsx_transact(self, Origin):
         self.Chat.Tx_Request([TOP_CODES_MNGR, [ANY], CODE_TO_CLOSE, []])
-        if not self.Load_Transact_Mngr(Origin):
+        if not self.Load_Codes_Mngr(Origin):
             dlg_msg = Message_Dlg(MSG_BOX_ERR, f"FATAL ERROR 21\non loading codes Db")
             dlg_msg.wait_window()
             return False

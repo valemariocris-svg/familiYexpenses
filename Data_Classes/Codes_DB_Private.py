@@ -368,7 +368,7 @@ class Codes_DB_Private(Files_Names_Manager):
         CapitalStr = String.capitalize()
         Curr_List   = []
         for Rec in self.Tree_Codes_View_List:
-            TRdesc = Rec[IX_WIEW_TR_DESCR]
+            TRdesc = Rec[IX_WIEW_TR_DESCR].capitalize()
             if CapitalStr in TRdesc:
                 Curr_List.append(Rec)
             pass
