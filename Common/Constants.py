@@ -231,17 +231,9 @@ TRANSACT_CODES_TABLE = 'Transactions Codes Table'
 GROUPS_CODES_TABLE   = 'Groups Codes Table'
 CATEG_CODES_TABLE    = 'Categories Codes Table'
 GENERIC_CODE         = 'GENERIC CODE'
-STANDARD_CODE       = 'STANDARD CODE'
-CODES_VIEW_SEL      = [VIEW_BY_CODE, VIEW_BYNAME, VIEW_SEARCH, GENERIC_BYCODE, GENERIC_BYNAME,
+STANDARD_CODE        = 'STANDARD CODE'
+CODES_VIEW_SEL       = [VIEW_BY_CODE, VIEW_BYNAME, VIEW_SEARCH, GENERIC_BYCODE, GENERIC_BYNAME,
                        VIEW_STRTOSERCH_LEN, VIEW_EXTRAORDOIN]
-
-TRANSACT_VIEW_ALL          = 'mostra mov. come nel Db'
-TRANSACT_VIEW_CONTAB_ASC   = 'mostra mov. ord. per contab.'
-TRANSACT_VIEW_STANDARD_CODE  = 'mostra mov. con codice standard'
-TRANSACT_VIEW_GENERIC      = 'mostra mov. con codice generico'
-TRANSACT_VIEW_AS_IS        = 'View transactions as is'
-TRANSACT_VIEW_SEL = [TRANSACT_VIEW_ALL, TRANSACT_VIEW_CONTAB_ASC,
-                     TRANSACT_VIEW_STANDARD_CODE, TRANSACT_VIEW_GENERIC]
 
 # =========================================================== #
 #             DATA BASES  STRUCTURE                           #
@@ -346,6 +338,13 @@ STEP        = 'Inserisci uno per volta'
 CONTINUOUS  = 'Inserisci tutti i movimenti'
 NREC        = 'Insert total rows'
 CONTINUE_LIST = [STEP, CONTINUOUS, NREC]
+
+TRANSACT_VIEW_ALL          = 'mostra mov. come nel Db'
+TRANSACT_VIEW_CONTAB_ASC   = 'mostra mov. ord. per contab.'
+TRANSACT_VIEW_STANDARD_CODE  = 'mostra mov. con codice standard'
+TRANSACT_VIEW_GENERIC      = 'mostra mov. con codice generico'
+TRANSACT_VIEW_SEL = [TRANSACT_VIEW_ALL, TRANSACT_VIEW_CONTAB_ASC,
+                     TRANSACT_VIEW_STANDARD_CODE, TRANSACT_VIEW_GENERIC, FIDEU, FLASH]
 
 NOTASK        = 'Not Ask Dialog'
 ASK           = 'Ask Dialog'
@@ -537,7 +536,7 @@ Default_selections_dictionary  = {
     #
     CODES_VIEW_MODE:        VIEW_BYNAME,
     TRANSACT_INSERT_MODE:   STEP,
-    TRANSACT_VIEW_MODE:     TRANSACT_VIEW_AS_IS,
+    TRANSACT_VIEW_MODE:     TRANSACT_VIEW_ALL,
     QUERY_CONTO:            FIDEU,
     QUERY_START_MONTH:      JAN,
     QUERY_TOT_MONTHS:       ONE_MONTH,

@@ -171,6 +171,15 @@ class Codes_db(Codes_DB_Private):
         else:
             return False, 0
 
+    # _query_execute(self, database, sql, parameters=(), close=True, all_records=False):
+    # ---------------------------------------------------------------------------------------------
+    def Get_transactions_per_conto(self, conto) -> tuple[bool, str | list]:
+        sql = "SELECT * FROM TRANSACT WHERE Conto = ?"
+        status, data = self._query_execute(TRANSACT_FILE, sql, (conto,), CLOSE_DB, all_records=True)
+        if not status:
+            return False, f"FATAL ERROR 25:\n"
+        return True, data
+
     # -----------------------   Add  transaction code record         ------------------------
     def Add_DB_TR_Record(self, Record):
         TR        = Record[IX_TR_TR_CODE]
@@ -190,7 +199,7 @@ class Codes_db(Codes_DB_Private):
 
     # ----------        delete the transaction codes record         -------------------------
     def Delete_DB_TR_Record(self, TRcode):
-        sql_query = """DELETE FROM TRANSACT_CODES WHERE TR_Code = ?"""
+        sql_query = "DELETE FROM TRANSACT_CODES WHERE TR_Code = ?"
         return self._query_execute(CODES_FILE, sql_query, (TRcode,), CLOSE_DB)
 
     # --------------   update a codes record on data base  ----------------------------------

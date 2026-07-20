@@ -92,7 +92,7 @@ class Codes_DB_Private(Files_Names_Manager):
     # --------------------------------------------------------------------------------------
     #  Apre il Codes DB, esegue una query (SELECT o UPDATE) e chiude
     #  la connect se CLOSE_DB   oppure  NO se  KEEP_OPEN
-    def _query_execute(self, database, sql, parameters=(), close=True):
+    def _query_execute(self, database, sql, parameters=(), close=True, all_records=False):
         # Validazione rapida del database
         if database not in [CODES_FILE, TRANSACT_FILE]:
             return False, f"Error: Database {database} not recognized"
@@ -103,7 +103,6 @@ class Codes_DB_Private(Files_Names_Manager):
         try:
             # 2. Esecuzione
             self._database_cursor.execute(sql, parameters)
-
             sql_clean = sql.strip().upper()
             # Gestione delle SELECT
             if sql_clean.startswith('SELECT'):
@@ -117,12 +116,13 @@ class Codes_DB_Private(Files_Names_Manager):
                         return True, False  # Restituiamo True (successo) e False (non esiste)
 
                 # CASO B: È una query di estrarre un solo record con Id
-                elif 'WHERE' in sql_clean:
+                # Modifichiamo solo questa riga:
+                # Usa fetchone SOLO SE c'è WHERE e NON hai chiesto esplicitamente tutti i record
+                elif 'WHERE' in sql_clean and not all_records:
                     record = self._database_cursor.fetchone()
-                    print(record)
                     return True, record
-                # CASO C: È una SELECT normale
                 else:
+                    # Cadranno qui tutte le SELECT senza WHERE, E le select con WHERE che hanno all_records=True
                     data = self._database_cursor.fetchall()
                     return True, data
             else:

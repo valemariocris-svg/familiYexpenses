@@ -95,7 +95,7 @@ class Top_View_Transact(tk.Toplevel):
     # ---------------------------------------------------------------------------------------------
     def Frame_Transactifons_Load(self):
         TR_Name = Get_File_Name(self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME))
-        if self.View_Transact_mode == TRANSACT_VIEW_AS_IS:
+        if self.View_Transact_mode == TRANSACT_VIEW_ALL:
              Title = '     movimenti come in Db'
              List = self.Data.Get_Transact_recs_asis()
 
@@ -106,6 +106,20 @@ class Top_View_Transact(tk.Toplevel):
         elif self.View_Transact_mode == TRANSACT_VIEW_STANDARD_CODE:
              Title = '     movimenti con codice normale'
              List  = self.Data.Get_Transact_NormalCode_List()
+
+        elif self.View_Transact_mode == FIDEU:
+             Title = f"  movimenti per conto {FIDEU} "
+             status, data  = self.Data.Get_transactions_per_conto(FIDEU)
+             if not status:
+                 return
+             List = data
+
+        elif self.View_Transact_mode == FLASH:
+             Title = f"  movimenti per conto {FLASH} "
+             status, data  = self.Data.Get_transactions_per_conto(FLASH)
+             if not status:
+                 return
+             List = data
 
         else:
             Title = ''
