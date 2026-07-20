@@ -297,14 +297,14 @@ def Convert_To_Float(Value):    # return always a float (0.00) in case of not nu
 def convert_float_toString(Float):
     if not type(Float) is float:
         return '????'
-    # 1. Arrotonda a 1 solo decimale
-    rounded_float = round(Float, 1)  # Diventa 0.1
+    # 1. Arrotonda a 2  decimali
+    rounded_float = round(Float, 2)  # Diventa  f.dd
     if rounded_float == 0.0:
         return '  '
 
     # 2. Formatta a stringa (forzando 1 decimale con '.1f')
     # Il modificatore :.1f garantisce che anche se il numero è 0, diventerà "0.0" e non "."
-    eng_format = f"{rounded_float:,.1f} "  # Risultato: "0.1"
+    eng_format = f"{rounded_float:,.2f} "  # Risultato: "0.1"
 
     # 3. Trasforma il punto in virgola per l'italiano
     # 2. Il gioco dei tre replace:

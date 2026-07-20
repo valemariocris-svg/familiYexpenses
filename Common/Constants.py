@@ -31,7 +31,7 @@ else:
     TOP_XLSX_VIEW_GEOMETRY = '820x1000+200+10'      # Top View Xlsx
     TOP_VIEW_MESS_GEOMETRY = '450x520+600+10'
     TOP_INSERT_GEOMETRY    = '740x1000+50+10'
-    TOP_TR_VIEW_GEOMETRY   = '940x1000+500+10'      # top View Transactions
+    TOP_TR_VIEW_GEOMETRY   = '1100x1000+300+10'      # top View Transactions
     TOP_TRANSACT_VERIF_GEO = '1200x1000+200+10'     # Top Verify   XLSX and Transactions
 
 XY_TO_HIDE   = 10000   # Hide widget

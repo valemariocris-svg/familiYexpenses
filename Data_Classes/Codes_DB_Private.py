@@ -116,12 +116,14 @@ class Codes_DB_Private(Files_Names_Manager):
                     else:
                         return True, False  # Restituiamo True (successo) e False (non esiste)
 
-                # CASO B: È una SELECT normale
+                # CASO B: È una query di estrarre un solo record con Id
+                elif 'WHERE' in sql_clean:
+                    record = self._database_cursor.fetchone()
+                    print(record)
+                    return True, record
+                # CASO C: È una SELECT normale
                 else:
                     data = self._database_cursor.fetchall()
-                    # if not data:
-                    #     return True, []
-                    # else:
                     return True, data
             else:
                 # Se è INSERT/UPDATE/DELETE, CREATE  salviamo le modifiche

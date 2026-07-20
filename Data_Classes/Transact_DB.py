@@ -338,53 +338,28 @@ class Transact_Db(Xlsx_Manager):
         return [strYear, Years_List]
 
     # -------------------------------------------------------------------------------------------------
-    def _Find_Rec_InTransactions_List(self):
-        for Transact in self._Transact_Table_Order:
-            if  self.Conto   == Transact[IX_TRANSACT_CONTO] and \
-                self.Contab  == Transact[IX_TRANSACT_CONTAB] and \
-                self.Valuta  == Transact[IX_TRANSACT_VALUTA] and \
-                self.flAccr  == Transact[IX_TRANSACT_ACCRED] and \
-                self.flAddeb == Transact[IX_TRANSACT_ADDEB] and \
-                self.FullDes == Transact[IX_TRANSACT_FULL_DESC]:
-                    return Transact
-        return []
+    # def _Find_Rec_InTransactions_List(self):
+    #     for Transact in self._Transact_Table_Order:
+    #         if  self.Conto   == Transact[IX_TRANSACT_CONTO] and \
+    #             self.Contab  == Transact[IX_TRANSACT_CONTAB] and \
+    #             self.Valuta  == Transact[IX_TRANSACT_VALUTA] and \
+    #             self.flAccr  == Transact[IX_TRANSACT_ACCRED] and \
+    #             self.flAddeb == Transact[IX_TRANSACT_ADDEB] and \
+    #             self.FullDes == Transact[IX_TRANSACT_FULL_DESC]:
+    #                 return Transact
+    #     return []
 
     # -------------------------------------------------------------------------------------------------
     # Record No Code:     [nRow,   Contab, Valuta, 'Accr', 'Addeb', FullDes]
     # Record to insert :  [(),     Conto,  Contab, Valuta, TRdesc, 'Accr',  'Addeb', TRcode, FullDes]
     # Record on Database: [Ident,  Conto,  Contab, Valuta, TRdesc, flAccr,  flAddeb, TRcode, FullDes]
     # -------------------------------------------------------------------------------------------------
-    def _Find_Rec_InTransactions(self): # return [OK, fetch_list] or  [NOK, ' Diagnostic']
-        pass
-        # Result = self._Connect_Transact_Db  # connect always here;  if connected pass
-        # if Result != OK:
-        #     return Result
-        # Sql = "SELECT * FROM TRANSACT WHERE Conto=? AND Contab=? AND Valuta=? AND Accred=? AND Addeb=? AND FullDes=?"
-        # Data = [self.Conto, self.Contab, self.Valuta, self.flAccr, self.flAddeb,self.FullDes]
-        # Result     = self._Make_Execute(Sql, Data)
-        # self._Close_Transact_DataBase()  #  it will be closed at the end of loop using this  method ###
-        # return Result
-
-    # -----------------------------------------------------------------------------------------------
-    def _Update_Transact_Record(self):
-        pass
-        # Sql      = "UPDATE TRANSACT SET (Conto=?, Contab=?, Valuta=?,Accred=?, Addeb=?, TRdesc=? TRcode=?, FullDes=?) WHERE Ident==?"
-        # Sql_Data = (self.Conto, self.Contab, self.Valuta, self.Accred, self.Addeb, self.Descr, self.TRcode, self.FullDes, self.Ident)
-        # MessgErr = ''
-        # try:
-        #     self._Transact_Cursor.execute(Sql, Sql_Data)        # Database is already connected
-        #     self._Transact_Connected.commit()
-        # except sqlite3.Error as e:  # in case of error nothing change
-        #     MessgErr = 'ERROR on Updating:\n\n' + 'Record: ' + str(self.Ident) + '\n\n'
-        #     MessgErr += ' in Transactions Table:\n\n'
-        #     strErr = Db_Error(e)
-        #     MessgErr += strErr
-        # # finally:
-        # #     pass
-        # # self._Close_Transact_DataBase()                         # Database closed
-        # if MessgErr:
-        #     return [NOK, MessgErr]
-        # return [OK, []]
+    def Get_transact_rec_from_id(self, Id) -> tuple[bool, list | str]: # return [OK, fetch_list] or  [NOK, ' Diagnostic']
+        sql  = "SELECT * FROM TRANSACT WHERE Ident=?"
+        status, data = self._query_execute(TRANSACT_FILE, sql, (Id,), CLOSE_DB)
+        if not status:
+            return False, f"record with Ident {Id} not found"
+        return True, data
 
     # -------------------------------------------------------------------------------------------------
     def Get_Rows_WithCod_List(self):
