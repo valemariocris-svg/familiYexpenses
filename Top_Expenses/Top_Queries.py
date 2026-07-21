@@ -148,7 +148,7 @@ class Top_Queries(Super_Top_Queries):
             Msg_Dlg.wait_window()
             return
         Ident = int(Value[IX_QUERY_IDENT])
-        RecordFound = self.Data.Get_List_Item_From_Ident(Ident)
+        RecordFound = self.Data.Get_transact_rec_from_id(Ident)
         if RecordFound:
             ViewMesg_Text = '-----   Transaction   found   -----\n'
             Index = -1

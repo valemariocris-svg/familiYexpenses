@@ -546,4 +546,32 @@ Default_selections_dictionary  = {
     QUERY_CATEGORY_SEL:     ALL_CAT,
     #
 }
+
+# Headings = ['#0','Conto', 'Cod.Std', 'Cod.Gener', 'Da inser.', 'Totale Db', 'Cod.Std.Ins.','Cod.Std. da ins.', 'NoCod Ins.', ' NoCod. da ins ', 'Totale xlsx']
+#
+# -----------------------------------------------------------------------------------------------------------
+TOT_CONTO           = 'Conto for totals Db - xlsx'
+TOT_COD_STD         = 'Total standard codes in Db'
+TOT_COD_GENER       = 'Total generic codes in Db'
+TOT_TO_INSERT       = 'Total recods to be inserted in Db'
+TOT_REC_FOR_DB      = 'Total  record for  Db'
+
+TOT_STD_TO_INSERT   = 'Total standard code to be inserted'
+TOT_NOCODE_INSERTED = 'Total rows no code inserted'
+TOT_NOCOD_TO_INSERT = 'Total rows no code to be inserted'
+TOT_ROWS_XLSX       = 'Conto per i totali'
+
+Totals_dict_default = {
+                        TOT_CONTO:           0,
+                        TOT_COD_STD:         0,
+                        TOT_COD_GENER:       0,
+                        TOT_TO_INSERT:       0,
+                        TOT_REC_FOR_DB:      0,
+
+                        TOT_STD_TO_INSERT:   0,
+                        TOT_NOCODE_INSERTED: 0,
+                        TOT_NOCOD_TO_INSERT: 0,
+                        TOT_ROWS_XLSX:       0
+                    }
+
 # ===========================================================================================================

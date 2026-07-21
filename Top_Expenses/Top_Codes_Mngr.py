@@ -5,6 +5,7 @@
 #           here are contained  the Combo  Texts  and Buttons                            #
 # -------------------------------------------------------------------------------------- #
 
+import os
 from Top_Expenses.Modules_Manager import Modul_Mngr
 from Top_Expenses.Super_Top_Codes_Mngr import Super_Top_Mngr
 
@@ -44,24 +45,19 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.Load_Trees()
 
         # ********************************      C A N V A S      ****************************************************
-        self.Canv_CodMngr = CreateCanvas(self, 10, 820, 380, 80)
+        self.Canv_CodMngr = CreateCanvas(self, 10, 820, 380, 130)
         TheLable(self.Canv_CodMngr, LAB_BLUE, 110, 1, 25, "gestione dei codici ")
 
         TheButton(self.Canv_CodMngr, BTN_DEF_EN,  10,  30, 20, "crea codice normale ", self.Clk_Add_Std)
         TheButton(self.Canv_CodMngr, BTN_DEF_EN, 215,  30, 20, "crea codice generico", self.Clk_Add_Generic)
         TheButton(self.Canv_CodMngr, BTN_DEF_EN,  10,  75, 20, "aggiorna codice", self.Clk_Update)
         TheButton(self.Canv_CodMngr, BTN_DEF_EN,  215, 75, 20, "cancella  codice",self.Clk_Delete)
-
+        TheButton(self.Canv_CodMngr, BTN_DEF_EN,   10,120, 20, "selez. un codice generico", self.Clk_code_sel)
 
         #    canvas on Super_Top_Codes_Mngr.py
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,   10,   30,  19, "inserisci mov. nel Db", self.Clk_launch_top_insert)
-        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,   10,   75,  19, "visualizza movimenti",  self.Clk_ViewTransact)
-        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  220,   30,  19, "seleziona un codice",self.Clk_code_sel)
-
-        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        # TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  200,  75,  21, "<<<<  button for test >>>", self.Clk_Canv_Test)
-        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  220,   30,  19, "visualizza movimenti",  self.Clk_ViewTransact)
+        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,   10,   75,  19, "Cancella file dabase",  self.Clk_Delete_Transact_Db)
         self.Canv_CodFile = CreateCanvas(self,   450, 640, 170, 130)
         TheLable(self.Canv_CodFile, LAB_BLUE,     15,   1,  16, "gestione Db codici ")
         TheButton(self.Canv_CodFile, BTN_DEF_EN,  10,  30,  18, "seleziona Db codici", self.Clk_Sel_Codes)
@@ -341,7 +337,24 @@ class Top_Codes_Mngr(Super_Top_Mngr):
                 Msg_Dld.wait_window()
                 self.Frames_Refresh()
 
-    # ------------------------     ***   Delete  a code record on codes Db    --------------------------
+    # ---------------------------------------------------------------------------------------------
+    def Clk_Delete_Transact_Db(self):
+        Full_transact_filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
+        transact_filename = Get_File_Name(Full_transact_filename)
+        Messg  = f"Confermi di cancellare il Db  {transact_filename}"
+        Msg_Dlg = Message_Dlg(MSG_BOX_ASK, Messg)
+        Msg_Dlg.wait_window()
+        Reply = Msg_Dlg.data
+        if Reply == YES:
+            # filepath = Full_transact_filename
+            # È sempre buona norma verificare prima se il file esiste davvero
+            if os.path.exists(Full_transact_filename):
+                os.remove(Full_transact_filename)
+                print(f"file {transact_filename}\neliminato")
+            else:
+                print("Il file non esiste a quel percorso.")
+
+    # ------------------------     ***   Delete  a code record on codes Db    ---------------------
     def Clk_Delete(self):
         if not self.Get_Confirm('Delete'):
             return
@@ -384,12 +397,12 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         return True
 
     # ---------------------------------------------------------------------------------------------
-    def Check_IfCodeExists(self):
-        if not self.Data.Check_If_Code_Exist(self.TR_Code):
-            Msg_Dld = Message_Dlg(MSG_BOX_ERR, 'The code number do not exist')
-            Msg_Dld.wait_window()
-            return  False   # Code not  exists
-        return True
+    # def Check_IfCodeExists(self):
+    #     if not self.Data.Check_If_Code_Exist(self.TR_Code):
+    #         Msg_Dld = Message_Dlg(MSG_BOX_ERR, 'The code number do not exist')
+    #         Msg_Dld.wait_window()
+    #         return  False   # Code not  exists
+    #     return True
 
      # ----------------------------------------------------------------------------------------
     def Check_codes_record(self) -> bool:

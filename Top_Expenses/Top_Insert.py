@@ -127,7 +127,6 @@ class Top_Insert(tk.Toplevel):
         # IX_TOT_ROWS_OK, IX_TOT_ROWS_WITH_CODE, IX_TOT_ROWS_WITHOUT_CODE
         self.Total             = self.Data.Get_Total_Rows()
 
-        # self.Xlsx_Filename     = self.Data.Get_Xlsx_Transact_Ident()[IX_XLSX_FILE]
         # self.Transact_Filename = self.Data.Get_Full_Xlsx_Transact_Ident()[IX_TRANSACT_FILE]
         self.Xlsx_Filename     = self.Data.Get_sel_dictionary_value(XLSX_FILENAME)
         self.Transact_Filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)

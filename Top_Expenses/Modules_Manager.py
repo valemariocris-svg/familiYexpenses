@@ -56,11 +56,12 @@ class Modules_Manager:
             File_Name = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
 
             if File_Name == UNKNOWN:
-                dlg_msg = Message_Dlg(MSG_BOX_ERR, "FATAL ERROR 26:\nthe transactions file not find ")
+                dlg_msg = Message_Dlg(MSG_BOX_ERR, "FATAL ERROR 26:\nthe transactions file not found ")
                 dlg_msg.wait_window()
                 return
             if not self.Load_Transact_Mngr(Origin):
                 return
+            self.Data.Create_records_to_insert_list()
 
         # ---------------------------------------------------------------------------
         elif Top_to_launch == TOP_QUERY:
@@ -177,7 +178,7 @@ class Modules_Manager:
             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dlg.wait_window()
             return False
-        self.Data.Create_records_to_insert_list()
+
         self.Chat.Tx_Request([Origin, MAIN_WIND, VIEW_SELECTIONS, []])
         return True
 

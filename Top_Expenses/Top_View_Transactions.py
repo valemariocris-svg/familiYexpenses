@@ -29,8 +29,13 @@ class Top_View_Transact(tk.Toplevel):
         self.title('***   View transactions database  *** ')
         self.configure(background=BACKGND)
 
-        # --------------------------   Create Treeview Frame   ------------------------------------
-        self.Frame_Transactions  = TheFrame(self, 10, 20, self.Clk_On_Transaction)
+        # --------------------------   Create Total rows   ------------------------------------
+        self.Frame_Totals = TheFrame(self, 10, 50, self.Clk_On_Transaction)
+        self.Frame_Totals_Setup()
+        self.Frame_Totals.Frame_View()
+
+        # --------------------------   Create Transactions records   --------------------------
+        self.Frame_Transactions  = TheFrame(self, 10, 150, self.Clk_On_Transaction)
         self.Frame_Transactions_Setup()
         self.Frame_Transactions.Frame_View()
 
@@ -40,15 +45,15 @@ class Top_View_Transact(tk.Toplevel):
         self.Txt_Code       = TheText(self, TXT_DISAB,     10, 950,  13, 1, '')
         self.Txt_TrDesc     = TheText(self, TXT_DISAB,    220, 950, 28, 1, '')
 
-        self.StrVar_List  = tk.StringVar
-        self.OptMenu_List = TheCombo(self,  self.StrVar_List, 500, 950, 300, 28,
-                                     TRANSACT_VIEW_SEL, TRANSACT_VIEW_ALL, self.Clk_ListSel)
+        self.View_Transact_mode = self.Data.Get_sel_dictionary_value(TRANSACT_VIEW_MODE)
+        self.StrVar_List        = tk.StringVar
+        self.Combo_sel = TheCombo(self,  self.StrVar_List, 500, 950, 300, 28,
+                                     TRANSACT_VIEW_SEL,  self.View_Transact_mode, self.Clk_ListSel)
         self.Btn_Exit = TheButton(self, BTN_DEF_EN, 910, 950, 18, '  E S C I  ', self.Call_OnClose)
 
         self.Transact_Record   = None
         self.TR_Code           = 0
         self.TRdesc            = ''
-        self.View_Transact_mode = self.Data.Get_sel_dictionary_value(TRANSACT_VIEW_MODE)
 
         self.All_Transact_as_is= []
         self.All_TR_Contab_ASC = []
@@ -57,6 +62,8 @@ class Top_View_Transact(tk.Toplevel):
 
         self.Frame_Transactifons_Load()
         self.Transact_Id_Selcted = None
+
+        self.Totals_dictionary  = Totals_dict_default
         pass
 
     # ---------------------------------------------------------------------------------------------
@@ -81,16 +88,21 @@ class Top_View_Transact(tk.Toplevel):
         self.Transact_Id_Selcted = None
 
     # ---------------------------------------------------------------------------------------------
-    def Clk_Delete_Transact(self):
-        if self.Transact_Id_Selcted is not None:
-            Messg  = 'Delete Tansaction Id : ' + str(self.Transact_Id_Selcted) + '\n'
-            Messg += 'Transaction code     : ' + str(self.TR_Code) + '\n'
-            Messg += 'Transact description : ' + self.TRdesc
-            Msg_Dlg = Message_Dlg(MSG_BOX_ASK, Messg)
-            Msg_Dlg.wait_window()
-            Reply = Msg_Dlg.data
-            if Reply == YES:
-                self.Data.Delete_Transact_Rec(self.Transact_Id_Selcted)
+    # def Clk_Delete_Transact_Db(self):
+    #         Full_transact_filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
+    #         transact_filename = Get_File_Name(Full_transact_filename)
+    #         Messg  = f"Confermi di cancellare il Db  {transact_filename}"
+    #         Msg_Dlg = Message_Dlg(MSG_BOX_ASK, Messg)
+    #         Msg_Dlg.wait_window()
+    #         Reply = Msg_Dlg.data
+    #         if Reply == YES:
+    #             # filepath = Full_transact_filename
+    #             # È sempre buona norma verificare prima se il file esiste davvero
+    #             if os.path.exists(Full_transact_filename):
+    #                 os.remove(Full_transact_filename)
+    #                 print(f"file {transact_filename}\neliminato")
+    #             else:
+    #                 print("Il file non esiste a quel percorso.")
 
     # ---------------------------------------------------------------------------------------------
     def Frame_Transactifons_Load(self):
@@ -124,6 +136,7 @@ class Top_View_Transact(tk.Toplevel):
         else:
             Title = ''
             List  = self.Data.Get_Transact_GenericCode_List()
+        self.Data.Update_key_dictionary(TRANSACT_VIEW_MODE, self.View_Transact_mode)
         #
         FrameText = ('      ' + TR_Name + '     ' + str(len(List)) + str(Title))
         # -------------------------------------------------------------------------------------------------
@@ -163,12 +176,23 @@ class Top_View_Transact(tk.Toplevel):
         self.Transact_Record = list(record)
         pass
 
+    # ----------------------------------------------------------------------------------------------
+    def Frame_Totals_Setup(self):
+        Nrow = 1
+        Ncol = 10
+        Headings = ['#0','Conto', 'Cod.Std', 'Cod.Gener', 'Da inser.', 'Totale Db', 'Cod.Std.Ins.','Cod.Std. da ins.', 'NoCod Ins.', ' NoCod. da ins ', 'Totale xlsx']
+        Anchor   = ['c', 'c',     'c',       'c',         'c',         'c',         'c',           'c',                   'c',          'c',               'c']
+        Width    = [ 0,   60,      90,        90,          90,          100,         120,           120,                   120,          120,              130 ]
+        Form_List = [Nrow, Ncol, Headings, Anchor, Width]
+        self.Frame_Totals.Tree_Setup_Strech(Form_List, ['#10'])
+        pass
+
     # ---------------------------------------------------------------------------------------------
     #                     0    1     2      3      4      5      6      7        8      9
     # List_Transact_DB :  Id  nRow  Conto Contab Valuta Accred  Addeb  TR_Desc TRcode FullDesc
     # ----------------------------------------------------------------------------------------------
     def Frame_Transactions_Setup(self):
-        Nrow = 39
+        Nrow = 33
         Ncol = 10
         Headings = ['#0','Ident', 'Riga', 'Conto', 'Contab', 'Valuta', 'Accred  ','Addeb  ', 'Descrizione', ' Codice ', 'Descizione Compl.']
         Anchor   = ['c', 'c',     'c',    'c',     'c',      'c',      'e',       'e',         'w',         'c',        'w']
@@ -192,9 +216,9 @@ class Top_View_Transact(tk.Toplevel):
 
     # ---------------------------------------------------------------------------------------------
     def get_dates_from_listToInsert(self, Id):
-        rec = self.Data.Get_rec_from_list_toInsert(Id)
-        if rec:
-            return rec[IX_TRANSACT_CONTAB], rec[IX_TRANSACT_VALUTA]
-        return '---', '---'
+        status, data = self.Data.Get_transact_rec_from_id(Id)
+        if not status:
+            return False, ['---- -- --', '---- -- --']
+        return data[IX_TRANSACT_CONTAB], data[IX_TRANSACT_VALUTA]
 
 # =================================================================================================

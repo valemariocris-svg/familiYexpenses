@@ -43,9 +43,9 @@ class Super_Top_Mngr(tk.Toplevel):
         self.Child_ClkNoCode   = Child_ClkNoCode
         self.Child_ClkWithCode = Child_ClkWithCode
         self.View_Without_Code = True
-        self.Rows_NoCode_List  = self.Data.Get_WithoutCodeList()
         self.Row_WithoutCode   = None  # it is the Row clicked on Frame_NoCodes
         self.Rows_WitCode_List = self.Data.Get_Rows_WithCod_List()
+        self.Rows_NoCode_List  = self.Data.Get_WithoutCodeList()
 
         # ----------------------   Frames   -------------------------------------------------------------------
         self.Frame_NoCodes = TheFrame(self,   10, 20, self.Clk_OnTree_NoCodes)
@@ -74,7 +74,7 @@ class Super_Top_Mngr(tk.Toplevel):
         self.Txt_CA_Code1     = TheText(self.Canv_CodData, TXT_DIS_BLACK,  20, 134,  5, 1, '0')
         self.Txt_CAdesc1      = TheText(self.Canv_CodData, TXT_DIS_BLACK,  82, 134, 33, 1, CATDESC)
         #
-        self.Btn_SelGeneric    = TheButton(self.Canv_Tr_Mngr, BTN_DEF_DIS, 485, 735, 19, '', None)
+        # self.Btn_SelGeneric    = TheButton(self.Canv_Tr_Mngr, BTN_DEF_DIS, 485, 735, 19, '', None)
 
     # ---------------------------------------------------------------------------------------------------------
     def Call_OnClose(self):
@@ -105,7 +105,7 @@ class Super_Top_Mngr(tk.Toplevel):
         intValues = [Row, Values[IX_NO_CODE_CONTAB], Values[IX_NO_CODE_VALUTA],
                      flAccred, flAddeb, Values[IX_NO_CODE_FULL_DESCR]]
         self.Row_WithoutCode = intValues
-        self.Btn_SelGeneric.Btn_Enable()
+        # self.Btn_SelGeneric.Btn_Enable()
         self.Frame_WithCodes.Clear_Focus()
         self.Child_ClkNoCode()
 
