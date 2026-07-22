@@ -16,44 +16,18 @@ class Transact_Db(Xlsx_Manager):
         self._Transact_Records_NormalCode  = []    # TRANSACT table normal code
         self._Transact_Records_GenericCode = []    # TRANSACT table GENERICCODE
 
-        # self.Ident  = None # [IX_TRANSACT_IDENT]    # Transact_Db uses without underscore (_)
-        # self.Conto  = None # [IX_TRANSACT_CONTO]
-        # self.Contab = None # [IX_TRANSACT_CONTAB]
-        # self.Valuta = None # [IX_TRANSACT_VALUTA]
-        # self.Descr  = None # [IX_TRANSACT_TR_DESC]
-        # self.Accred = None # [IX_TRANSACT_ACCRED]
-        # self.Addeb  = None # [IX_TRANSACT_ADDEB]
-        # self.flAccr = None
-        # self.flAddeb= None
-        # self.TRcode = None # [IX_TRANSACT_TR_CODE]
-        # self.FullDes= None # [IX_TRANSACT_FULL_DESC]
-
         self.Row_To_Del         = []
         self._Count_Contab_Val  = 0
         self._Rows_Tot_xMonth   = None
         self._Found_Except      = False
         self._Transactions_Exceptions = None
 
-        # self._Full_Transact_List = []
-        # self._Full_Contab_List   = []
-        # self._Full_Valuta_List   = []
-        # self._Month_Contab_List  = []
-        # self._Month_Valuta_List  = []
-
-        # self._Full_Generic_List         = []
-        # self._Full_Generic_Contab_List  = []
-        # self._Full_Generic_Valuta_List  = []
-        # self._Generic_Month_Contab_List = []
-        # self._Generic_Month_Valuta_List = []
-        self.rows_inserted_list                 = []
-        self.with_code_rows_to_be_inserted_list = []
-        self.no_codes_rows_to_be_inserted_list  = []
-        self._records_to_insert_list            = []
-
-        self.tot_with_code_rows_to_be_inserted  = 0
-        self.tot_nocodes_rows_to_be_inserted    = 0
-        self._TotTransact_ToBeInserted          = 0
-        self._transactions_map  = {} # dictionary for finding recods on transact Db
+        self.rows_inserted_list                = []
+        self.std_code_rows_to_be_insertd_list  = []
+        self.noCode_to_be_inserted_list        = []
+        self._records_to_insert_list           = []   # std_code_rows_to_be_insertd_list + noCode_to_be_inserted_list
+        self._transactions_map                  = {}  # dictionary for finding recods on transact Db
+        self.Totals_dict                        = Totals_dict_default
 
     # -------------------------------------------------------------------------------------------------
     def Get_Full_Xlsx_Transact_Ident(self):
@@ -126,37 +100,36 @@ class Transact_Db(Xlsx_Manager):
     # ----------------------------------------------------------------------------------------------------- #
     # Chiave per la ricerca nel Db movimenti:                                                               #
     # (conto, nRow, contab, valuta, Accred, Addeb)                                                          #
-    # l'elento nRow da' la certezza che non si creino o si saltino doppioni (ass. Domestic ...)             #
+    # l'elemento nRow da' la certezza che non si creino o si saltino doppioni (ass. Domestic ...)           #
     # PERO' nella inserzione dei movimenti nel Db bisogna ricreare un Transact_yyyy.db                      #
     # ogni volta che si cambia file xlsx, mentre finche' si usa sempre lo stesso,                           #
     # si possono inerire movimenti  in piu' volte                                                           #                                                                                         #
     # ----------------------------------------------------------------------------------------------------- #
     # Liste:                                                                                                #
-    # Rows_WithCode_List,                   Rows_NoCode_List,                 rows_inserted_list,           #
-    # with_code_rows_to_be_inserted_list,   no_codes_rows_to_be_inserted_list                               #
+    # rows_inserted_lis(std & generic)   std_code_rows_to_be_insertd_list  noCode_to_be_inserted_list       #
+    # Totale calcolato   = somma(1-3)
     # Premessa:                                                                                             #
     # Alle righe contenute nel file xlsx, di cui non si e' trovato un codice standard corrispondente,       #
-    # si potra' abbinare soltanto un codice generico (o creandone uno nuovo standard ad hoc)                #
-    # per cui nel Db si avranno solo record con codice standard  o con  codice generico                     #
-    #                                                                                                       #
-    # Nota iniziale: le righe di xlsx vengono suddivise  in Rows_WithCod_List  e  Rows_NoCode_List          #
+    # si potra' abbinare soltanto un codice generico (o creandone uno nuovo standard)                       #
+    # Nota iniziale:
+    # le righe di xlsx vengono suddivise  in Rows_WithCod_List  e  Rows_NoCode_List                         #
     # Si fanno due passate di ricerca: una sulla lista WithCode ed una sulla lista NoCode:                  #
     # 1) Passata WithCode:                                                                                  #
-    #    genera le liste   rows_inserted_list   e   with_code_rows_to_be_inserted_list                      #
-    #    nella Top_Codes_Mngr verra' usata quest' ultima lista nella Frame  WithCode                        #
+    #    inizializza  la lista   rows_inserted_list   e crea   std_code_rows_to_be_insertd_list             #
     # 2) Passata NoCode:                                                                                    #
+    #    Iniizializza noCode_to_be_inserted_list                                                            #
     #    se una riga viene trovata nel Db  significa che le e' stato assegnato un codice generico           #
-    #    quindi verra' aggiunta alla rows_inserted_list (cod.gen) e tolta dalla NoCode                      #
+    #    quindi verra' aggiunta alla  rows_inserted_liste                                                   #
+    #    altrimenti viene aggiunta alla noCode_to_be_inserted_list                                          #
     # 3) Risultato finale:                                                                                  #
-    #    rows_inserted_list   conterra record con codice standard e generico                                #
-    #    with_code_rows_to_be_inserted_list     per la visualizzazione i  Top_Codes_Mngr                    #
-    #    la   Rows_NoCode_List   debitamente decurtata, conterra' solo le liste NoCode da abbinare          #
-    #    ad un codice generico, oppure ad un codice standard creato seduta stante ad hoc                    #
-    #    e sara' visualizzata sulla NoCodes  Frame                                                          #
-    # 4) Gestione in Top_Codes manager:                                                                     #
-    #    a) abbinare un codice generico: +1 no_codes_rows_to_be_inserted_list                               #
-    #                                    -1 NoCodes_List                                                    #
-    #     b) creare un codice standard o generico:  rilanciare  Create_records_to_insert_list               #
+    #    rows_inserted_list:                                                                                #
+    #       conterra' le righe  con codice standard e generico                                              #
+    #    std_code_rows_to_be_insertd_list:                                                                  #
+    #       usata da Frame_with_code_not_inserted                                                           #
+    #    noCode_to_be_inserted_list:                                                                        #                                                                       #
+    #       usata dal  Frame_No_Codes                                                                       #
+    #   std_code_rows_to_be_insertd_list  +   noCode_to_be_inserted_list                                    #
+    #       usata da Top_insert                                                                             #
     # 5) Calcolo totali righe in Db o da inserire:                                                          #
     #    a) rows_inserted_list = ( codici standard e generici)                                              #
     #    b) rows_to_be_inserted = with_code_rows_to_be_inserted_list + no_codes_rows_to_be_inserted_list    #
@@ -168,12 +141,11 @@ class Transact_Db(Xlsx_Manager):
     #    d Create_records_to_insert_list                                                                    #
     #    d) Richiamare questa sequenza ad ogni modifica effettuata in Top_Codes_Mng + Load_Codes            #
     # ----------------------------------------------------------------------------------------------------- #
+    # Codice std inseriti 	Codice std da inserire 	Codici gener. Inseriti	noCode da inserire
     def Create_records_to_insert_list(self):
-        self.rows_inserted_list                 = []
-        self.with_code_rows_to_be_inserted_list = []   # the list of records to be inserted in transactions database
-        self.no_codes_rows_to_be_inserted_list  = []
-        self.tot_with_code_rows_to_be_inserted   = 0
-        self.tot_nocodes_rows_to_be_inserted     = 0
+        self.rows_inserted_list = []
+        self.std_code_rows_to_be_insertd_list = []
+        self.noCode_to_be_inserted_list = []
 
         #   crea la mappa come dizionario vuoto: la chiave e' una tupla di 5 elementi
         #   ed il valore
@@ -208,9 +180,9 @@ class Transact_Db(Xlsx_Manager):
             if (nRow, conto, dateContab, dateValuta, credit, debit) in self._transactions_map:
                 self.rows_inserted_list.append(record)
             else:
-               self.with_code_rows_to_be_inserted_list.append(record)
+               self.std_code_rows_to_be_insertd_list.append(record)
             pass
-        pass
+
         # ========================================================================================
         # creazione della lista dei record caricati da .XLSX ma non presenti nel database
         # esaminando la lista delle righe xlsx, di cui NON si e' trovato un codice Db
@@ -225,10 +197,18 @@ class Transact_Db(Xlsx_Manager):
 
             record     = [nRow, conto, dateContab, dateValuta, credit, debit, FullDesc],
             if not (nRow, dateContab, dateValuta, credit, debit) in self._transactions_map:
-                self.no_codes_rows_to_be_inserted_list.append(record)
-                pass
+                self.noCode_to_be_inserted_list.append(record)
+            else:
+                self.rows_inserted_list.append(record)
             pass
+        self.Totals_dict[TOT_ROWS_INSERTED] = len(self.rows_inserted_list)
+        self.Totals_dict[TOT_STD_COD_TOBE_INS] = len(self.std_code_rows_to_be_insertd_list)
+        self.Totals_dict[TOT_NOCOD_TO_INSERT] = len(self.noCode_to_be_inserted_list)
+        self._records_to_insert_list = self.std_code_rows_to_be_insertd_list
+        for row in self.noCode_to_be_inserted_list:
+            self._records_to_insert_list.append(row)
         pass
+
 
     # -------------------------------------------------------------------------------------------------
     def _Set_Transact_Year(self):
@@ -269,32 +249,6 @@ class Transact_Db(Xlsx_Manager):
         return self._query_execute(TRANSACT_FILE, sql, parameters, CLOSE_DB)
 
     # -------------------------------------------------------------------------------------------------
-    # def _Create_Transact_List_perMonth(self):
-    #     # DateIndex = IX_TRANSACT_VALUTA
-    #     DateIndex = IX_TRANSACT_CONTAB
-    #     # self.Transact_xMonth_List = [[]] * 12
-    #     # self.DateCount_PerMonth   = [0]  * 12
-    #     self.Transact_xMonth_List = [ [], [], [], [], [], [], [], [], [], [], [], [] ]
-    #     self.DateCount_PerMonth   = [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0  ]
-    #     for Rec in self._Transact_Table_Order:
-    #         iMonth = 0            # self.CheckForInsert(Rec)
-    #         if iMonth >= 0:
-    #             Counts = self.DateCount_PerMonth[iMonth]
-    #             Counts += 1
-    #             if Counts > 10:
-    #                 Counts = 0
-    #             self.DateCount_PerMonth[iMonth] = Counts
-    #             # ['Date', 'Co', 'Description', 'Credits  ', 'Debits  ']
-    #             FullDate = Rec[DateIndex]
-    #             Date     = Set_Month_Day(FullDate, Counts)
-    #             TRcode   = Rec[IX_TRANSACT_TR_CODE]
-    #             TRdescr  = self.Get_TrDesc_FromCode(TRcode)
-    #             Conto    = CONTO_RED[Rec[IX_TRANSACT_CONTO]]
-    #             View_Rec = [Date, Conto, TRdescr, Rec[IX_TRANSACT_ACCRED],
-    #                         Rec[IX_TRANSACT_ADDEB], Rec[IX_TRANSACT_IDENT]]
-    #             self.Transact_xMonth_List[iMonth].append(View_Rec)
-    #             pass
-    # -------------------------------------------------------------------------------------------------
     #                   0      1       2      3       4       5       6       7       8
     # Record_List :  (Ident) Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes)
     # -------------------------------------------------------------------------------------------------
@@ -316,31 +270,10 @@ class Transact_Db(Xlsx_Manager):
             return True, ''
         return False, data
 
-    # # -------------------------------------------------------------------------------------------------
-    # def Get_Transact_Year_ListInData(self):
-    #     Full_Transact_filename = self.Get_sel_dictionary_value(TRANSACT_FILENAME)
-    #
-    #     if Full_Transact_filename == UNKNOWN:
-    #         return [0, []]
-    #     Transact_Dir  = Get_Dir_Name(Full_Transact_filename)  # Get TRANSACTIONS directory
-    #     Transact_List = os.listdir(Transact_Dir)
-    #     if not Transact_List:
-    #         return [0, []]
-    #     Years_List = []
-    #     for Filename in Transact_List:
-    #         if TRANSACT in Filename:           # Transact_2024.db
-    #             strYear = Filename[9:13]
-    #             if CheckInteger(strYear):
-    #                 iYear = int(strYear)
-    #                 Years_List.append(iYear)    # [2020, ..., 2024]
-    #     SelectedFile = Get_File_Name(Full_Transact_filename)
-    #     strYear = SelectedFile[9:13]
-    #     return [strYear, Years_List]
-
     # -------------------------------------------------------------------------------------------------
     # Record No Code:     [nRow,   Contab, Valuta, 'Accr', 'Addeb', FullDes]
-    # Record to insert :  [(),     Conto,  Contab, Valuta, TRdesc, 'Accr',  'Addeb', TRcode, FullDes]
-    # Record on Database: [Ident,  Conto,  Contab, Valuta, TRdesc, flAccr,  flAddeb, TRcode, FullDes]
+    # Record to insert :  [(),     nRow, Conto,  Contab, Valuta, TRdesc, 'Accr',  'Addeb', TRcode, FullDes]
+    # Record on Database: [Ident,  nRow, Conto,  Contab, Valuta, TRdesc, flAccr,  flAddeb, TRcode, FullDes]
     # -------------------------------------------------------------------------------------------------
     def Get_transact_rec_from_id(self, Id) -> tuple[bool, list | str]: # return [OK, fetch_list] or  [NOK, ' Diagnostic']
         sql  = "SELECT * FROM TRANSACT WHERE Ident=?"
@@ -358,13 +291,29 @@ class Transact_Db(Xlsx_Manager):
         return self._records_to_insert_list
 
     # -------------------------------------------------------------------------------------------------
-    def _Get_Months_Lengths(self, List):
-        self.Dummy = 0
-        Len_List = []
-        for Index in range(0, 12):
-            Len_List.append(len(List[Index]))
-        return Len_List
-    pass
+    def get_totals_dict_as_list(self, Conto):
+        self.Totals_dict[TOT_CONTO] = Conto
+        Tot_calculated = self.Totals_dict[TOT_ROWS_INSERTED] + self.Totals_dict[TOT_STD_COD_TOBE_INS] + \
+                         self.Totals_dict[TOT_NOCOD_TO_INSERT]
+        self.Totals_dict[TOT_CALCULATED]  = Tot_calculated
+        self.Totals_dict[TOT_ROWS_IN_XLSX] = self.Get_Length_Xlsx()
+        totals_list = []
+        for key, value in self.Totals_dict.items():
+            totals_list.append(str(value))
+        return [totals_list]
+
+    # --------------------------------------------------------------------------------------------------
+    def update_totals_dict(self, key, value):
+        self.Totals_dict[key] = value
+
+    # -------------------------------------------------------------------------------------------------
+    # def _Get_Months_Lengths(self, List):
+    #     self.Dummy = 0
+    #     Len_List = []
+    #     for Index in range(0, 12):
+    #         Len_List.append(len(List[Index]))
+    #     return Len_List
+    # pass
 
     # -------------------------------------------------------------------------------------------------
     # def Get_Transactions_Tables_Lengths(self):

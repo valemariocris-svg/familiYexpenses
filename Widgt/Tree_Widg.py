@@ -85,6 +85,15 @@ class TheFrame(tk.LabelFrame):
         self.Width       = Form_List[IX_TREE_WIDTH]
         self.Tree.configure(height=self.Nrows)
 
+        tot_col = self.nColToVis + 1
+        if len(self.Headings) != tot_col or len(self.Anchor) != tot_col or len(self.Anchor) != tot_col or len(self.Width) != tot_col:
+            return 'Mismathing on number of columns '
+        str_last_col = IdStretch_List[0]
+        last_stretch = int(str_last_col[1:])
+        if (tot_col-1) != last_stretch:
+            return f"Mismathing on getting {IdStretch_List}  tot column= {tot_col} "
+        pass
+
         self.Tree['columns'] = list(range(self.nColToVis))
         self.Tree.heading("#0", text="", anchor='w')
         self.Tree.column("#0", width=0, stretch=False)
@@ -99,6 +108,7 @@ class TheFrame(tk.LabelFrame):
 
         self.Tree.tag_configure("oddrow", background="white", )
         self.Tree.tag_configure("evenrow", background="lightblue", )
+        return ''
 
     # -------------------------------------------
     def Tree_Setup(self, Form_List):
@@ -120,19 +130,20 @@ class TheFrame(tk.LabelFrame):
         self.Tree.tag_configure("oddrow", background="white", )
         self.Tree.tag_configure("evenrow", background="lightblue", )
         pass
-    # def Heading_Setup(self, Headings):
-    #     for jj in range(1, self.nColToVis + 1):
-    #         self.Headings = Headings[jj]
-    #         self.Tree.heading(f'#{jj}', text=self.Headings[jj])
-    #         pass
-
 
     # ----------------------------------  Load Values of Rows  --------------------------
+    #   VERY IMPORTANT  List MUST  ME  list of lists  [ [], []... ]
     def Load_Row_Values(self, List):
         # self.Tree_Scroll.pack(side='right', fill='y')
         self.Loaded_List = List
         self.Delete_All_Rows()
+        inner_list = List[0]
+        if type(inner_list) is not list:
+            return  'Load_Row_Values list NOT a List of list'
         count = 0
+        List_len = len(List[0])
+        if List_len != self.nColToVis:
+            return 'Load_Row_Values list len NOT equal nCol_TovVis'
         for Row in List:
             TreeRow = []
             for i in range(0, self.nColToVis):
@@ -148,6 +159,7 @@ class TheFrame(tk.LabelFrame):
             count += 1
         if self.iFocus != NO_FOCUS:
             self.Set_Focus(self.iFocus)
+        return ''
 
     # -------------------------------  Delete Last Row on Tree    -----------------------
     def Delete_Tree_Last_Row(self):

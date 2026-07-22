@@ -12,6 +12,7 @@ from Widgt.Tree_Widg import *
 from Top_Expenses.Modules_Manager import Modul_Mngr
 from Widgt.Widgets import TheButton, TheText, TheCombo
 
+
 # ===================================================================================
 class Top_View_Transact(tk.Toplevel):
     def __init__(self, List):
@@ -25,19 +26,9 @@ class Top_View_Transact(tk.Toplevel):
         self.protocol('WM_DELETE_WINDOW', self.Call_OnClose)
 
         self.resizable(True, True)
-        self.geometry(TOP_TR_VIEW_GEOMETRY)
+        self.geometry('10x10+10000+10000')
         self.title('***   View transactions database  *** ')
         self.configure(background=BACKGND)
-
-        # --------------------------   Create Total rows   ------------------------------------
-        self.Frame_Totals = TheFrame(self, 10, 50, self.Clk_On_Transaction)
-        self.Frame_Totals_Setup()
-        self.Frame_Totals.Frame_View()
-
-        # --------------------------   Create Transactions records   --------------------------
-        self.Frame_Transactions  = TheFrame(self, 10, 150, self.Clk_On_Transaction)
-        self.Frame_Transactions_Setup()
-        self.Frame_Transactions.Frame_View()
 
         self.Txt_dateContab = TheText(self, TXT_DISAB,    10, 870,  21, 1, '')
         self.Txt_dateValuta = TheText(self, TXT_DISAB,    10, 905,  21, 1, '')
@@ -59,12 +50,31 @@ class Top_View_Transact(tk.Toplevel):
         self.All_TR_Contab_ASC = []
         self.TR_Normal_Code    = []
         self.TR_Generic_Code   = []
+        self.Frame_Totals_OK   = False
 
+        # --------------------------   Create Total rows   ------------------------------------
+        self.Frame_Totals = TheFrame(self, 10, 20, self.Clk_On_Transaction)
+        if not self.Frame_Totals_Setup():
+            self.Frame_Totals_OK = False
+        else:
+            self.Frame_Totals.Frame_View()
+            self.Frame_Totals_OK = True
+        Title  = "         ----------     confronto  tra  totale movimenti nel Db    e    totale righe in xlsx     ----------         "
+        self.Frame_Totals.Frame_Title(Title)
+        if not self.Frame_Totals_Load():
+            # A) Nascondi immediatamente la finestra per non farla vedere monca
+            # self.withdraw()
+            # B) Pianifica la distruzione appena l'__init__ ha terminato
+            self.after(0, self.Call_OnClose)
+            return
+        self.geometry(TOP_TR_VIEW_GEOMETRY)
+
+        # --------------------------   Create Transactions records   --------------------------
+        self.Frame_Transactions  = TheFrame(self, 10, 130, self.Clk_On_Transaction)
+        self.Frame_Transactions_Setup()
+        self.Frame_Transactions.Frame_View()
         self.Frame_Transactifons_Load()
         self.Transact_Id_Selcted = None
-
-        self.Totals_dictionary  = Totals_dict_default
-        pass
 
     # ---------------------------------------------------------------------------------------------
     def Call_OnClose(self):
@@ -88,21 +98,22 @@ class Top_View_Transact(tk.Toplevel):
         self.Transact_Id_Selcted = None
 
     # ---------------------------------------------------------------------------------------------
-    # def Clk_Delete_Transact_Db(self):
-    #         Full_transact_filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
-    #         transact_filename = Get_File_Name(Full_transact_filename)
-    #         Messg  = f"Confermi di cancellare il Db  {transact_filename}"
-    #         Msg_Dlg = Message_Dlg(MSG_BOX_ASK, Messg)
-    #         Msg_Dlg.wait_window()
-    #         Reply = Msg_Dlg.data
-    #         if Reply == YES:
-    #             # filepath = Full_transact_filename
-    #             # È sempre buona norma verificare prima se il file esiste davvero
-    #             if os.path.exists(Full_transact_filename):
-    #                 os.remove(Full_transact_filename)
-    #                 print(f"file {transact_filename}\neliminato")
-    #             else:
-    #                 print("Il file non esiste a quel percorso.")
+    def Frame_Totals_Load(self):
+        if not self.Frame_Totals_OK:
+            return False
+        if self.View_Transact_mode == FIDEU:
+            Conto = FIDEU
+        elif self.View_Transact_mode == FLASH:
+            Conto = FLASH
+        else:
+            Conto = FIDFLH
+        List   = self.Data.get_totals_dict_as_list(Conto)
+        result = self.Frame_Totals.Load_Row_Values(List)
+        if result != '':
+            msg_dlg = Message_Dlg(MSG_BOX_ERR, result)
+            msg_dlg.wait_window()
+            return False
+        return True
 
     # ---------------------------------------------------------------------------------------------
     def Frame_Transactifons_Load(self):
@@ -150,7 +161,6 @@ class Top_View_Transact(tk.Toplevel):
         #
         self.Frame_Transactions.Frame_Title(FrameText)
         self.Frame_Transactions.Load_Row_Values(view_list)
-        self.Frame_Transactions.Frame_View()
 
     # ---------------------------------------------------------------------------------------------
     def Clk_On_Transaction(self, Values):
@@ -179,13 +189,17 @@ class Top_View_Transact(tk.Toplevel):
     # ----------------------------------------------------------------------------------------------
     def Frame_Totals_Setup(self):
         Nrow = 1
-        Ncol = 10
-        Headings = ['#0','Conto', 'Cod.Std', 'Cod.Gener', 'Da inser.', 'Totale Db', 'Cod.Std.Ins.','Cod.Std. da ins.', 'NoCod Ins.', ' NoCod. da ins ', 'Totale xlsx']
-        Anchor   = ['c', 'c',     'c',       'c',         'c',         'c',         'c',           'c',                   'c',          'c',               'c']
-        Width    = [ 0,   60,      90,        90,          90,          100,         120,           120,                   120,          120,              130 ]
+        Ncol = 6
+        Headings = ['#0','Conto', 'Righe inserite', 'Cod.std da inserire', 'Senza codici da inserire', 'Totale calcolato ', 'Totale xlsx']
+        Anchor   = ['c', 'c',     'c',                'c',                 'c',                        'c',                        'c',  ]
+        Width    = [ 0,   70,      200,                200,                 200,                        120,                        120, ]
         Form_List = [Nrow, Ncol, Headings, Anchor, Width]
-        self.Frame_Totals.Tree_Setup_Strech(Form_List, ['#10'])
-        pass
+        result = self.Frame_Totals.Tree_Setup_Strech(Form_List, ['#6'])
+        if result != '':
+            msg_dlg = Message_Dlg(MSG_BOX_ERR,  result)
+            msg_dlg.wait_window()
+            return False
+        return True
 
     # ---------------------------------------------------------------------------------------------
     #                     0    1     2      3      4      5      6      7        8      9
@@ -215,10 +229,10 @@ class Top_View_Transact(tk.Toplevel):
                     break
 
     # ---------------------------------------------------------------------------------------------
-    def get_dates_from_listToInsert(self, Id):
-        status, data = self.Data.Get_transact_rec_from_id(Id)
-        if not status:
-            return False, ['---- -- --', '---- -- --']
-        return data[IX_TRANSACT_CONTAB], data[IX_TRANSACT_VALUTA]
+    # def get_dates_from_listToInsert(self, Id):
+    #     status, data = self.Data.Get_transact_rec_from_id(Id)
+    #     if not status:
+    #         return False, ['---- -- --', '---- -- --']
+    #     return data[IX_TRANSACT_CONTAB], data[IX_TRANSACT_VALUTA]
 
 # =================================================================================================

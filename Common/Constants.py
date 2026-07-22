@@ -551,27 +551,18 @@ Default_selections_dictionary  = {
 #
 # -----------------------------------------------------------------------------------------------------------
 TOT_CONTO           = 'Conto for totals Db - xlsx'
-TOT_COD_STD         = 'Total standard codes in Db'
-TOT_COD_GENER       = 'Total generic codes in Db'
-TOT_TO_INSERT       = 'Total recods to be inserted in Db'
-TOT_REC_FOR_DB      = 'Total  record for  Db'
-
-TOT_STD_TO_INSERT   = 'Total standard code to be inserted'
-TOT_NOCODE_INSERTED = 'Total rows no code inserted'
-TOT_NOCOD_TO_INSERT = 'Total rows no code to be inserted'
-TOT_ROWS_XLSX       = 'Conto per i totali'
-
-Totals_dict_default = {
-                        TOT_CONTO:           0,
-                        TOT_COD_STD:         0,
-                        TOT_COD_GENER:       0,
-                        TOT_TO_INSERT:       0,
-                        TOT_REC_FOR_DB:      0,
-
-                        TOT_STD_TO_INSERT:   0,
-                        TOT_NOCODE_INSERTED: 0,
-                        TOT_NOCOD_TO_INSERT: 0,
-                        TOT_ROWS_XLSX:       0
-                    }
+TOT_ROWS_INSERTED   = 'Total rows (std+gen) codes in Db'
+TOT_STD_COD_TOBE_INS = 'Total recods to be inserted in Db'
+TOT_NOCOD_TO_INSERT  = 'Total rows no code to be inserted'
+TOT_CALCULATED       = 'Totale calcolato'
+TOT_ROWS_IN_XLSX     = 'Total rows in xlsx'
+Totals_dict_default  = {
+                        TOT_CONTO:           FIDEU,
+                        TOT_ROWS_INSERTED:    100,       #  sweep 1  on With_Codes  inserted
+                        TOT_STD_COD_TOBE_INS:  20,       #    "  "       " " "      not inserted
+                        TOT_NOCOD_TO_INSERT:   10,       #  =  0 + 1 + 2
+                        TOT_CALCULATED:        0,
+                        TOT_ROWS_IN_XLSX:      0,
+                      }
 
 # ===========================================================================================================

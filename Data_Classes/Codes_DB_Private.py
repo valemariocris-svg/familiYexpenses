@@ -169,36 +169,36 @@ class Codes_DB_Private(Files_Names_Manager):
 
 
     # ------   Check if in codes table esists multiple StrToSearch matching in more Full_Descr ---
-    def _Check_Codesdatabase(self, Db_Select):
-        if Db_Select == CHECK_DBCODES_LOADED:
-            TR_Codes_Table = self._TR_Codes_Table.copy()
-        else:         # CHECK TUPLES DBCODES
-            TR_Codes_Table = self._tTR_Codes_Table.copy()
-        self._Multi_Codes_Matching_List = []
-        # TRcodesToCheck = TR_Codes_Table.copy()
-        # First loop for each code to be Checked  =====================================
-        for Rec_To_Check in TR_Codes_Table:
-            # Code_ToCheck = Rec_To_Check[IX_TR_TR_CODE]
-            StrToCek      = Rec_To_Check[IX_TR_TR_STR_TO_FIND]
-
-            if not GENERIC_CODE in StrToCek:
-                StrToCek_List = GetStrList_ForFind(StrToCek)
-                # second loop to compare Rec_To_Check with the remanent Codes  ============
-                for Rec in TR_Codes_Table:
-                    # Code_InChecking = Rec[IX_TR_TR_CODE]
-                    # ---------------------------------------------------------------------
-                    if Rec == Rec_To_Check:   # ---- >>>>>>  it's himself   <<<<<<< -------
-                        pass
-                    # ---------------------------------------------------------------------
-
-                    else:
-                        FullDescr = Rec[IX_TR_TR_FULL_DESC]
-                        if StrToFind_in_Fulldescr(StrToCek_List, FullDescr):
-                            if not Rec_To_Check in self._Multi_Codes_Matching_List:
-                                self._Multi_Codes_Matching_List.append(Rec_To_Check)
-                            self._Multi_Codes_Matching_List.append(Rec)
-                TR_Codes_Table.remove(TR_Codes_Table[0])
-        return self._Multi_Codes_Matching_List
+    # def _Check_Codesdatabase(self, Db_Select):
+    #     if Db_Select == CHECK_DBCODES_LOADED:
+    #         TR_Codes_Table = self._TR_Codes_Table.copy()
+    #     else:         # CHECK TUPLES DBCODES
+    #         TR_Codes_Table = self._tTR_Codes_Table.copy()
+    #     self._Multi_Codes_Matching_List = []
+    #     # TRcodesToCheck = TR_Codes_Table.copy()
+    #     # First loop for each code to be Checked  =====================================
+    #     for Rec_To_Check in TR_Codes_Table:
+    #         # Code_ToCheck = Rec_To_Check[IX_TR_TR_CODE]
+    #         StrToCek      = Rec_To_Check[IX_TR_TR_STR_TO_FIND]
+    #
+    #         if not GENERIC_CODE in StrToCek:
+    #             StrToCek_List = GetStrList_ForFind(StrToCek)
+    #             # second loop to compare Rec_To_Check with the remanent Codes  ============
+    #             for Rec in TR_Codes_Table:
+    #                 # Code_InChecking = Rec[IX_TR_TR_CODE]
+    #                 # ---------------------------------------------------------------------
+    #                 if Rec == Rec_To_Check:   # ---- >>>>>>  it's himself   <<<<<<< -------
+    #                     pass
+    #                 # ---------------------------------------------------------------------
+    #
+    #                 else:
+    #                     FullDescr = Rec[IX_TR_TR_FULL_DESC]
+    #                     if StrToFind_in_Fulldescr(StrToCek_List, FullDescr):
+    #                         if not Rec_To_Check in self._Multi_Codes_Matching_List:
+    #                             self._Multi_Codes_Matching_List.append(Rec_To_Check)
+    #                         self._Multi_Codes_Matching_List.append(Rec)
+    #             TR_Codes_Table.remove(TR_Codes_Table[0])
+    #     return self._Multi_Codes_Matching_List
 
   
     # -------------------------------------------------------------------------------------- #
