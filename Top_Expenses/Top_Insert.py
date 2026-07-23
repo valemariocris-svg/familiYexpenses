@@ -237,8 +237,8 @@ class Top_Insert(tk.Toplevel):
         self.Conto       = self.Files_Ident[IX_XLSX_CONTO]
         self.intYear     = self.Files_Ident[IX_XLSX_YEAR]
         self.intMonth    = self.Files_Ident[IX_XLSX_MONTH]
-        Texto = 'Clear Transactions  ' + str(self.intYear)
-        self.Btn_Clear_Db.Set_Text(Texto)
+        # Texto = 'Clear Transactions  ' + str(self.intYear)
+        # self.Btn_Clear_Db.Set_Text(Texto)
 
         Full_Transact_Name = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
         Transact_Name      = Get_File_Name(Full_Transact_Name)

@@ -238,7 +238,7 @@ class Xlsx_Manager(Codes_db):
                 print(TRcodeList, Row[IX_ROW_COMP_FULLDES])
                 message  = f"la descrizione completa per la riga={str(Row[IX_ROW_COMP_NROW])}\n"
                 message += f"{Row[IX_ROW_COMP_FULLDES]}\n\n"
-                message += f"Contab: {Row[IX_ROW_COMP_CONT]}  Valuta: {Row[IX_ROW_COMP_VAL]}  "
+                message += f"Contab: {Row[IX_ROW_COMP_CONTAB]}  Valuta: {Row[IX_ROW_COMP_VAL]}  "
                 message += f"Accred: {Row[IX_ROW_COMP_ACCR]}  Addeb: {Row[IX_ROW_COMP_ADDEB]}\n"
                 message += f"combacia con piu stringhe per la ricerca\n\n"
                 for code in TRcodeList:
@@ -247,15 +247,32 @@ class Xlsx_Manager(Codes_db):
                 return False, message
 
             else:  # Code NOT found
-                self._tWihtout_Code_Tree_List.append(Row)
+                myRow = [Row[IX_ROW_COMP_NROW], self._tXlsx_Conto, Row[IX_ROW_COMP_CONTAB], Row[IX_ROW_COMP_VAL],
+                         Row[IX_ROW_COMP_ACCR], Row[IX_ROW_COMP_ADDEB], Row[IX_ROW_COMP_FULLDES] ]
+
+                self._tWihtout_Code_Tree_List.append(myRow)
                 self._tTotWithout_Code += 1
                 pass
         return True, ''
 
+    # sql = """CREATE TABLE TRANSACT \
+    #      ( \
+    #          "Ident"   INTEGER NOT NULL UNIQUE, \
+    #          "nRow"    INTEGER, \
+    #          "Conto"   TEXT, \
+    #          "Contab"  TEXT, \
+    #          "Valuta"  TEXT, \
+    #          "Accred"  FLOAT, \
+    #          "Addeb"   FLOAT, \
+    #          "TRdesc"  TEXT, \
+    #          "TRcode"  INTEGER, \
+    #          "FullDes" TEXT, \
+    #          PRIMARY KEY ("Ident" AUTOINCREMENT)
+    #      )"""
     # -----------------------------Code(TRcode)---------------------------------------------------------------
     def Insert_On_WithCode_List(self, Row, TRcode):
         TRdesc = self.Get_TrDesc_FromCode(TRcode)
-        RecForIns   = [Row[IX_ROW_COMP_NROW], Row[IX_ROW_COMP_CONT], Row[IX_ROW_COMP_VAL],
+        RecForIns   = [Row[IX_ROW_COMP_NROW], self._tXlsx_Conto, Row[IX_ROW_COMP_CONTAB], Row[IX_ROW_COMP_VAL],
                        Row[IX_ROW_COMP_ACCR], Row[IX_ROW_COMP_ADDEB],
                        TRdesc, TRcode,
                        Row[IX_ROW_COMP_FULLDES] ]

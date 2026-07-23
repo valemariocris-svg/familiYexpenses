@@ -208,7 +208,7 @@ class Top_View_Transact(tk.Toplevel):
     def Frame_Transactions_Setup(self):
         Nrow = 33
         Ncol = 10
-        Headings = ['#0','Ident', 'Riga', 'Conto', 'Contab', 'Valuta', 'Accred  ','Addeb  ', 'Descrizione', ' Codice ', 'Descizione Compl.']
+        Headings = ['#0','Ident', 'Riga', 'Conto', 'Contab', 'Valuta', 'Accred  ','Addeb  ', 'Descrizione', ' Codice ', 'Descizione Completa']
         Anchor   = ['c', 'c',     'c',    'c',     'c',      'c',      'e',       'e',         'w',         'c',        'w']
         Width    = [ 0,   60,      60,     60,      90,       90,       70,        60,         160,         80,         320 ]
         Form_List = [Nrow, Ncol, Headings, Anchor, Width]

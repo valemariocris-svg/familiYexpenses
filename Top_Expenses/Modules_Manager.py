@@ -43,7 +43,6 @@ class Modules_Manager:
         elif Top_to_launch == TOP_CODES_MNGR: # or\
             # Top_to_launch == TOP_XLSX_VIEW or \   # these top windows are
             # Top_to_launch == TOP_GR_MNGR          # launched only from Top_Codes_Mngr
-            # Top_to_launch == TOP_INS:
             if not self.Check_xlsx(Origin):
                 msg_dlg = Message_Dlg(MSG_BOX_ERR, "an xlsx file must be selected")
                 msg_dlg.wait_window()  # diagnostic in Sel_Xlsx_Mngr
@@ -51,17 +50,8 @@ class Modules_Manager:
             if not self.Load_xlsx_Mngr(Origin):
                 return
 
-            if not self.Check_create_transact_database_for_xlsx_filename():
-               return
-            File_Name = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
-
-            if File_Name == UNKNOWN:
-                dlg_msg = Message_Dlg(MSG_BOX_ERR, "FATAL ERROR 26:\nthe transactions file not found ")
-                dlg_msg.wait_window()
+            if not self.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(Origin):
                 return
-            if not self.Load_Transact_Mngr(Origin):
-                return
-            self.Data.Create_records_to_insert_list()
 
         # ---------------------------------------------------------------------------
         elif Top_to_launch == TOP_QUERY:
@@ -73,6 +63,21 @@ class Modules_Manager:
             #     return
         TopLevel = self._Get_TopLev(Top_to_launch)
         TopLevel([])
+
+    # -----------------------------------------------------------------------------------------------
+    def check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(self, Origin):
+        if not self.Check_create_transact_database_for_xlsx_filename():
+            return False
+        File_Name = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
+
+        if File_Name == UNKNOWN:
+            dlg_msg = Message_Dlg(MSG_BOX_ERR, "FATAL ERROR 26:\nthe transactions file not found ")
+            dlg_msg.wait_window()
+            return False
+        if not self.Load_Transact_Mngr(Origin):
+            return False
+        self.Data.Create_rows_to_insert_list()
+        return True
 
     # ============================================================================================= #
     # manage  codes  xlsx  transactions:

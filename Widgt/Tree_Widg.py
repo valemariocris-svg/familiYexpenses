@@ -85,14 +85,16 @@ class TheFrame(tk.LabelFrame):
         self.Width       = Form_List[IX_TREE_WIDTH]
         self.Tree.configure(height=self.Nrows)
 
-        tot_col = self.nColToVis + 1
-        if len(self.Headings) != tot_col or len(self.Anchor) != tot_col or len(self.Anchor) != tot_col or len(self.Width) != tot_col:
-            return 'Mismathing on number of columns '
-        str_last_col = IdStretch_List[0]
-        last_stretch = int(str_last_col[1:])
-        if (tot_col-1) != last_stretch:
-            return f"Mismathing on getting {IdStretch_List}  tot column= {tot_col} "
+        lenHead = len(self.Headings)
+        if lenHead != len(self.Anchor) or lenHead != len(self.Width):
+            return f"Columns mismacthing on \n\n{self.Headings}\n\n{self.Anchor}\n\n{self.Width}"
         pass
+
+        # str_last_col = IdStretch_List[0]
+        # last_stretch = int(str_last_col[1:])
+        # if (tot_col-1) != last_stretch:
+        #     return f"Mismathing on getting {IdStretch_List}  tot column= {tot_col} "
+        # pass
 
         self.Tree['columns'] = list(range(self.nColToVis))
         self.Tree.heading("#0", text="", anchor='w')
@@ -113,30 +115,69 @@ class TheFrame(tk.LabelFrame):
     # -------------------  NOT  checked on colunms number  ------------------------
     def Tree_Setup(self, Form_List):
         self.Delete_All_Rows()
-        self.Nrows       = Form_List[IX_TREE_ROW]
-        self.nColToVis   = Form_List[IX_TREE_COLMN]
-        self.Headings    = Form_List[IX_TREE_HEAD]
-        self.Anchor      = Form_List[IX_TREE_ANCHOR]
-        self.Width       = Form_List[IX_TREE_WIDTH]
+        self.Nrows = Form_List[IX_TREE_ROW]
+        self.nColToVis = Form_List[IX_TREE_COLMN]
+        self.Headings = Form_List[IX_TREE_HEAD]
+        self.Anchor = Form_List[IX_TREE_ANCHOR]
+        self.Width = Form_List[IX_TREE_WIDTH]
         self.Tree.configure(height=self.Nrows)
 
-        # ***************************************************************************
-        tot_col = self.nColToVis + 1
-        if len(self.Headings) != tot_col or len(self.Anchor) != tot_col or len(self.Anchor) != tot_col or len(self.Width) != tot_col:
-            return 'Mismathing on number of columns '
-        pass
-        # *****************************************************************************************
+        # 1. Nascondiamo del tutto la colonna '#0' dell'albero (Tree) che non usiamo
+        self.Tree["show"] = "headings"  # <--- Questo elimina la colonna radice ed evita pasticci
 
-        self.Tree['columns'] = list(range(self.nColToVis))
-        self.Tree.heading("#0", text="", anchor='w')
-        self.Tree.column("#0", width=0, stretch=False)
-        for jj in range(1, self.nColToVis + 1):
-            self.Tree.column(f'#{jj}', width=self.Width[jj], anchor=self.Anchor[jj])
-            self.Tree.heading(f'#{jj}', text=self.Headings[jj], anchor=self.Anchor[jj])
+        # 2. Definiamo i nomi delle colonne dati (es. ['col1', 'col2', 'col3'...])
+        # Ignoriamo il primo elemento [0] se era riservato all'header '#0'
+        col_names = [f"col_{i}" for i in range(1, len(self.Headings))]
+        self.Tree['columns'] = col_names
 
-        self.Tree.tag_configure("oddrow", background="white", )
-        self.Tree.tag_configure("evenrow", background="lightblue", )
+        # 3. Ciclo di configurazione usando I NOMI DELLE COLONNE
+        for jj, col_name in enumerate(col_names, start=1):
+            # Configuriamo la colonna usando il suo nome 'col_name'
+            self.Tree.column(
+                col_name,
+                width=self.Width[jj],
+                anchor=self.Anchor[jj],
+                stretch=False
+            )
+            self.Tree.heading(
+                col_name,
+                text=self.Headings[jj],
+                anchor=self.Anchor[jj]
+            )
+
+        self.Tree.tag_configure("oddrow", background="white")
+        self.Tree.tag_configure("evenrow", background="lightblue")
         return ''
+        # self.Delete_All_Rows()
+        # self.Nrows       = Form_List[IX_TREE_ROW]
+        # self.nColToVis   = Form_List[IX_TREE_COLMN]
+        # self.Headings    = Form_List[IX_TREE_HEAD]
+        # self.Anchor      = Form_List[IX_TREE_ANCHOR]
+        # self.Width       = Form_List[IX_TREE_WIDTH]
+        # self.Tree.configure(height=self.Nrows)
+        #
+        # # ***************************************************************************
+        # lenHead = len(self.Headings)
+        # if lenHead != len(self.Anchor) or lenHead != len(self.Width):
+        #     return f"Columns mismacthing on \n\n{self.Headings}\n\n{self.Anchor}\n\n{self.Width}"
+        # pass
+        # # *****************************************************************************************
+        #
+        # self.Tree['columns'] = list(range(lenHead))
+        # self.Tree.heading("#0", text="", anchor='w')
+        # self.Tree.column("#0", width=0, stretch=False)
+        # for jj in range(1, lenHead):
+        #     print(jj)
+        #     pass
+        #     # for i in range(1, len(Headings)):
+        #     #     col_id = f"#{i}"
+        #     #     self.Tree.column(col_id, width=Width[i], anchor=Anchor[i], stretch=False)
+        #     self.Tree.column(f'#{jj}', width=self.Width[jj], anchor=self.Anchor[jj], stretch=False)
+        #     self.Tree.heading(f'#{jj}', text=self.Headings[jj], anchor=self.Anchor[jj])
+        #
+        # self.Tree.tag_configure("oddrow", background="white", )
+        # self.Tree.tag_configure("evenrow", background="lightblue", )
+        # return ''
 
     # ----------------------------------  Load Values of Rows  --------------------------
     #   VERY IMPORTANT  List MUST  BE  list of lists  [ [], []... ]
@@ -145,17 +186,17 @@ class TheFrame(tk.LabelFrame):
         self.Loaded_List = List
         self.Delete_All_Rows()
         if not List:
-            return ''
-        inner_list = List[0]
-        if type(inner_list) is not list:
-            return  'Load_Row_Values list NOT a List of list'
-        count = 0
+            return ''       # No row to be loaded
+        if type(List[0]) is not list:   # List contains list for every row
+            return  f"Load_Row_Values list NOT a list of list on\n\n{self.Headings}"
         List_len = len(List[0])
-        if List_len != self.nColToVis:
-            return 'Load_Row_Values list len NOT equal nCol_TovVis'
+        # if List_len != self.nColToVis + 1:
+        #     return f"Load_Row_Values list len {str(List_len)}\nNOT equal to nCol_ToViw  {self.nColToVis}   for\n\n{self.Headings}"
+
+        count = 0
         for Row in List:
             TreeRow = []
-            for i in range(0, self.nColToVis):
+            for i in range(0, List_len):  #self.nColToVis):
                 Val = str(Row[i]).replace('\n', '', 5)
                 if Val == 'None':
                     Val = ''

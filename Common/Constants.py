@@ -297,13 +297,15 @@ IX_XLSX_DEBIT    = 5
 IX_XLSX_DESC2    = 6
 
 IX_XLSX_WITH_ROW     = 0
-IX_XLSX_WITH_CONTAB  = 1
-IX_XLSX_WITH_VALUTA  = 2
-IX_XLSX_WITH_ACCR    = 3
-IX_XLSX_WITH_DEBIT   = 4
-IX_XLSX_WITH_TRDESC  = 5
-IX_XLSX_WITH_FULLDES = 6
+IX_XLSX_WITH_CONTO   = 1
+IX_XLSX_WITH_CONTAB  = 2
+IX_XLSX_WITH_VALUTA  = 3
+IX_XLSX_WITH_ACCR    = 4
+IX_XLSX_WITH_DEBIT   = 5
+IX_XLSX_WITH_TRDESC  = 6
 IX_XLSX_WITH_TRCODE  = 7
+IX_XLSX_WITH_FULLDES = 8
+
 
 
 #   -----  Database  /TRNSACTIONS/Transact_2024.db  ----------
@@ -385,7 +387,7 @@ IX_ROW_DESCR2 = 6
 
 # all Xlsx Rows         (Compact)
 IX_ROW_COMP_NROW    = 0
-IX_ROW_COMP_CONT    = 1
+IX_ROW_COMP_CONTAB  = 1
 IX_ROW_COMP_VAL     = 2
 IX_ROW_COMP_ACCR    = 3
 IX_ROW_COMP_ADDEB   = 4
@@ -393,21 +395,23 @@ IX_ROW_COMP_FULLDES = 5  # (Descr1/Descr2
 
 # List_WithoutCode      (only without code)
 IX_NO_CODE_NROW       = 0
-IX_NO_CODE_CONTAB     = 1
-IX_NO_CODE_VALUTA     = 2
-IX_NO_CODE_ACCRED     = 3
-IX_NO_CODE_ADDEB      = 4
-IX_NO_CODE_FULL_DESCR = 5     # The Fulll_Desc of Row inserted in Transact_Db
+IX_NO_CODE_CONTO      = 1
+IX_NO_CODE_CONTAB     = 2
+IX_NO_CODE_VALUTA     = 3
+IX_NO_CODE_ACCRED     = 4
+IX_NO_CODE_ADDEB      = 5
+IX_NO_CODE_FULL_DESCR = 6     # The Fulll_Desc of Row inserted in Transact_Db
 
 # List_WithCode         (only with code)
 IX_WITH_CODE_NROW       = 0
-IX_WITH_CODE_CONTAB     = 1
-IX_WITH_CODE_VALUTA     = 2
-IX_WITH_CODE_ACCRED     = 3
-IX_WITH_CODE_ADDEB      = 4
-IX_WITH_CODE_TR_DESCR   = 5
-IX_WITH_CODE_TR_CODE    = 6
-IX_WITH_CODE_FULL_DESCR = 7  # The Fulll_Desc of Row inserted in Transact_Db
+IX_WITH_CODE_CONTO      = 1
+IX_WITH_CODE_CONTAB     = 2
+IX_WITH_CODE_VALUTA     = 3
+IX_WITH_CODE_ACCRED     = 4
+IX_WITH_CODE_ADDEB      = 5
+IX_WITH_CODE_TR_DESCR   = 6
+IX_WITH_CODE_TR_CODE    = 7
+IX_WITH_CODE_FULL_DESCR = 8  # The Fulll_Desc of Row inserted in Transact_Db
 
 # List_View_Codes
 IX_WIEW_TR_CODE    = 0

@@ -28,12 +28,8 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.GR_List = self.Data.Get_GR_Codes_Table()
         # --------------------------- Group Select Combo  -----------------------------------------------------------
         self.ComboList = self.Data.Get_GRdescr_Ordered_List()
-        self.GR_Combo1 = TheCombo(self.Canv_CodData, self.StrVar1, 80, 100, 32, 36,
+        self.GR_Combo1 = TheCombo(self.Canv_CodData, self.StrVar, 80, 100, 32, 36,
                                   self.ComboList, GROUPSEL, self.Clk_Combo)
-
-        # --------------------------         B U T T O N S        ---------------------------------------------------
-        # self.Btn_SelGeneric.Set_Text('Seleziona un codice')    # defined on Super for Ena/Disab for Clk on Frames
-        # self.Btn_SelGeneric.configure(command=self.Clk_Generic_Select)
 
         self.geometry(TOP_MNGR_GEOMETRY)
 
@@ -50,7 +46,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         TheButton(self.Canv_CodMngr, BTN_DEF_EN, 215,  30, 20, "crea codice generico", self.Clk_Add_Generic)
         TheButton(self.Canv_CodMngr, BTN_DEF_EN,  10,  75, 20, "aggiorna codice", self.Clk_Update)
         TheButton(self.Canv_CodMngr, BTN_DEF_EN,  215, 75, 20, "cancella  codice",self.Clk_Delete)
-        TheButton(self.Canv_CodMngr, BTN_DEF_EN,   10,120, 20, "selez. un codice generico", self.Clk_code_sel)
+        TheButton(self.Canv_CodMngr, BTN_DEF_EN,   10,120, 20, "selez. un codice generico", self.Clk_gen_code_sel)
 
         #    canvas on Super_Top_Codes_Mngr.py
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,   10,   30,  19, "inserisci mov. nel Db", self.Clk_launch_top_insert)
@@ -85,11 +81,11 @@ class Top_Codes_Mngr(Super_Top_Mngr):
     # ------------------------------------------------------------------------------------------------------
     def Child_ClkNoCode(self):
         self.Clear_Text_Widg(False)
-        self.Txt_StrFullDesc1.Set_Text(self.Row_WithoutCode[IX_NO_CODE_FULL_DESCR])
+        self.Txt_StrFullDesc1.Set_Text(self.FullDesc_OnClick_NoCode)
 
     # ---------------------------------------------------------------------------------------------
     def Child_ClkWithCode(self):
-        pass
+        self.Txt_StrFullDesc1.Set_Text(self.FullDesc_OnClick_WithCode)
 
     # ---------------------------------------------------------------------------------------------
     def Set_Conto_Year(self):
@@ -104,21 +100,20 @@ class Top_Codes_Mngr(Super_Top_Mngr):
     # ---------------------------------------------------------------------------------------------
     def Clk_With_out(self):
         self.Row_WithoutCode = None
-        self.Frame_NoCodes.Clear_Focus()
-        self.Frame_WithCodes.Clear_Focus()
+        self.Frame_NoCodes_ToIns.Clear_Focus()
+        self.Frame_WithCodes_ToIns.Clear_Focus()
         self.Clear_Text_Widg(True)
         if self.View_Without_Code:
             self.View_Without_Code = False
         else:
             self.View_Without_Code = True
-            # self.Canv_Sel_Genr.Btn_Disable()
         self.View_Frames(-1)
 
     # ---------------------------------------------------------------------------------------------
     def Clk_Sel_Codes(self):
         self.Row_WithoutCode = None
-        self.Frame_NoCodes.Clear_Focus()
-        self.Frame_WithCodes.Clear_Focus()
+        self.Frame_NoCodes_ToIns.Clear_Focus()
+        self.Frame_WithCodes_ToIns.Clear_Focus()
         self.Mod_Mngr.Sel_Codes_Mngr(TOP_CODES_MNGR)
         self.Mod_Mngr.Initialize_codes_xlsx_transact(TOP_CODES_MNGR)
 
@@ -126,8 +121,8 @@ class Top_Codes_Mngr(Super_Top_Mngr):
     def Clk_Sel_xlsx(self):
         if not self.Mod_Mngr.Sel_Xlsx_Mngr(TOP_CODES_MNGR):
             return
-        self.Frame_NoCodes.Clear_Focus()
-        self.Frame_WithCodes.Clear_Focus()
+        self.Frame_NoCodes_ToIns.Clear_Focus()
+        self.Frame_WithCodes_ToIns.Clear_Focus()
         self.Load_Trees()
 
     # --------------------------------------------------------------------------------------------
@@ -145,7 +140,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
     def Clk_View_Codes(self):   # from Button Codes View
         self.Row_WithoutCode = None
         self.Top_View_Type = VIEW_ALL_LARGE
-        self.Frame_NoCodes.Clear_Focus()
+        self.Frame_NoCodes_ToIns.Clear_Focus()
         self.Mod_Mngr.Top_Launcher(TOP_CODES_VIEW, TOP_CODES_MNGR,
                                    [VIEW_ALL_LARGE])  # Launch Top_Codes_View for ALL Large
 
@@ -175,7 +170,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             else:
                 pass
         else:
-            self.Frame_WithCodes.Clear_Focus()           # === Clicked On Codes View No Code Waiting
+            self.Frame_WithCodes_ToIns.Clear_Focus()           # === Clicked On Codes View No Code Waiting
             self.Row_WithoutCode = None
             self.TR_Code   = TR_Full_List[IX_TR_FULL_TR_CODE]
             self.TR_Desc   = TR_Full_List[IX_TR_FULL_TR_DESC]
@@ -214,7 +209,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         return False
 
     # ---------------------------------------------------------------------------------------------
-    def Clk_code_sel(self):   # from Button  Select a generic Code
+    def Clk_gen_code_sel(self):
         if not self.Row_WithoutCode:
             Msg_Dlg = Message_Dlg(MSG_BOX_INFO, 'Please select a Row without Code')
             Msg_Dlg.wait_window()
@@ -231,10 +226,8 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             self.Top_View_Type = VIEW_ALL_REDUC
 
     # ----------------------------------------------------------------------------------- #
-    # List_Rows_WithoutCode : nRow  Contab  Valuta  Accr     Addeb   FullDes              #
-    # List_Rows_WithCode    : nRow  Contab  Valuta  TR_Desc  Accred  Addeb    TR_Code      #
-    # ----------------------------------------------------------------------------------- #
     def Set_Selected_Code(self, TRfull_Rec):
+        pass
         self.TR_Code  = int(TRfull_Rec[IX_TR_FULL_TR_CODE])
         TR_Desc = TRfull_Rec[IX_TR_FULL_TR_DESC]
         Messg   = 'Confirm selected code: ' + str(self.TR_Code) + '\nDescription: ' + TR_Desc + '  '
@@ -262,7 +255,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
     #          All Xlsx Records with Full description that matches StrToFind                      #
     #          are  automatically selected for insert in transactions DB                          #
     #    ***   Codes  > 10.000   are generic code that can be assigned manually to                #
-    #          any Xlsx Record. The assignement must be done for each Xlsx Row                    #
+    #          NoCode Xlsx row . The assignement must be done for each Xlsx Row                   #
     # ------------------------------------------------------------------------------------------- #
     def Clk_Add_Generic(self):
         status, data = self.Data.Get_New_Code(GENERIC_CODE)
@@ -312,7 +305,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
                 Msg_Dld.wait_window()
                 self.Frames_Refresh()
         self.Row_WithoutCode = None
-        self.Frame_WithCodes.Clear_Focus()
+        self.Frame_WithCodes_ToIns.Clear_Focus()
         return
 
     # ------------------------     ***   Update TR code Record      -------------------------------
@@ -393,14 +386,6 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         if Reply == NO:
             return False
         return True
-
-    # ---------------------------------------------------------------------------------------------
-    # def Check_IfCodeExists(self):
-    #     if not self.Data.Check_If_Code_Exist(self.TR_Code):
-    #         Msg_Dld = Message_Dlg(MSG_BOX_ERR, 'The code number do not exist')
-    #         Msg_Dld.wait_window()
-    #         return  False   # Code not  exists
-    #     return True
 
      # ----------------------------------------------------------------------------------------
     def Check_codes_record(self) -> bool:
