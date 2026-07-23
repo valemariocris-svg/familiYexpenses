@@ -194,7 +194,7 @@ class Top_View_Transact(tk.Toplevel):
         Anchor   = ['c', 'c',     'c',                'c',                 'c',                        'c',                        'c',  ]
         Width    = [ 0,   70,      200,                200,                 200,                        120,                        120, ]
         Form_List = [Nrow, Ncol, Headings, Anchor, Width]
-        result = self.Frame_Totals.Tree_Setup_Strech(Form_List, ['#6'])
+        result = self.Frame_Totals.Tree_Setup(Form_List)
         if result != '':
             msg_dlg = Message_Dlg(MSG_BOX_ERR,  result)
             msg_dlg.wait_window()
@@ -212,7 +212,7 @@ class Top_View_Transact(tk.Toplevel):
         Anchor   = ['c', 'c',     'c',    'c',     'c',      'c',      'e',       'e',         'w',         'c',        'w']
         Width    = [ 0,   60,      60,     60,      90,       90,       70,        60,         160,         80,         320 ]
         Form_List = [Nrow, Ncol, Headings, Anchor, Width]
-        self.Frame_Transactions.Tree_Setup_Strech(Form_List, ['#10'])
+        self.Frame_Transactions.Tree_Setup(Form_List)
         pass
 
     # ---------------------------------------------------------------------------------------------

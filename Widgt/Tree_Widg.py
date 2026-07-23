@@ -120,6 +120,13 @@ class TheFrame(tk.LabelFrame):
         self.Width       = Form_List[IX_TREE_WIDTH]
         self.Tree.configure(height=self.Nrows)
 
+        # ***************************************************************************
+        tot_col = self.nColToVis + 1
+        if len(self.Headings) != tot_col or len(self.Anchor) != tot_col or len(self.Anchor) != tot_col or len(self.Width) != tot_col:
+            return 'Mismathing on number of columns '
+        pass
+        # *****************************************************************************************
+
         self.Tree['columns'] = list(range(self.nColToVis))
         self.Tree.heading("#0", text="", anchor='w')
         self.Tree.column("#0", width=0, stretch=False)
@@ -129,14 +136,16 @@ class TheFrame(tk.LabelFrame):
 
         self.Tree.tag_configure("oddrow", background="white", )
         self.Tree.tag_configure("evenrow", background="lightblue", )
-        pass
+        return ''
 
     # ----------------------------------  Load Values of Rows  --------------------------
-    #   VERY IMPORTANT  List MUST  ME  list of lists  [ [], []... ]
+    #   VERY IMPORTANT  List MUST  BE  list of lists  [ [], []... ]
     def Load_Row_Values(self, List):
         # self.Tree_Scroll.pack(side='right', fill='y')
         self.Loaded_List = List
         self.Delete_All_Rows()
+        if not List:
+            return ''
         inner_list = List[0]
         if type(inner_list) is not list:
             return  'Load_Row_Values list NOT a List of list'
