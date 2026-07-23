@@ -1,12 +1,6 @@
 # ---------------------------------------------------------------------------------- #
 #            *****     Super_Top_Codes_Mngr.py     *****                             #
 #                                                                                    #
-#      here  are contained the two Frames  without/with code                         #
-#      List_Rows_WithoutCode : nRow    Date      FullDesc                            #
-#      List View Codes       : TR_Code  TR_Desc   GR_Desc  CA_Desc  StrToSearch      #
-#                                                                                    #
-#                        VIEW  DELETE  ADD  UPDATE                                   #
-#                             on the child                                           #
 # ---------------------------------------------------------------------------------- #
 from Common.Common_Functions import *
 from Chat import Ms_Chat
@@ -44,13 +38,11 @@ class Super_Top_Mngr(tk.Toplevel):
         self.Child_ClkWithCode = Child_ClkWithCode
         self.View_Without_Code = True
         self.Row_WithoutCode   = None  # it is the Row clicked on Frame_NoCodes
-        self.Rows_WitCode_List = self.Data.Get_Rows_WithCod_List()
-        self.Rows_NoCode_List  = self.Data.Get_WithoutCodeList()
 
         # ----------------------   Frames   -------------------------------------------------------------------
         self.Frame_NoCodes = TheFrame(self,   10, 20, self.Clk_OnTree_NoCodes)
         self.Frame_NoCodes_Setup()
-        self.Frame_WithCodes = TheFrame(self, 10, 20, self.Clk_OnTree_WithCodes)
+        self.Frame_WithCodes_ToIns = TheFrame(self, 10, 20, self.Clk_OnTree_WithCodes)
         self.Frame_WithCodes_Setup()
 
         # ***************************     C A N V A  S    *****************************************************
@@ -73,8 +65,6 @@ class Super_Top_Mngr(tk.Toplevel):
         self.Txt_GR_Code1     = TheText(self.Canv_CodData, TXT_DIS_BLACK,  20, 100,  5, 1, '0')
         self.Txt_CA_Code1     = TheText(self.Canv_CodData, TXT_DIS_BLACK,  20, 134,  5, 1, '0')
         self.Txt_CAdesc1      = TheText(self.Canv_CodData, TXT_DIS_BLACK,  82, 134, 33, 1, CATDESC)
-        #
-        # self.Btn_SelGeneric    = TheButton(self.Canv_Tr_Mngr, BTN_DEF_DIS, 485, 735, 19, '', None)
 
     # ---------------------------------------------------------------------------------------------------------
     def Call_OnClose(self):
@@ -105,23 +95,19 @@ class Super_Top_Mngr(tk.Toplevel):
         intValues = [Row, Values[IX_NO_CODE_CONTAB], Values[IX_NO_CODE_VALUTA],
                      flAccred, flAddeb, Values[IX_NO_CODE_FULL_DESCR]]
         self.Row_WithoutCode = intValues
-        # self.Btn_SelGeneric.Btn_Enable()
-        self.Frame_WithCodes.Clear_Focus()
+        self.Frame_WithCodes_ToIns.Clear_Focus()
         self.Child_ClkNoCode()
 
     # ==========================  T R E E     With  Codes   ===========================================
     def Frame_WithCodes_Setup(self):
-        self.Frame_WithCodes.Frame_Title('  ')
+        self.Frame_WithCodes_ToIns.Frame_Title('  ')
         Nrows     = 25
         nColToVis = 7
-        # Headings = ['#0',  'Row ', 'Contab ', 'Valuta ', 'Description',  'Accred ', 'Addeb ', 'Code ']
-        # Anchor   = ['c',   'w',     'c',       'c',       'w',            'e',       'e',      'c'    ]
-        # Width    = [ 0,     50,      80,        80,        230,            70,        70,       50    ]
         Headings = ['#0',  'Row ', 'Contab ', 'Valuta ', 'Accred  ', 'Addeb  ', 'Description ', 'Code ']
         Anchor   = ['c',   'w',     'c',       'c',      'e',        'e',       'w',           'c'    ]
         Width    = [ 0,     50,      80,        80,       70,         70,        440,           50    ]
         Form_List = [Nrows, nColToVis, Headings, Anchor, Width]
-        self.Frame_WithCodes.Tree_Setup(Form_List)
+        self.Frame_WithCodes_ToIns.Tree_Setup(Form_List)
 
     # -------------------------------------------------------------------------------------------------
     def Clk_OnTree_WithCodes(self, Values):
@@ -143,21 +129,21 @@ class Super_Top_Mngr(tk.Toplevel):
     def View_Frames(self, Total_WthoutCode):
         if Total_WthoutCode == 0:               # 0 No Rows Without codes
             self.View_Without_Code = False
-            self.Frame_WithCodes.Frame_View()
+            self.Frame_WithCodes_ToIns.Frame_View()
             self.Frame_NoCodes.Frame_Hide()
         elif Total_WthoutCode > 0:              # some Rows Without codes
             self.View_Without_Code = True
-            self.Frame_WithCodes.Frame_Hide()
+            self.Frame_WithCodes_ToIns.Frame_Hide()
             self.Frame_NoCodes.Frame_View()
         elif Total_WthoutCode < 0:              # -1 view frames as selected
             if self.View_Without_Code:
-                self.Frame_WithCodes.Frame_Hide()
+                self.Frame_WithCodes_ToIns.Frame_Hide()
                 self.Frame_NoCodes.Frame_View()
                 self.Frame_NoCodes.Clear_Focus()
             else:
-                self.Frame_WithCodes.Frame_View()
+                self.Frame_WithCodes_ToIns.Frame_View()
                 self.Frame_NoCodes.Frame_Hide()
-                self.Frame_WithCodes.Clear_Focus()
+                self.Frame_WithCodes_ToIns.Clear_Focus()
 
     # -------------------------------------------------------------------------------------------------
     def Frames_Refresh(self):
@@ -167,26 +153,28 @@ class Super_Top_Mngr(tk.Toplevel):
         self.Load_Trees()
         self.View_Frames(-1)
 
+
+
+    # self.all_rows_inserted_list            = []
+    # self.std_code_rows_to_be_insertd_list  = []
+    # self.noCode_to_be_inserted_list        = []
+    # self.rows_to_insert_list
     # -------------------------------------------------------------------------------------------------
     def Load_Trees(self):
-        With_Code_List   = self.Data.Get_WithCodeList()
+        noCode_to_be_inserted_list = self.Data.get_noCode_to_be_inserted_list()
+        len_NoCode_to_be_inserted  = len(noCode_to_be_inserted_list)
+        std_code_to_be_inserted    = self.Data.get_std_code_rows_to_be_insertd_list()
+        len_std_code_to_be_iserted = len(std_code_to_be_inserted)
         XlsxFilename     = Get_File_Name(self.Data.Get_sel_dictionary_value(XLSX_FILENAME))
-        Total            = self.Data.Get_Total_Rows()
-        Total_WthoutCode = Total[IX_TOT_ROWS_WITHOUT_CODE]
-        Total_WithCode   = Total[IX_TOT_ROWS_WITH_CODE]
-
-        TitleNoCode  = '   ' + XlsxFilename + '       senza codice:  ' + str(Total_WthoutCode)
-        TitleNoCode += '   con codice:  ' +  str(Total[IX_TOT_ROWS_WITH_CODE]) + '   '
-
-        TitleWith    = '   ' + XlsxFilename + '       con codice:  ' + str(Total_WithCode)
-        TitleWith   += '    senza codice:  ' + str(Total_WthoutCode) + '   '
+        TitleNoCode  = '   ' + XlsxFilename + '   senza codice da inserire:  ' + str(len_NoCode_to_be_inserted)
+        TitleWith    = '   ' + XlsxFilename + '   da inserire  con codice:  ' + str(len_std_code_to_be_iserted)
 
         self.Frame_NoCodes.Frame_Title(TitleNoCode)
-        self.Frame_WithCodes.Frame_Title(TitleWith)
+        self.Frame_WithCodes_ToIns.Frame_Title(TitleWith)
 
-        self.Frame_NoCodes.Load_Row_Values(self.Data.Get_WithoutCodeList())
-        self.Frame_WithCodes.Load_Row_Values(With_Code_List)
-        self.View_Frames(Total_WthoutCode)
+        self.Frame_NoCodes.Load_Row_Values(noCode_to_be_inserted_list)
+        self.Frame_WithCodes_ToIns.Load_Row_Values(std_code_to_be_inserted)
+        self.View_Frames(len_NoCode_to_be_inserted)
 
     # -------------------------------------------------------------------------------------------------
     def Clk_Combo(self, GRdesc):

@@ -5,7 +5,6 @@
 #           here are contained  the Combo  Texts  and Buttons                            #
 # -------------------------------------------------------------------------------------- #
 
-import os
 from Top_Expenses.Modules_Manager import Modul_Mngr
 from Top_Expenses.Super_Top_Codes_Mngr import Super_Top_Mngr
 
@@ -25,7 +24,6 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.Rec_Candidate = []
         self.Rec_Cand_For_ViewList = []
         self.Top_View_Type         = VIEW_ALL_LARGE
-        # self.New_Code_for_insert   = 0
 
         self.GR_List = self.Data.Get_GR_Codes_Table()
         # --------------------------- Group Select Combo  -----------------------------------------------------------

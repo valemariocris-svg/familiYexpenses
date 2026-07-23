@@ -227,7 +227,6 @@ class Xlsx_Manager(Codes_db):
         self._tTotWith_Code           = 0
         self._tTotWithout_Code        = 0
 
-
         for Row in self._tXlsx_Rows_Compact:
             Full_Desc = Row[IX_ROW_COMP_FULLDES]
             TRcodeList  = self._Find_StrToFind_InFullDesc(Full_Desc)
@@ -252,7 +251,6 @@ class Xlsx_Manager(Codes_db):
                 self._tTotWithout_Code += 1
                 pass
         return True, ''
-
 
     # -----------------------------Code(TRcode)---------------------------------------------------------------
     def Insert_On_WithCode_List(self, Row, TRcode):

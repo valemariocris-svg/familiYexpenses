@@ -117,7 +117,7 @@ class Top_Insert(tk.Toplevel):
 
     # -------------------------------------------------------------------------------------------------
     def Set_Frame_Rows(self):
-        self.Rows_WithCod_List  = self.Data.Get_Rows_WithCod_List()
+        # self.Rows_WithCod_List  = self.Data.Get_Rows_WithCod_List()
         pass
         self.Records_ToIns_List = self.Data.Get_Records_ToInsert_List()
         self.Load_Tree(self.Records_ToIns_List)

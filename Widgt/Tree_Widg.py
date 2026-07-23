@@ -75,7 +75,7 @@ class TheFrame(tk.LabelFrame):
             return int(strId)
         return 0
 
-    # -------------------------------------------
+    # -------------------  CHECKED on colunms number  ------------------------
     def Tree_Setup_Strech(self, Form_List, IdStretch_List):
         self.Delete_All_Rows()
         self.Nrows       = Form_List[IX_TREE_ROW]
@@ -110,7 +110,7 @@ class TheFrame(tk.LabelFrame):
         self.Tree.tag_configure("evenrow", background="lightblue", )
         return ''
 
-    # -------------------------------------------
+    # -------------------  NOT  checked on colunms number  ------------------------
     def Tree_Setup(self, Form_List):
         self.Delete_All_Rows()
         self.Nrows       = Form_List[IX_TREE_ROW]
