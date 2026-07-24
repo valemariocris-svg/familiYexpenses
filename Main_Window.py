@@ -215,7 +215,7 @@ class Main_Window(tk.Tk):
         self.Mod_Mngr.Add_Toplevels_Id_List([Top_View_Codes,        TOP_CODES_VIEW])
         self.Mod_Mngr.Add_Toplevels_Id_List([Top_GR_Codes_Mngr,     TOP_GR_MNGR])
         self.Mod_Mngr.Add_Toplevels_Id_List([Top_XLSX_Rows_View,    TOP_XLSX_VIEW])
-        # self.Mod_Mngr.Add_Toplevels_Id_List([Top_Insert,            TOP_INS])
+        # self.Mod_Mngr.Add_Toplevels_Id_List([Top_Insert,          TOP_INS])
         self.Mod_Mngr.Add_Toplevels_Id_List([Top_View_Transact,     TOP_VIEW_TRANSACT])
         self.Mod_Mngr.Add_Toplevels_Id_List([Top_Queries,           TOP_QUERY])
         self.Mod_Mngr.Add_Toplevels_Id_List([View_Message,          TOP_VIEW_MESS])
