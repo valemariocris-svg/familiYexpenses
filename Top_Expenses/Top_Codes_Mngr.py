@@ -50,7 +50,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         TheLable(self.Canv_Tr_Mngr, LAB_BLUE, 90, 1, 25, " gestione database movimenti   ")
 
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  10, 30, 20, "ins. righe std nel Db",   self.Clk_ins_std_code_transact)
-        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  10, 75, 20, "ins. un codice generico", self.Clk_insert_gen_code)
+        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  10, 75, 20, "abbina un codice gener.", self.Clk_insert_gen_code)
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN, 220, 30, 20, "visualizza movimenti",    self.Clk_ViewTransact)
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN, 220, 75, 20, "ricrea file movimenti",   self.Clk_Ricrea_Transact_Db)
 
