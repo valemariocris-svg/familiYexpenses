@@ -3,15 +3,15 @@
 # XLS_Row_List : nRow  Contab  Valuta  Descr1  Accred  Addeb  Descr2                #
 # ================================================================================= #
 
-from Common.Common_Functions import *
-from Chat import Ms_Chat
-from Data_Classes.Transact_DB import Data_Manager
-
-from Widgt.Dialogs import Print_Received_Message
+# from Common.Common_Functions import *
+# from Chat import Ms_Chat
+# from Data_Classes.Transact_DB import Data_Manager
+#
+# from Widgt.Dialogs import Print_Received_Message
 from Widgt.Tree_Widg import *
 from Top_Expenses.Modules_Manager import Modul_Mngr
-from Widgt.Widgets import TheButton, TheText, TheCombo
-
+# from Widgt.Widgets import TheButton, TheText, TheCombo
+from Widgt.Dialogs import *
 
 # ===================================================================================
 class Top_View_Transact(tk.Toplevel):
@@ -164,7 +164,7 @@ class Top_View_Transact(tk.Toplevel):
 
     # ---------------------------------------------------------------------------------------------
     def Clk_On_Transaction(self, Values):
-        Id = int(Values[IX_TRANSACT_IDENT])
+        Id = 0  #int(Values[IX_TRANSACT_IDENT])
         status, data = self.Data.Get_transact_rec_from_id(Id)
         if not status:
             return
@@ -173,8 +173,8 @@ class Top_View_Transact(tk.Toplevel):
         record = data
 
         self.Transact_Id_Selcted = record[0]
-        self.Txt_dateContab.Set_Text(record[IX_TRANSACT_CONTAB])
-        self.Txt_dateValuta.Set_Text(record[IX_TRANSACT_VALUTA])
+        self.Txt_dateContab.Set_Text(record[IX_ROW_TOINS_VALUTA])
+        self.Txt_dateValuta.Set_Text(record[IX_ROW_TOINS_VALUTA])
         FullDesc = record[IX_TRANSACT_FULL_DESC]
         self.Txt_FullDesc.Set_Text(FullDesc)
         self.TR_Code = record[IX_TRANSACT_TR_CODE]
@@ -227,12 +227,5 @@ class Top_View_Transact(tk.Toplevel):
                 if myDate == Date:
                     self.Frame_Transactions.Set_List_For_Focus(Index)
                     break
-
-    # ---------------------------------------------------------------------------------------------
-    # def get_dates_from_listToInsert(self, Id):
-    #     status, data = self.Data.Get_transact_rec_from_id(Id)
-    #     if not status:
-    #         return False, ['---- -- --', '---- -- --']
-    #     return data[IX_TRANSACT_CONTAB], data[IX_TRANSACT_VALUTA]
 
 # =================================================================================================

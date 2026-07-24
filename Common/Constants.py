@@ -313,7 +313,18 @@ TRANSACTIONS = 'TRANSACTIONS'
 TRANSACT     = 'TRANSACT'
 TRANSACT_ID  = 'TRANSACTIONS/Transact_'
 LEN_TRANSACT_FILENAME= 16
-IX_TRANSACT_IDENT    = 0
+
+IX_ROW_TOINS_NROW     = 0
+IX_ROW_TOINS_CONTO    = 1
+IX_ROW_TOINS_CONTAB   = 2
+IX_ROW_TOINS_VALUTA   = 3
+IX_ROW_TOINS_ACCRED   = 4
+IX_ROW_TOINS_ADDEB    = 5
+IX_ROW_TOINS_TR_DESC  = 6
+IX_ROW_TOINS_TR_CODE  = 7
+IX_ROW_TOINS_FULL_DESC= 8  # DESC1 / DESC2
+#
+IX_TRANSACT_IDENT    = 0  # auto inserted
 IX_TRANSACT_NROW     = 1
 IX_TRANSACT_CONTO    = 2
 IX_TRANSACT_CONTAB   = 3
@@ -496,9 +507,9 @@ DEFAULT_INIT_DIR       = '/home/mario'
 
 # -------------------------------------------------------------------------------
 # used on File_Dialog and in _sql_execute for selecting database
-CODES_FILE    = 'Codes file'    # for File_Dalog
+CODES_FILE    = 'Codes file'    # for File_Dialog
 XLSX_FILE     = 'Xlsx file'
-TRANSACT_FILE = 'Transact file'
+TRANSACT_FILE = 'Transact file' # the TRANSACT_FILENAME is used on managing transactions filename
 
 # -------------------------------------------------------------------------------
 CODES_FILENAME       = 'codes_filename'     # for selections dictionary names
@@ -522,6 +533,7 @@ TRANSACT_VIEW_MODE   = 'transact_view_mode'
 
 CLOSE_DB  = True
 KEEP_OPEN = False
+SQL_CLOSE_DB  = "close database"
 
 Dict_Keys_List = [
     CODES_FILENAME, XLSX_FILENAME, TRANSACT_FILENAME, CODES_DIRECTORY, XLSX_FILENAME, TRANSACT_DIRECTORY,

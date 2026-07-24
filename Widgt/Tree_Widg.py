@@ -6,8 +6,6 @@
 import tkinter as tk
 from tkinter import ttk
 from Common.Constants import *
-from Widgt.Dialogs import Message_Dlg
-
 class TheFrame(tk.LabelFrame):
     def __init__(self, Parent, PosX, PosY, Click_On_Tree):
         super().__init__(Parent)
@@ -69,38 +67,33 @@ class TheFrame(tk.LabelFrame):
             RowValues = self.Tree.item(strId, 'values')
             self.Clk_On_Tree(RowValues)
 
-    def Get_Index_Of_Click(self):
-        strId = self.Tree.focus()
-        if strId:
-            return int(strId)
-        return 0
+    # def Get_Index_Of_Click(self):
+    #     strId = self.Tree.focus()
+    #     if strId:
+    #         return int(strId)
+    #     return 0
 
     # -------------------  CHECKED on colunms number  ------------------------
     def Tree_Setup_Strech(self, Form_List, IdStretch_List):
         self.Delete_All_Rows()
         self.Nrows       = Form_List[IX_TREE_ROW]
-        self.nColToVis   = Form_List[IX_TREE_COLMN]
+        # self.nColToVis   = Form_List[IX_TREE_COLMN]  n.u.
         self.Headings    = Form_List[IX_TREE_HEAD]
         self.Anchor      = Form_List[IX_TREE_ANCHOR]
         self.Width       = Form_List[IX_TREE_WIDTH]
         self.Tree.configure(height=self.Nrows)
 
-        lenHead = len(self.Headings)
-        if lenHead != len(self.Anchor) or lenHead != len(self.Width):
+        self.nColToVis = len(self.Headings)
+        if self.nColToVis != len(self.Anchor) or self.nColToVis != len(self.Width):
             return f"Columns mismacthing on \n\n{self.Headings}\n\n{self.Anchor}\n\n{self.Width}"
-        pass
-
-        # str_last_col = IdStretch_List[0]
-        # last_stretch = int(str_last_col[1:])
-        # if (tot_col-1) != last_stretch:
-        #     return f"Mismathing on getting {IdStretch_List}  tot column= {tot_col} "
-        # pass
-
         self.Tree['columns'] = list(range(self.nColToVis))
         self.Tree.heading("#0", text="", anchor='w')
         self.Tree.column("#0", width=0, stretch=False)
 
         for IdStrech in IdStretch_List:
+            nColumn = IdStrech[1:]
+            if nColumn > self.nColToVis:
+                return False, f"stretching out of coluns for:\n\n{self.Headings}{self.Anchor[IdStrech]}"
             self.Tree.heading(IdStrech, text="", anchor='w')
             self.Tree.column(IdStrech, width=0, stretch=False)
 
@@ -115,19 +108,21 @@ class TheFrame(tk.LabelFrame):
     # -------------------  NOT  checked on colunms number  ------------------------
     def Tree_Setup(self, Form_List):
         self.Delete_All_Rows()
-        self.Nrows = Form_List[IX_TREE_ROW]
-        self.nColToVis = Form_List[IX_TREE_COLMN]
-        self.Headings = Form_List[IX_TREE_HEAD]
-        self.Anchor = Form_List[IX_TREE_ANCHOR]
-        self.Width = Form_List[IX_TREE_WIDTH]
+        self.Nrows   = Form_List[IX_TREE_ROW]
+        # self.nColToVis = Form_List[IX_TREE_COLMN]
+        self.Headings  = Form_List[IX_TREE_HEAD]
+        self.Anchor    = Form_List[IX_TREE_ANCHOR]
+        self.Width     = Form_List[IX_TREE_WIDTH]
         self.Tree.configure(height=self.Nrows)
+        self.nColToVis = len(self.Headings)
 
         # 1. Nascondiamo del tutto la colonna '#0' dell'albero (Tree) che non usiamo
         self.Tree["show"] = "headings"  # <--- Questo elimina la colonna radice ed evita pasticci
 
         # 2. Definiamo i nomi delle colonne dati (es. ['col1', 'col2', 'col3'...])
         # Ignoriamo il primo elemento [0] se era riservato all'header '#0'
-        col_names = [f"col_{i}" for i in range(1, len(self.Headings))]
+        # col_names = [f"col_{i}" for i in range(1, len(self.Headings))]
+        col_names = [f"col_{i}" for i in range(1, self.nColToVis)]
         self.Tree['columns'] = col_names
 
         # 3. Ciclo di configurazione usando I NOMI DELLE COLONNE
@@ -148,36 +143,6 @@ class TheFrame(tk.LabelFrame):
         self.Tree.tag_configure("oddrow", background="white")
         self.Tree.tag_configure("evenrow", background="lightblue")
         return ''
-        # self.Delete_All_Rows()
-        # self.Nrows       = Form_List[IX_TREE_ROW]
-        # self.nColToVis   = Form_List[IX_TREE_COLMN]
-        # self.Headings    = Form_List[IX_TREE_HEAD]
-        # self.Anchor      = Form_List[IX_TREE_ANCHOR]
-        # self.Width       = Form_List[IX_TREE_WIDTH]
-        # self.Tree.configure(height=self.Nrows)
-        #
-        # # ***************************************************************************
-        # lenHead = len(self.Headings)
-        # if lenHead != len(self.Anchor) or lenHead != len(self.Width):
-        #     return f"Columns mismacthing on \n\n{self.Headings}\n\n{self.Anchor}\n\n{self.Width}"
-        # pass
-        # # *****************************************************************************************
-        #
-        # self.Tree['columns'] = list(range(lenHead))
-        # self.Tree.heading("#0", text="", anchor='w')
-        # self.Tree.column("#0", width=0, stretch=False)
-        # for jj in range(1, lenHead):
-        #     print(jj)
-        #     pass
-        #     # for i in range(1, len(Headings)):
-        #     #     col_id = f"#{i}"
-        #     #     self.Tree.column(col_id, width=Width[i], anchor=Anchor[i], stretch=False)
-        #     self.Tree.column(f'#{jj}', width=self.Width[jj], anchor=self.Anchor[jj], stretch=False)
-        #     self.Tree.heading(f'#{jj}', text=self.Headings[jj], anchor=self.Anchor[jj])
-        #
-        # self.Tree.tag_configure("oddrow", background="white", )
-        # self.Tree.tag_configure("evenrow", background="lightblue", )
-        # return ''
 
     # ----------------------------------  Load Values of Rows  --------------------------
     #   VERY IMPORTANT  List MUST  BE  list of lists  [ [], []... ]
@@ -210,35 +175,6 @@ class TheFrame(tk.LabelFrame):
         if self.iFocus != NO_FOCUS:
             self.Set_Focus(self.iFocus)
         return ''
-
-    # -------------------------------  Delete Last Row on Tree    -----------------------
-    def Delete_Tree_Last_Row(self):
-        List = []
-        Len = len(self.Loaded_List)
-        Last_Index = Len-1
-        # LastRec = self.Loaded_List[Last_Index]
-
-        for i in range(0, Last_Index):
-            List.append(self.Loaded_List[i])
-        self.iFocus    = Last_Index-1
-        self.Load_Row_Values(List)
-    #
-    # -----------------------------  Inseert Record  on End   ---------------------------
-    def Add_ToEnd_Tree_Values(self, Row_Rec):
-        List = self.Loaded_List
-        Len = len(self.Loaded_List)
-        Last_Index = Len
-        List.append(Row_Rec)
-
-        iLast_Row = len(List) -1
-        self.iFocus    = iLast_Row
-        self.Load_Row_Values(List)
-        Mess = 'Added Codes Record:\nTR Code: ' + str(Last_Index)  + '\n'
-        for Val in Row_Rec:
-            Mess += str(Val)
-            Mess += '\n'
-        Msg_Dlg = Message_Dlg(MSG_BOX_INFO, Mess)
-        Msg_Dlg.wait_window()
 
     # -----------------------------------  Update  Values  ------------------------------
     def Update_Tree_Values(self, Val_Rec_ToUpdate):

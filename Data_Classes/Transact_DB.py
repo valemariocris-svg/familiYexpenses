@@ -24,7 +24,7 @@ class Transact_Db(Xlsx_Manager):
 
         self.all_rows_inserted_list            = []     # the basic rows lists for insert
         self.std_code_rows_to_be_insertd_list  = []
-        self.noCode_to_be_inserted_list        = []
+        self.noCode_rows_to_be_inserted_list        = []
 
         self._transactions_map                 = {}  # dictionary for finding recods on transact Db
         self.Totals_dict                       = Totals_dict_default
@@ -106,7 +106,7 @@ class Transact_Db(Xlsx_Manager):
     # si possono inerire movimenti  in piu' volte                                                           #                                                                                         #
     # ----------------------------------------------------------------------------------------------------- #
     # Liste:                                                                                                #
-    # all_rows_inserted_lis(std & generic)   std_code_rows_to_be_insertd_list  noCode_to_be_inserted_list   #
+    # all_rows_inserted_lis(std & generic)  std_code_rows_to_be_insertd_list noCode_rows_to_be_inserted_list#
     # Totale calcolato   = somma(1-3)                                                                       #
     # Premessa:                                                                                             #
     # Alle righe contenute nel file xlsx, di cui non si e' trovato un codice standard corrispondente,       #
@@ -117,19 +117,17 @@ class Transact_Db(Xlsx_Manager):
     # 1) Passata WithCode:                                                                                  #
     #    inizializza  la lista   all_rows_inserted_list   e crea   std_code_rows_to_be_insertd_list         #
     # 2) Passata NoCode:                                                                                    #
-    #    Iniizializza noCode_to_be_inserted_list                                                            #
+    #    Iniizializza noCode_rows_to_be_inserted_list                                                       #
     #    se una riga viene trovata nel Db  significa che le e' stato assegnato un codice generico           #
     #    quindi verra' aggiunta alla  all_rows_inserted_list                                                #
-    #    altrimenti viene aggiunta alla noCode_to_be_inserted_list                                          #
+    #    altrimenti viene aggiunta alla noCode_rows_to_be_inserted_list                                     #
     # 3) Risultato finale:                                                                                  #
     #    all_rows_inserted_list:                                                                            #
     #       conterra' le righe  con codice standard e generico                                              #
     #    std_code_rows_to_be_insertd_list:                                                                  #
     #       usata da Frame_WithCodes_ToIns                                                                  #
-    #    noCode_to_be_inserted_list:                                                                        #                                                                       #
+    #    noCode_rows_to_be_inserted_list:                                                                   #
     #       usata dal  Frame_No_Codes                                                                       #
-    #   all_rows_inserted_list  [std_code_rows_to_be_insertd_list  +   noCode_to_be_inserted_list]          #
-    #       usata da Top_insert                                                                             #
     # 5) Calcolo totali righe in Db o da inserire:                                                          #
     #    a) all_rows_inserted_list = ( codici standard e generici)                                          #
     #    b) rows_to_be_inserted = with_code_rows_to_be_inserted_list + no_codes_rows_to_be_inserted_list    #
@@ -146,7 +144,7 @@ class Transact_Db(Xlsx_Manager):
     def Create_rows_to_insert_list(self):
         self.all_rows_inserted_list           = []
         self.std_code_rows_to_be_insertd_list = []
-        self.noCode_to_be_inserted_list       = []
+        self.noCode_rows_to_be_inserted_list  = []
 
         #   crea la mappa come dizionario vuoto: la chiave e' una tupla di 5 elementi
         #   ed il valore
@@ -161,17 +159,7 @@ class Transact_Db(Xlsx_Manager):
 
             # Crea la chiave unica (una tupla) e la inserisce nel dizionario
             key = (nRow, conto, dateContab, dateValuta, credit, debit)
-            self._transactions_map[key] = record[IX_TRANSACT_NROW]  # numero riga
-
-            # IX_XLSX_WITH_ROW = 0
-            # IX_XLSX_WITH_CONTO  = 1
-            # IX_XLSX_WITH_CONTAB = 2
-            # IX_XLSX_WITH_VALUTA = 3
-            # IX_XLSX_WITH_ACCR = 4
-            # IX_XLSX_WITH_DEBIT = 5
-            # IX_XLSX_WITH_TRDESC = 6
-            # IX_XLSX_WITH_TRCODE = 7
-            # IX_XLSX_WITH_FULLDES = 8
+            self._transactions_map[key] = record[IX_ROW_TOINS_NROW]  # numero riga
         # creazione della lista dei record caricati da .XLSX ma non presenti nel database
         # esaminando la lista delle righe xlsx, di cui si e' trovato un codice Db
         for row in self._tWith_Code_Tree_List:
@@ -184,28 +172,14 @@ class Transact_Db(Xlsx_Manager):
             TRdesc     = row[IX_XLSX_WITH_TRDESC]
             TRcode     = row[IX_XLSX_WITH_TRCODE]
             FullDesc   = row[IX_XLSX_WITH_FULLDES]
-
-            # sql = """CREATE TABLE TRANSACT \
-            #      ( \
-            #          "Ident"   INTEGER NOT NULL UNIQUE, \
-            #          "nRow"    INTEGER, \
-            #          "Conto"   TEXT, \
-            #          "Contab"  TEXT, \
-            #          "Valuta"  TEXT, \
-            #          "Accred"  FLOAT, \
-            #          "Addeb"   FLOAT, \
-            #          "TRdesc"  TEXT, \
-            #          "TRcode"  INTEGER, \
-            #          "FullDes" TEXT, \
-            #          PRIMARY KEY ("Ident" AUTOINCREMENT)
-            #      )"""
+            pass
             record = [nRow, conto, dateContab, dateValuta, credit, debit, TRdesc,
                       TRcode, FullDesc]
             if (nRow, conto, dateContab, dateValuta, credit, debit) in self._transactions_map:
                 self.all_rows_inserted_list.append(record)
             else:
                self.std_code_rows_to_be_insertd_list.append(record)
-            pass
+        pass
 
         # ========================================================================================
         # creazione della lista dei record caricati da .XLSX ma non presenti nel database
@@ -221,15 +195,13 @@ class Transact_Db(Xlsx_Manager):
 
             record     = [nRow, conto, dateContab, dateValuta, credit, debit, FullDesc]
             if not (nRow, dateContab, dateValuta, credit, debit) in self._transactions_map:
-                self.noCode_to_be_inserted_list.append(record)
+                self.noCode_rows_to_be_inserted_list.append(record)
             else:
                 self.all_rows_inserted_list.append(record)
             pass
-        self.Totals_dict[TOT_ROWS_INSERTED] = len(self.all_rows_inserted_list)
+        self.Totals_dict[TOT_ROWS_INSERTED]    = len(self.all_rows_inserted_list)
         self.Totals_dict[TOT_STD_COD_TOBE_INS] = len(self.std_code_rows_to_be_insertd_list)
-        self.Totals_dict[TOT_NOCOD_TO_INSERT] = len(self.noCode_to_be_inserted_list)
-
-        self.all_rows_inserted_list = self.std_code_rows_to_be_insertd_list + self.noCode_to_be_inserted_list
+        self.Totals_dict[TOT_NOCOD_TO_INSERT]  = len(self.noCode_rows_to_be_inserted_list)
         pass
 
     # -------------------------------------------------------------------------------------------------
@@ -264,23 +236,47 @@ class Transact_Db(Xlsx_Manager):
     #                   0      1       2      3       4       5       6       7       8
     # Record_List :  (Ident) Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes)
     # -------------------------------------------------------------------------------------------------
-    def Insert_Transact_Record(self, Record_List):
-        Conto  = Record_List[IX_TRANSACT_CONTO]
-        Contab = Record_List[IX_TRANSACT_CONTAB]
-        Valuta = Record_List[IX_TRANSACT_VALUTA]
+    def Insert_oneRow_on_Transact_Db(self, Record_List):
+        Conto  = Record_List[IX_ROW_TOINS_CONTO]
+        Contab = Record_List[IX_ROW_TOINS_CONTAB]
+        Valuta = Record_List[IX_ROW_TOINS_VALUTA]
         TRdesc = Record_List[IX_TRANSACT_TR_DESC]
-        Accred = Convert_To_Float(Record_List[IX_TRANSACT_ACCRED])
-        Addeb  = Convert_To_Float(Record_List[IX_TRANSACT_ADDEB])
-        TRcode = Record_List[IX_TRANSACT_TR_CODE]
-        FullDes = Record_List[IX_TRANSACT_FULL_DESC]
+        Accred = Convert_To_Float(Record_List[IX_ROW_TOINS_ACCRED])
+        Addeb  = Convert_To_Float(Record_List[IX_ROW_TOINS_ADDEB])
+        TRcode = Record_List[IX_ROW_TOINS_TR_CODE]
+        FullDes = Record_List[IX_ROW_TOINS_FULL_DESC]
 
         sql = """INSERT INTO TRANSACT (Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
         parameters = (Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes)
-        status, data = self._query_execute(TRANSACT_FILENAME, sql, parameters, CLOSE_DB)
-        if status:
-            self.Load_Transactions_Table()
-            return True, ''
-        return False, data
+        status, data = self._query_execute(TRANSACT_FILE, sql, parameters, CLOSE_DB)
+        if not status:
+            return False, data
+        return True, ''
+
+    # --------------------------------------------------------------------------------------------------
+    def Insert_std_code_rows_to_be_insertd(self):
+        for row in self.std_code_rows_to_be_insertd_list:
+            nRow    = row[IX_ROW_TOINS_NROW]
+            Conto   = row[IX_ROW_TOINS_CONTO]
+            Contab  = row[IX_ROW_TOINS_CONTAB]
+            Valuta  = row[IX_ROW_TOINS_VALUTA]
+            Accred  = Convert_To_Float(row[IX_ROW_ACCRED])
+            Addeb   = Convert_To_Float(row[IX_ROW_ADDEB])
+            TRdesc  = row[IX_ROW_TOINS_TR_DESC]
+            TRcode  = row[IX_ROW_TOINS_TR_CODE]
+            FullDes = row[IX_ROW_TOINS_FULL_DESC]
+
+            sql = """INSERT INTO TRANSACT (nRow, Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+            parameters = (nRow, Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes)
+            status, data = self._query_execute(TRANSACT_FILE, sql, parameters, KEEP_OPEN)
+            if not status:
+                self._query_execute(TRANSACT_FILE, SQL_CLOSE_DB, (), CLOSE_DB)
+                messg  = f"FATAL ERROR 41:\non inserting row\n{nRow}  {Contab}  {Valuta}  {Accred}  {Addeb}\n"
+                messg += f"{TRdesc}  {TRcode}\n{FullDes}\n"
+                return False, messg
+
+        self._query_execute(TRANSACT_FILE, SQL_CLOSE_DB, (), CLOSE_DB)
+        return True, ''
 
     # -------------------------------------------------------------------------------------------------
     # Record No Code:     [nRow,   Contab, Valuta, 'Accr', 'Addeb', FullDes]
@@ -295,18 +291,17 @@ class Transact_Db(Xlsx_Manager):
         return True, data
 
 
-    # self.all_rows_inserted_list                = []
+    # self.all_rows_inserted_list            = []
     # self.std_code_rows_to_be_insertd_list  = []
-    # self.noCode_to_be_inserted_list        = []
-    # self.all_rows_to_insert_list
+    # self.noCode_rows_to_be_inserted_list   = []
     def get_all_rows_inserted_list(self):
         return self.all_rows_inserted_list
 
     def get_std_code_rows_to_be_insertd_list(self):
         return self.std_code_rows_to_be_insertd_list
 
-    def get_noCode_to_be_inserted_list(self):
-        return self.noCode_to_be_inserted_list
+    def get_noCode_rows_to_be_inserted_list(self):
+        return self.noCode_rows_to_be_inserted_list
 
     # -------------------------------------------------------------------------------------------------
     def get_totals_dict_as_list(self, Conto):

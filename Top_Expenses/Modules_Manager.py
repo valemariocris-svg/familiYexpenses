@@ -108,6 +108,7 @@ class Modules_Manager:
             return True
         else:
             self.Chat.Tx_Request([Origin, [MAIN_WIND], VIEW_SELECTIONS, []])
+            self.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(Origin)
             return True
 
     # ---------------------------------------------------------------------------------------------
@@ -144,6 +145,7 @@ class Modules_Manager:
         else:
             self.Data.Load_Xlsx_Rows()
             self.Chat.Tx_Request([Origin, [MAIN_WIND], VIEW_SELECTIONS, []])
+            self.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(Origin)
             return True
 
     # --------------------------------------------------------------------------------------------
@@ -208,7 +210,6 @@ class Modules_Manager:
             return False
 
         if not os.path.isfile(full_transact_filename):
-            # try
             self.Data.Update_key_dictionary(TRANSACT_FILENAME, full_transact_filename)
             status, data = self.Data.Create_Transact_Table()
             if not status:
@@ -219,7 +220,7 @@ class Modules_Manager:
                 return False
 
             Messg = "Transactions database for year:  " + str(xlsx_Year) + "\ncorrectly created"
-            Mess_Dlg = Message_Dlg(MSG_BOX_ERR, Messg)
+            Mess_Dlg = Message_Dlg(MSG_BOX_INFO, Messg)
             Mess_Dlg.wait_window()
             directory = Get_Dir_Name(full_transact_filename)
             self.Data.Update_key_dictionary(TRANSACT_DIRECTORY, directory)

@@ -2,14 +2,11 @@
 #            *****     Super_Top_Codes_Mngr.py     *****                             #
 #                                                                                    #
 # ---------------------------------------------------------------------------------- #
-from Common.Common_Functions import *
-from Chat import Ms_Chat
-from Data_Classes.Transact_DB import Data_Manager
 from Top_Expenses.Modules_Manager import Modul_Mngr
-
 from Widgt.Widgets import *
 from Widgt.Tree_Widg import *
 from Widgt.Canvas_Frame import *
+from Widgt.Dialogs import *
 
 # -------------------------------------------------------------------------------------------------------------
 class Super_Top_Mngr(tk.Toplevel):
@@ -52,9 +49,6 @@ class Super_Top_Mngr(tk.Toplevel):
         self.Canv_CodData = CreateCanvas(self, 10, 640, 380, 130)
         TheLable(self.Canv_CodData, LAB_BLUE, 60, 1, 26, "impostazioni dati per il codice")
 
-        self.Canv_Tr_Mngr = CreateCanvas(self, 450, 820, 380, 80)
-        TheLable(self.Canv_Tr_Mngr, LAB_BLUE, 90, 1, 25, " gestione Db  movimenti   ")
-
         # --------------------------------   Groups    C O M B O            -----------------------------------
         self.StrVar    = tk.StringVar()
         self.GR_Combo  = TheCombo(self.Canv_CodData, self.StrVar, XY_TO_HIDE, XY_TO_HIDE, 1, 1, [], '', self.Clk_Combo)
@@ -78,7 +72,7 @@ class Super_Top_Mngr(tk.Toplevel):
     # ==========================  T R E E     Without  Codes   ========================================
     def Frame_NoCodes_ToIns_Set(self):
         Nrows     = 25
-        nColToVis = 0
+        nColToVis = 0   # no more used
         Headings  = ['#0', 'Row', 'Conto', 'Contab', 'Valuta  ', 'Accred  ', 'Addeb  ', 'Descrizione completa']
         Anchor    = ['c',   'w',    'c',   'c',      'c',        'e',         'e',       'w']
         Width     = [0,      50,     40,    80,       70,         70,          70,       460]
@@ -107,10 +101,10 @@ class Super_Top_Mngr(tk.Toplevel):
     def Frame_WithCodes_ToIns_Set(self):
         self.Frame_WithCodes_ToIns.Frame_Title('  ')
         Nrows     = 25
-        nColToVis = 8
+        nColToVis = 0   # no more used
         Headings = ['#0',  'Row ', 'Conto', 'Contab ', 'Valuta ', 'Accred  ', 'Addeb  ', 'Descrizione ', 'Codice ']
         Anchor   = ['c',   'w',     'c',    'c',       'e',       'e',         'w',       'w',           'c'    ]
-        Width    = [ 0,     80,      50,     80,        80,        80,          80,        200,           100    ]
+        Width    = [ 0,     80,      50,     90,        90,        80,          80,        210,           100    ]
         Form_List = [Nrows, nColToVis, Headings, Anchor, Width]
         result = self.Frame_WithCodes_ToIns.Tree_Setup(Form_List)
         self.View_frames_error(result)
@@ -162,24 +156,29 @@ class Super_Top_Mngr(tk.Toplevel):
     # -------------------------------------------------------------------------------------------------
     # self.all_rows_inserted_list            = []
     # self.std_code_rows_to_be_insertd_list  = []
-    # self.noCode_to_be_inserted_list        = []
+    # self.noCode_rows_to_be_inserted_list        = []
     # -------------------------------------------------------------------------------------------------
     def Load_Trees(self):
-        noCode_to_be_inserted_list = self.Data.get_noCode_to_be_inserted_list()
-        len_NoCode_to_be_inserted  = len(noCode_to_be_inserted_list)
-        std_code_to_be_inserted    = self.Data.get_std_code_rows_to_be_insertd_list()
-        len_std_code_to_be_iserted = len(std_code_to_be_inserted)
-        XlsxFilename     = Get_File_Name(self.Data.Get_sel_dictionary_value(XLSX_FILENAME))
-        TitleNoCode  = '   ' + XlsxFilename + '   senza codice da inserire:  ' + str(len_NoCode_to_be_inserted)
-        TitleWith    = '   ' + XlsxFilename + '   da inserire  con codice:  ' + str(len_std_code_to_be_iserted)
+        noCode_rows_to_be_inserted_list     = self.Data.get_noCode_rows_to_be_inserted_list()
+        len_NoCode_to_be_inserted      = len(noCode_rows_to_be_inserted_list)
+        std_cod_to_be_inserted         = self.Data.get_std_code_rows_to_be_insertd_list()
+        len_tot_std_cod_to_be_inserted = len(std_cod_to_be_inserted)
+        inserted_len                   = self.Data.get_tot_rows_inserted()
+
+        NoCodeStr   = f"righe da ins.senza codice = {str(len_NoCode_to_be_inserted)}"
+        WithCodeStr = f"righe da ins. con codice std = {str(len_tot_std_cod_to_be_inserted)}"
+        Inserted    = f"tot righe inserite = {str(inserted_len)}"
+
+        TitleNoCode = f"     {NoCodeStr}         {WithCodeStr}         {Inserted}     "
+        TitleWith   = f"     {WithCodeStr}         {NoCodeStr}         {Inserted}     "
 
         self.Frame_NoCodes_ToIns.Frame_Title(TitleNoCode)
         self.Frame_WithCodes_ToIns.Frame_Title(TitleWith)
 
-        result = self.Frame_NoCodes_ToIns.Load_Row_Values(noCode_to_be_inserted_list)
+        result = self.Frame_NoCodes_ToIns.Load_Row_Values(noCode_rows_to_be_inserted_list)
         self.View_frames_error(result)
 
-        result = self.Frame_WithCodes_ToIns.Load_Row_Values(std_code_to_be_inserted)
+        result = self.Frame_WithCodes_ToIns.Load_Row_Values(std_cod_to_be_inserted)
         self.View_frames_error(result)
 
         self.View_Frames(len_NoCode_to_be_inserted)

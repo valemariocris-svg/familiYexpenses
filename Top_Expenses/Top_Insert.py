@@ -123,15 +123,13 @@ class Top_Insert(tk.Toplevel):
         self.Load_Tree(self.Records_ToIns_List)
 
     # -------------------------------------------------------------------------------------------------
-    def Set_Data(self):
-        # IX_TOT_ROWS_OK, IX_TOT_ROWS_WITH_CODE, IX_TOT_ROWS_WITHOUT_CODE
-        self.Total             = self.Data.Get_Total_Rows()
-
-        # self.Transact_Filename = self.Data.Get_Full_Xlsx_Transact_Ident()[IX_TRANSACT_FILE]
-        self.Xlsx_Filename     = self.Data.Get_sel_dictionary_value(XLSX_FILENAME)
-        self.Transact_Filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
-
-        self.Transact_Year     = self.Data.Get_TransacYear()
+    # def Set_Data(self):
+    #     # IX_TOT_ROWS_OK, IX_TOT_ROWS_WITH_CODE, IX_TOT_ROWS_WITHOUT_CODE
+    #     self.Total             = self.Data.Get_Total_Rows()
+    #     self.Xlsx_Filename     = self.Data.Get_sel_dictionary_value(XLSX_FILENAME)
+    #     self.Transact_Filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
+    #
+    #     self.Transact_Year     = self.Data.Get_TransacYear()
 
     # --------------------------------------------------------------------------------------------------
     def Purge_FulDesc(self, All, Full_Desc):
@@ -210,26 +208,26 @@ class Top_Insert(tk.Toplevel):
         self.Ins_Btn.Btn_Disable()
         IndexEnd          = len(self.Records_ToIns_List)
         self.Remain_List  = self.Records_ToIns_List.copy()
-        for Index in range(0, IndexEnd):
-            RecToIns    = self.Records_ToIns_List[Index]
-            if self.Check_For_Record_ToInsert(RecToIns):
-                Result = self.Data.Insert_Transact_Record(RecToIns)     # it opens also Db
-                if Result != OK:
-                    Msg_Dlg = Message_Dlg(MSG_BOX_ERR, Result)
-                    Msg_Dlg.wait_window()
-                    return
-                del self.Remain_List[0]
-                self.Load_Tree(self.Remain_List)
-            else:
-                break
+        # for Index in range(0, IndexEnd):
+        #     RecToIns    = self.Records_ToIns_List[Index]
+        #     if self.Check_For_Record_ToInsert(RecToIns):
+        #         Result = self.Data.Insert_Transact_Record(RecToIns)     # it opens also Db
+        #         if Result != OK:
+        #             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, Result)
+        #             Msg_Dlg.wait_window()
+        #             return
+        #         del self.Remain_List[0]
+        #         self.Load_Tree(self.Remain_List)
+        #     else:
+        #         break
 
         # Reload Rows etc for Insert --------------------
-        self.Records_ToIns_List = self.Remain_List
-        self.Set_Data()
-        self.Set_Texts()
-        self.Mod_Mngr.Initialize_codes_xlsx_transact(TOP_INS)
-        self.Set_Frame_Rows()
-        self.Ins_Btn.Btn_Enable()
+        # self.Records_ToIns_List = self.Remain_List
+        # self.Set_Data()
+        # self.Set_Texts()
+        # self.Mod_Mngr.Initialize_codes_xlsx_transact(TOP_INS)
+        # self.Set_Frame_Rows()
+        # self.Ins_Btn.Btn_Enable()
 
     # -------------------------------------------------------------------------------------------------
     def Set_Texts(self):

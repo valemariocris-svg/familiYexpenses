@@ -154,57 +154,6 @@ class Files_Names_Manager:
         self.Update_key_dictionary(TRANSACT_DIRECTORY, Transact_Directory)
         return True
 
-    # -------------------------------------------------------------------------------------
-    # def Get_Xls_CommonDir(self):
-    #     nSlash = []
-    #     Count  = -1
-    #     for Char in self._Xlsx_Filename:
-    #         Count = Count + 1
-    #         if Char == '/':
-    #             nSlash.append(Count)
-    #     Len_nSlash = len(nSlash)
-    #     if Len_nSlash < 4:
-    #         return False
-    #     IndexCommon = nSlash[Len_nSlash-3]
-    #     CommonXlsx = self._Xlsx_Filename[0:IndexCommon]
-    #     return CommonXlsx
-
-    # -------------------------------------------------------------------------------------
-    # def Get_Transact_CommonDir(self):
-    #     nSlash = []
-    #     Count  = -1
-    #     for Char in self._Transact_DB_Filename:
-    #         Count = Count + 1
-    #         if Char == '/':
-    #             nSlash.append(Count)
-    #     Len_nSlash = len(nSlash)
-    #     if Len_nSlash < 4:
-    #         return False
-    #     IndexCommon = nSlash[Len_nSlash-2]
-    #     CommonTransact = self._Transact_DB_Filename[0:IndexCommon]
-    #     return CommonTransact
-
-
-    # ----------------------------------------------------------------------------------- #
-    #            ----------------      internal  methods   ---------------                #
-    # ----------------------------------------------------------------------------------- #
-    # def _Read_Selections(self):
-        # self._Selections_List = []
-        # Selection_File = open(SELECTIONS_FULL_NAME)  # default is 'r'
-        # for Line in Selection_File:
-        #     self._Selections_List = eval(Line)
-        # Selection_File.close()
-        #
-        # self._Codes_DB_Filename = self._Selections_List[IX_CODES_FILE]
-        # self._Xlsx_Filename     = self._Selections_List[IX_XLSX_FILE]
-        # self.Sheet_Name         = self._Selections_List[IX_SHEET_NAME]
-        # self._Transact_DB_Filename = self._Selections_List[IX_TRANSACT_FILE]
-        #
-        # self._Codes_DB_Filename    = self._sel_dictionary[CODES_FILENAME]
-        # self._Xlsx_Filename        = self._sel_dictionary[XLSX_FILENAME]
-        # self._Transact_DB_Filename = self._sel_dictionary[TRANSACT_FILENAME]
-        # pass
-
     # ------------------------------------------------------------------------------------
     def _Save_dictionary(self):
         try:

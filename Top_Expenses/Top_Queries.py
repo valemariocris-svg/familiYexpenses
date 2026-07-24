@@ -47,7 +47,6 @@ class Top_Queries(Super_Top_Queries):
 
     # ------------------------------------------------------------------------------------------------
     def Load_All_Data(self):
-        # here the transactions database is corrrectly loaded from Mod_Manager.py
         self.OneYear_Transact_List = self.Data.Get_Transact_Table()
         self.Setup_Year_Conto_Month_Tot_Date()
         self.Set_All_Selections()
@@ -223,7 +222,7 @@ class Top_Queries(Super_Top_Queries):
     def CheckForInsert(self, Rec):
         # Check for Year    Contabile can be of the next year (Jan: 2026 :  Dec: 2025)
         #                   Valuta can be of the previous year (Jan: 2025 : Dec: 2024)
-        DateContab = Rec[IX_TRANSACT_CONTAB]
+        DateContab = Rec[IX_ROW_TOINS_CONTAB]
         DateValuta = Rec[IX_TRANSACT_VALUTA]
         YearContab = int(DateContab[0:4])
         YearValuta = int(DateValuta[0:4])
@@ -248,12 +247,12 @@ class Top_Queries(Super_Top_Queries):
 
         # Check for Conto -------------------------------------------------------
         if self.Conto_Selected == FIDFLH:
-            ContoInDB = Rec[IX_TRANSACT_CONTO]
+            ContoInDB = Rec[IX_ROW_TOINS_CONTO]
             if ContoInDB == FIDEU or ContoInDB == FLASH or ContoInDB == POSTA:
                 pass
             else:
                 return -1
-        elif self.Conto_Selected != Rec[IX_TRANSACT_CONTO]:
+        elif self.Conto_Selected != Rec[IX_ROW_TOINS_CONTO]:
             return -1
 
         # Check for TRcode ------------------------------------------------------
@@ -311,17 +310,17 @@ class Top_Queries(Super_Top_Queries):
                     Counts = 0
                 self.DateCount_PerMonth[iMonth] = Counts
                 # ['Conto, 'Contab', 'Valuta', 'Description', 'Credits  ', 'Debits  ']
-                Contabile = Rec[IX_TRANSACT_CONTAB]
-                Valuta    = Rec[IX_TRANSACT_VALUTA]
+                Contabile = Rec[IX_ROW_TOINS_CONTAB]
+                Valuta    = Rec[IX_ROW_TOINS_VALUTA]
 
                 DateContab = Set_Month_Day(Contabile, Counts)
                 DateValuta = Set_Month_Day(Valuta, Counts)
                 TRcode   = Rec[IX_TRANSACT_TR_CODE]
                 TRdescr  = self.Data.Get_TrDesc_FromCode(TRcode)
-                Conto = CONTO_RED[Rec[IX_TRANSACT_CONTO]]
+                Conto = CONTO_RED[Rec[IX_ROW_TOINS_CONTO]]
                 # View_Rec = [Date, Conto, TRdescr, Rec[IX_TRANSACT_ACCRED], Rec[IX_TRANSACT_ADDEB], Rec[IX_TRANSACT_IDENT]]
                 View_Rec = [Conto, DateContab, DateValuta,  TRdescr, Rec[IX_TRANSACT_ACCRED], Rec[IX_TRANSACT_ADDEB],
-                            Rec[IX_TRANSACT_IDENT]]
+                            Rec[IX_ROW_TOINS_CONTO]]
                 self.Transact_xMonth_List[iMonth].append(View_Rec)
                 self.Tot_Transact_xMonth[iMonth] += 1
                 pass

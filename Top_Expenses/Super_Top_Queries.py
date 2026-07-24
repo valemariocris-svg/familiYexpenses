@@ -187,23 +187,20 @@ class Super_Top_Queries(tk.Toplevel):
 
     # -------------------------------------------------------------------------------------------------------------
     def Setup_Year_Conto_Month_Tot_Date(self):
-
         Transact_Filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
-        # Transact_Filename = self.Data.Get_Selections_Member(IX_TRANSACT_FILE)
-
         Years_List = Get_Transactions_Years(Transact_Filename)
 
         self.OptMenu_Year.SetValues(Years_List)
         self.iYear_Selected = Get_Transactions_Year(Transact_Filename)
         pass
 
-        self.Conto_Selected = self.Data.Get_sel_dictionary[QUERY_CONTO]
-        self.Month_Selected = self.Data.Get_sel_dictionary[QUERY_START_MONTH]
-        self.Tot_MonSelected= self.Data.Get_sel_dictionary[QUERY_TOT_MONTHS]
-        self.Date_Selected  = self.Data.Get_sel_dictionary[QUERY_VAL_CONT_DATE]
-        self.TRselected     = self.Data.Get_sel_dictionary[QUERY_CODE_SEL]
-        self.GRselected     = self.Data.Get_sel_dictionary[QUERY_GROUP_SEL]
-        self.CAselected     = self.Data.Get_sel_dictionary[QUERY_CATEGORY_SEL]
+        self.Conto_Selected = self.Data.Get_sel_dictionary_value(QUERY_CONTO)
+        self.Month_Selected = self.Data.Get_sel_dictionary_value(QUERY_START_MONTH)
+        self.Tot_MonSelected= self.Data.Get_sel_dictionary_value(QUERY_TOT_MONTHS)
+        self.Date_Selected  = self.Data.Get_sel_dictionary_value(QUERY_VAL_CONT_DATE)
+        self.TRselected     = self.Data.Get_sel_dictionary_value(QUERY_CODE_SEL)
+        self.GRselected     = self.Data.Get_sel_dictionary_value(QUERY_GROUP_SEL)
+        self.CAselected     = self.Data.Get_sel_dictionary_value(QUERY_CATEGORY_SEL)
 
     # -------------------------------------------------------------------------------------------------------------
     def Setup_TR_GR_CA_OptMenu(self):
@@ -274,11 +271,7 @@ class Super_Top_Queries(tk.Toplevel):
         self.Chat.Tx_Request([TOP_QUERY, [MAIN_WIND], VIEW_SELECTIONS, []])
         #
         if self.Mod_Mngr.Load_Transact_Mngr(TOP_QUERY):
-
-            # sel_list = self.Data.Read_Selections()
-            # transact_filename = sel_list[IX_TRANSACT_FILE]
             transact_filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
-
             Reply = self.Data.Load_Transact_Table(transact_filename)
             if Reply == OK:
                 self.OneYear_Transact_List = self.Data.Get_Transact_Table()

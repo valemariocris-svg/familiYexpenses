@@ -84,10 +84,17 @@ class Codes_DB_Private(Files_Names_Manager):
     # --------------------------------------------------------------------------------------
     def _close_db_connection(self):
         if hasattr(self, '_database_connect'):
-            # È buona pratica chiudere prima il cursore se esiste
-            if hasattr(self, '_database_cursor'):
-                self._database_cursor.close()
-            self._database_connect.close()
+            try:
+                # È buona pratica chiudere prima il cursore se esiste
+                if hasattr(self, '_database_cursor'):
+                    self._database_cursor.close()
+                self._database_connect.close()
+                return True, ''
+            except sqlite3.Error as e:
+                return False, f"FATAL ERROR 51:\nErrore in chiusura database\n{e}"
+            finally:
+                pass
+        return True, ''
 
     # --------------------------------------------------------------------------------------
     #  Apre il Codes DB, esegue una query (SELECT o UPDATE) e chiude
@@ -96,12 +103,19 @@ class Codes_DB_Private(Files_Names_Manager):
         # Validazione rapida del database
         if database not in [CODES_FILE, TRANSACT_FILE]:
             return False, f"Error: Database {database} not recognized"
-        # 1. Open
+        # 1. simple request for closing db
+        if sql == SQL_CLOSE_DB:
+            self._close_db_connection()
+            # IMPORTANTE: resettiamo l'oggetto a None così alla prossima chiamata
+            # il test 'if not self._database_connect' funzionerà correttamente
+            self._database_connect = None
+            return True, ''
+        # 2. Open
         status, data = self._open_database(database)  # it remains open whith NO_CLOSE request
         if not status:
             return False, data
         try:
-            # 2. Esecuzione
+            # 3. Esecuzione
             self._database_cursor.execute(sql, parameters)
             sql_clean = sql.strip().upper()
             # Gestione delle SELECT
@@ -134,13 +148,15 @@ class Codes_DB_Private(Files_Names_Manager):
             str_Err = f"FATAL ERROR 24:\nError on fetching codes records:\n{e}"
             return False, str_Err
         finally:
-            # 3. Chiusura garantita (anche in caso di errore)
+            # 4. Chiusura garantita (anche in caso di errore)
             if close:
-                self._close_db_connection()
+                status, dataclose = self._close_db_connection()
+                if not status:
+                    return False, dataclose
                 # IMPORTANTE: resettiamo l'oggetto a None così alla prossima chiamata
                 # il test 'if not self._database_connect' funzionerà correttamente
                 self._database_connect = None
-            pass
+                return True, data
 
     # -------------------------------------------------------------------------------------------
     def _get_codes_tables(self):
@@ -167,40 +183,6 @@ class Codes_DB_Private(Files_Names_Manager):
             self._tCA_Codes_Table = data
         return True, ''
 
-
-    # ------   Check if in codes table esists multiple StrToSearch matching in more Full_Descr ---
-    # def _Check_Codesdatabase(self, Db_Select):
-    #     if Db_Select == CHECK_DBCODES_LOADED:
-    #         TR_Codes_Table = self._TR_Codes_Table.copy()
-    #     else:         # CHECK TUPLES DBCODES
-    #         TR_Codes_Table = self._tTR_Codes_Table.copy()
-    #     self._Multi_Codes_Matching_List = []
-    #     # TRcodesToCheck = TR_Codes_Table.copy()
-    #     # First loop for each code to be Checked  =====================================
-    #     for Rec_To_Check in TR_Codes_Table:
-    #         # Code_ToCheck = Rec_To_Check[IX_TR_TR_CODE]
-    #         StrToCek      = Rec_To_Check[IX_TR_TR_STR_TO_FIND]
-    #
-    #         if not GENERIC_CODE in StrToCek:
-    #             StrToCek_List = GetStrList_ForFind(StrToCek)
-    #             # second loop to compare Rec_To_Check with the remanent Codes  ============
-    #             for Rec in TR_Codes_Table:
-    #                 # Code_InChecking = Rec[IX_TR_TR_CODE]
-    #                 # ---------------------------------------------------------------------
-    #                 if Rec == Rec_To_Check:   # ---- >>>>>>  it's himself   <<<<<<< -------
-    #                     pass
-    #                 # ---------------------------------------------------------------------
-    #
-    #                 else:
-    #                     FullDescr = Rec[IX_TR_TR_FULL_DESC]
-    #                     if StrToFind_in_Fulldescr(StrToCek_List, FullDescr):
-    #                         if not Rec_To_Check in self._Multi_Codes_Matching_List:
-    #                             self._Multi_Codes_Matching_List.append(Rec_To_Check)
-    #                         self._Multi_Codes_Matching_List.append(Rec)
-    #             TR_Codes_Table.remove(TR_Codes_Table[0])
-    #     return self._Multi_Codes_Matching_List
-
-  
     # -------------------------------------------------------------------------------------- #
     #      private  _methods invoked only inside  the data classes  chain                    #
     #    in case of error on loading TR-GR-CA Tables nothing is changed                      #
