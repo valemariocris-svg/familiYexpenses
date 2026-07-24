@@ -280,6 +280,33 @@ class Modules_Manager:
             dlg_msg.wait_window()
             return False
         return True
+
+    # --------------------------------------------------------------------------------------------
+    def regenerate_transact_Db(self, Origin):
+        Full_transact_filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
+        transact_filename = Get_File_Name(Full_transact_filename)
+        Messg = f"Confermi di cancellare il database\n{transact_filename}"
+        Msg_Dlg = Message_Dlg(MSG_BOX_ASK, Messg)
+        Msg_Dlg.wait_window()
+        Reply = Msg_Dlg.data
+        if Reply == YES:
+            # filepath = Full_transact_filename
+            # È sempre buona norma verificare prima se il file esiste davvero
+            if os.path.exists(Full_transact_filename):
+                os.remove(Full_transact_filename)
+                print(f"file {transact_filename}\neliminato")
+            else:
+                msg_dlg = Message_Dlg((MSG_BOX_ERR, f"file {transact_filename}\nnon esiste per la cancellazione"))
+                msg_dlg.wait_window()
+                return False
+            if not self.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(Origin):
+                return False
+        return True
+
+
+
+
+
 # =================================================================================================
 
 

@@ -36,9 +36,8 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.LocConto      = ''
         self.LocIntYear    = 0
         self.Set_Conto_Year()       # Conto Years etc are setted on Load_Xlsx_Lists
-        self.Load_Trees()
 
-        # ********************************      C A N V A S    &   B U T T O N S   ********************************
+        #---------------------------      C A N V A S    &   B U T T O N S   --------------------------------
         self.Canv_CodMngr = CreateCanvas(self, 10, 820, 380, 80)
         TheLable(self.Canv_CodMngr, LAB_BLUE, 110, 1, 25, "gestione dei codici ")
 
@@ -47,14 +46,13 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         TheButton(self.Canv_CodMngr, BTN_DEF_EN, 215, 30, 20, "aggiorna codice", self.Clk_Update)
         TheButton(self.Canv_CodMngr, BTN_DEF_EN, 215, 75, 20, "cancella  codice",self.Clk_Delete)
 
-
         self.Canv_Tr_Mngr = CreateCanvas(self, 450, 820, 380, 80)
         TheLable(self.Canv_Tr_Mngr, LAB_BLUE, 90, 1, 25, " gestione database movimenti   ")
 
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  10, 30, 20, "ins. righe std nel Db",   self.Clk_ins_std_code_transact)
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  10, 75, 20, "ins. un codice generico", self.Clk_insert_gen_code)
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN, 220, 30, 20, "visualizza movimenti",    self.Clk_ViewTransact)
-        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN, 220, 75, 20, "cancella file movimenti",  self.Clk_Delete_Transact_Db)
+        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN, 220, 75, 20, "ricrea file movimenti",   self.Clk_Ricrea_Transact_Db)
 
         self.Canv_CodFile = CreateCanvas(self,   450, 640, 170, 130)
         TheLable(self.Canv_CodFile, LAB_BLUE,     15,   1,  16, "gestione Db codici ")
@@ -70,7 +68,8 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         TheButton(self.Canv_XlsxFile, BTN_DEF_EN, 10, 75, 18, "visualizza file xlsx", self.Clk_View_Xlsx)
 
         TheButton(self, BTN_DEF_EN, 680, 955, 20, 'E S C I ',  self.Call_OnClose)
-        # ***********************************************************************************************************
+
+        self.Load_Trees()   # ------------------------------------------
 
     # ------------------------------------------------------------------------------------------------------
     def Share_Msg_on_Chat(self, Transmitter_Name, Request_Code, Values_List):
@@ -149,6 +148,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             msg_dlg = Message_Dlg(MSG_BOX_INFO, "tutte le righe\nsono state inserite\ncorrettamente nel database")
             msg_dlg.wait_window()
             self.Mod_Mngr.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(TOP_CODES_MNGR)
+            self.Load_Trees()
             if self.Chat.Check_Name_Is_On_Participants_List(TOP_VIEW_TRANSACT):
                 self.Mod_Mngr.Top_Launcher(TOP_VIEW_TRANSACT, TOP_CODES_MNGR, [])       # to close
                 self.Mod_Mngr.Top_Launcher(TOP_VIEW_TRANSACT, TOP_CODES_MNGR, [])       # to refresh
@@ -223,7 +223,6 @@ class Top_Codes_Mngr(Super_Top_Mngr):
 
     # ----------------------------------------------------------------------------------- #
     def Set_Selected_Code(self, TRfull_Rec):
-        pass
         self.TR_Code  = int(TRfull_Rec[IX_TR_FULL_TR_CODE])
         TR_Desc = TRfull_Rec[IX_TR_FULL_TR_DESC]
         Messg   = 'Confirm selected code: ' + str(self.TR_Code) + '\nDescription: ' + TR_Desc + '  '
@@ -325,23 +324,9 @@ class Top_Codes_Mngr(Super_Top_Mngr):
                 self.Frames_Refresh()
 
     # ---------------------------------------------------------------------------------------------
-    def Clk_Delete_Transact_Db(self):
-        Full_transact_filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
-        transact_filename = Get_File_Name(Full_transact_filename)
-        Messg  = f"Confermi di cancellare il database\n{transact_filename}"
-        Msg_Dlg = Message_Dlg(MSG_BOX_ASK, Messg)
-        Msg_Dlg.wait_window()
-        Reply = Msg_Dlg.data
-        if Reply == YES:
-            # filepath = Full_transact_filename
-            # È sempre buona norma verificare prima se il file esiste davvero
-            if os.path.exists(Full_transact_filename):
-                os.remove(Full_transact_filename)
-                print(f"file {transact_filename}\neliminato")
-                self.Mod_Mngr.Check_create_transact_database_for_xlsx_filename()
-                self.Load_Trees()
-            else:
-                print("Il file non esiste in quel percorso.")
+    def Clk_Ricrea_Transact_Db(self):
+        if self.Mod_Mngr.regenerate_transact_Db(TOP_CODES_MNGR):
+            self.Load_Trees()
 
     # ------------------------     ***   Delete  a code record on codes Db    ---------------------
     def Clk_Delete(self):

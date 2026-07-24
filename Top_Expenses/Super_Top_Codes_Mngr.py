@@ -159,7 +159,7 @@ class Super_Top_Mngr(tk.Toplevel):
     # self.noCode_rows_to_be_inserted_list        = []
     # -------------------------------------------------------------------------------------------------
     def Load_Trees(self):
-        noCode_rows_to_be_inserted_list     = self.Data.get_noCode_rows_to_be_inserted_list()
+        noCode_rows_to_be_inserted_list= self.Data.get_noCode_rows_to_be_inserted_list()
         len_NoCode_to_be_inserted      = len(noCode_rows_to_be_inserted_list)
         std_cod_to_be_inserted         = self.Data.get_std_code_rows_to_be_insertd_list()
         len_tot_std_cod_to_be_inserted = len(std_cod_to_be_inserted)
@@ -200,10 +200,6 @@ class Super_Top_Mngr(tk.Toplevel):
     # -------------------------------------------------------------------------------------------------
     def View_Descr_Text(self, TRcode):
         TR_Full_Code = self.Data.Get_TR_Codes_Full(TRcode)
-        pass
-        # TRfullRec    = Get_List_Record(TR_Full_Code, IX_TR_FULL_TR_CODE, TRcode, [])
-        # if not TRfullRec:
-        #     return
         self.Txt_TR_Code1.Set_Text(TRcode)
         self.Txt_GR_Code1.Set_Text(TR_Full_Code[IX_TR_FULL_GR_CODE])
         self.Txt_CA_Code1.Set_Text(TR_Full_Code[IX_TR_FULL_CA_CODE])

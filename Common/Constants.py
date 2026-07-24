@@ -209,7 +209,6 @@ IX_QUERY_ACCRED   = 4
 IX_QUERY_ADDEB    = 5
 IX_QUERY_IDENT    = 6
 
-
 IX_TREE_ROW    = 0      # Tree number of columns to view
 IX_TREE_COLMN  = 1
 IX_TREE_HEAD   = 2
@@ -307,9 +306,8 @@ IX_XLSX_WITH_TRCODE  = 7
 IX_XLSX_WITH_FULLDES = 8
 
 
-
 #   -----  Database  /TRNSACTIONS/Transact_2024.db  ----------
-TRANSACTIONS = 'TRANSACTIONS'
+# TRANSACTIONS = 'TRANSACTIONS'
 TRANSACT     = 'TRANSACT'
 TRANSACT_ID  = 'TRANSACTIONS/Transact_'
 LEN_TRANSACT_FILENAME= 16
@@ -430,7 +428,6 @@ IX_WIEW_TR_DESCR   = 1
 IX_WIEW_GR_DESCR   = 2 # these constants are not used
 IX_WIEW_CA_DESCR   = 3 # because GRdesc CAdesc StrToFind are
 IX_WIEW_STR_TOFIND = 4 # as on Codes Tables
-
 
 
 # =============================================================

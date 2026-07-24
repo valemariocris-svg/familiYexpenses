@@ -133,8 +133,8 @@ class Codes_DB_Private(Files_Names_Manager):
                 # Modifichiamo solo questa riga:
                 # Usa fetchone SOLO SE c'è WHERE e NON hai chiesto esplicitamente tutti i record
                 elif 'WHERE' in sql_clean and not all_records:
-                    record = self._database_cursor.fetchone()
-                    return True, record
+                    data = self._database_cursor.fetchone()     # is  (nCode,)
+                    return True, data
                 else:
                     # Cadranno qui tutte le SELECT senza WHERE, E le select con WHERE che hanno all_records=True
                     data = self._database_cursor.fetchall()

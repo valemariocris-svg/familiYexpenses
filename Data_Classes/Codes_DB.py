@@ -147,26 +147,27 @@ class Codes_db(Codes_DB_Private):
     #    ***   Codes  > 10.000   are generic code that can be assigned manually to                #
     #          any Xlsx Record. The assignement must be made for each Xlsx Record                 #
     # ------------------------------------------------------------------------------------------- #
-    def Get_New_Code(self, Table) -> tuple[bool, int]:
+    def Get_New_Code(self, codType) -> tuple[bool, int]:
         status = False
         data   = []
-        if Table == STANDARD_CODE:
+        if codType == STANDARD_CODE:
             sql_query = "SELECT MAX(TR_Code) FROM TRANSACT_CODES WHERE TR_Code < ?"
             status, data = self._query_execute(CODES_FILE, sql_query, (10000,), CLOSE_DB)
 
-        elif Table == GENERIC_CODE:
+        elif codType == GENERIC_CODE:
             sql_query = "SELECT MAX(TR_Code) FROM TRANSACT_CODES WHERE TR_Code > ?"
             status, data = self._query_execute(CODES_FILE, sql_query, (10000,), CLOSE_DB)
+            pass
 
-        # elif Table == GROUP_CODE:
+        # elif codType == GROUP_CODE:
         #     status, data = self._query_execute(CODES_FILE, "SELECT MAX(GR_Code) FROM GROUP_CODES", (), CLOSE_DB)
         #
-        # elif Table == CATEG_CODE:
+        # elif codType == CATEG_CODE:
         #     status, data = self._query_execute(CODES_FILE, "SELECT MAX(CA_Code) FROM CAT_CODES", (), CLOSE_DB)
 
         # risultato sarà una lista di tuple, es: [(9998,)] oppure [(None,)]
-        if status and data[0][0] is not None:
-            found_code = data[0][0] + 1
+        if data:
+            found_code = data[0] + 1
             return True, found_code
         else:
             return False, 0
