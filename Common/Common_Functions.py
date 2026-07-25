@@ -420,11 +420,16 @@ def GetStrList_ForFind_Checked(strToFind):
 
 # -----------------------------------------------------------------------------
 def StrToFind_in_Fulldescr(strToFind_List, FullDesc):
+    # 1. Convertiamo tutto in maiuscolo
+    upper_text = FullDesc.upper()
+    # 2. Estraggiamo solo lettere e numeri ricomponendoli in una stringa
+    fullDesc_purged = "".join(char for char in upper_text if char.isalnum() or char == ' ')
+
     MatchToFind = len(strToFind_List)
     OccurenceIndex = 0
     OccurenceList  = []
     for Item in strToFind_List:
-        iOccurience = FullDesc.find(Item)
+        iOccurience = fullDesc_purged.find(Item)
         if iOccurience == -1:
             break
         else:
@@ -435,9 +440,10 @@ def StrToFind_in_Fulldescr(strToFind_List, FullDesc):
     else:
         if OccurenceIndex != MatchToFind:
             return False
+
         CurrIndex = 0
         for Index in OccurenceList:
-            if Index < CurrIndex:
+            if Index < CurrIndex:       # the occurencs must be sequentially found
                 return False
             else:
                 CurrIndex = Index

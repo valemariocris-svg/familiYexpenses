@@ -1,7 +1,6 @@
 # ========================================================================== #
 #               -----   xlsx_Mngr.py   -----                                 #
 #              class  for  xlsx file managiging                              #
-#  for more informations see Data_Organization.txt                           #
 # ========================================================================== #
 
 import sqlite3
@@ -93,8 +92,8 @@ class Xlsx_Manager(Codes_db):
         return len(self._Xlsx_Rows_From_Sheet)
 
     # ------------------------------------------------------------------------------------
-    def Add_Row_WithCode_FromNoCode(self, Row_WithoutCode, TRcode, TRdesc):
-        self._Add_Row_WithCode_FromNoCode(Row_WithoutCode, TRcode, TRdesc)
+    def Add_Row_NoCode_into_WithCode_list(self, Row_WithoutCode, TRcode, TRdesc):
+        self._Add_Row_NoCode_into_WithCode_list(Row_WithoutCode, TRcode, TRdesc)
 
     def Delete_Row_NoCode(self, Row_WithoutCode):
         return self._Delete_Row_NoCode(Row_WithoutCode)
@@ -236,13 +235,13 @@ class Xlsx_Manager(Codes_db):
 
             elif nCode > 1:                         # Multiple codes found for a xlsx row
                 print(TRcodeList, Row[IX_ROW_COMP_FULLDES])
-                message  = f"la descrizione completa per la riga={str(Row[IX_ROW_COMP_NROW])}\n"
+                message  = f"la descrizione completa per la riga n.  {str(Row[IX_ROW_COMP_NROW])}\n\n"
+                message += f"Contab: {Row[IX_ROW_COMP_CONTAB]}\nValuta: {Row[IX_ROW_COMP_VAL]}\n"
+                message += f"Accred: {Row[IX_ROW_COMP_ACCR]}\nAddeb: {Row[IX_ROW_COMP_ADDEB]}\n"
                 message += f"{Row[IX_ROW_COMP_FULLDES]}\n\n"
-                message += f"Contab: {Row[IX_ROW_COMP_CONTAB]}  Valuta: {Row[IX_ROW_COMP_VAL]}  "
-                message += f"Accred: {Row[IX_ROW_COMP_ACCR]}  Addeb: {Row[IX_ROW_COMP_ADDEB]}\n"
-                message += f"combacia con piu stringhe per la ricerca\n\n"
+                message += f"combacia con piu stringhe per la ricerca:\n\n"
                 for code in TRcodeList:
-                    strFound =  f"\n{str(code)}:  {self.Get_TrDesc_FromCode(code)}\n{self.Get_strToFind_FromCode(code)}"
+                    strFound =  f"codice: {str(code)}:  descr: {self.Get_TrDesc_FromCode(code)}\n{self.Get_strToFind_FromCode(code)}\n\n"
                     message += strFound        # dlg_select = View_Messa
                 return False, message
 
@@ -255,20 +254,6 @@ class Xlsx_Manager(Codes_db):
                 pass
         return True, ''
 
-    # sql = """CREATE TABLE TRANSACT \
-    #      ( \
-    #          "Ident"   INTEGER NOT NULL UNIQUE, \
-    #          "nRow"    INTEGER, \
-    #          "Conto"   TEXT, \
-    #          "Contab"  TEXT, \
-    #          "Valuta"  TEXT, \
-    #          "Accred"  FLOAT, \
-    #          "Addeb"   FLOAT, \
-    #          "TRdesc"  TEXT, \
-    #          "TRcode"  INTEGER, \
-    #          "FullDes" TEXT, \
-    #          PRIMARY KEY ("Ident" AUTOINCREMENT)
-    #      )"""
     # -----------------------------Code(TRcode)---------------------------------------------------------------
     def Insert_On_WithCode_List(self, Row, TRcode):
         TRdesc = self.Get_TrDesc_FromCode(TRcode)
@@ -292,9 +277,6 @@ class Xlsx_Manager(Codes_db):
     #       January
     # 02/01/23	31/12/22	only contabile
     # 02/01/23	02/01/23	both
-    # 03/01/23	30/12/22	only contabile
-    #..............................
-    #   dd/06/23  dd/09/22   signal  checkek on request
     # ..............................
     #       December
     # 02/01/24	30/12/23	only valuta
@@ -509,7 +491,7 @@ class Xlsx_Manager(Codes_db):
     # List_Rows_WithoutCode : nRow  Contab  Valuta  Accr(str) Addeb(str)   FullDes          #
     # List_Rows_WithCode    : nRow  Contab  Valuta  TR_Desc  Accr(str)  Addeb(str) TRcode   #
     # ------------------------------------------------------------------------------------- #
-    def _Add_Row_WithCode_FromNoCode(self, Row_WithoutCode, TRcode, TRdesc):
+    def _Add_Row_NoCode_into_WithCode_list(self, Row_WithoutCode, TRcode, TRdesc):
         nRow      = int(Row_WithoutCode[IX_NO_CODE_NROW])
         Contab    = Row_WithoutCode[IX_NO_CODE_CONTAB]
         Valuta    = Row_WithoutCode[IX_NO_CODE_VALUTA]

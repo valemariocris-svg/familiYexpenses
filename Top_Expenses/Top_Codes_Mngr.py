@@ -50,7 +50,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         TheLable(self.Canv_Tr_Mngr, LAB_BLUE, 90, 1, 25, " gestione database movimenti   ")
 
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  10, 30, 20, "ins. righe std nel Db",   self.Clk_ins_std_code_transact)
-        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  10, 75, 20, "abbina un codice gener.", self.Clk_insert_gen_code)
+        TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN,  10, 75, 20, "abbina un codice gener.", self.Clk_abbina_gen_code)
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN, 220, 30, 20, "visualizza movimenti",    self.Clk_ViewTransact)
         TheButton(self.Canv_Tr_Mngr, BTN_DEF_EN, 220, 75, 20, "ricrea file movimenti",   self.Clk_Ricrea_Transact_Db)
 
@@ -175,7 +175,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
                     if Result == YES:
                         self.TR_Code = TR_Full_List[IX_TR_FULL_TR_CODE]
                         self.TR_Desc = TR_Full_List[IX_TR_FULL_TR_DESC]
-                        self.Data.Add_Row_WithCode_FromNoCode(self.Row_WithoutCode, self.TR_Code, self.TR_Desc)
+                        self.Data.Add_Row_NoCode_into_WithCode_list(self.Row_WithoutCode, self.TR_Code, self.TR_Desc)
                         self.Data.Delete_Row_NoCode(self.Row_WithoutCode)
                         Total      = self.Data.Get_Total_Rows()
                         Tot_NoCode = Total[IX_TOT_ROWS_WITHOUT_CODE]
@@ -205,7 +205,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             self.Txt_StrFullDesc1.Set_Text(TR_Full_List[IX_TR_FULL_FULL_DESC])
 
     # ---------------------------------------------------------------------------------------------
-    def Clk_insert_gen_code(self):
+    def Clk_abbina_gen_code(self):
         if not self.Row_WithoutCode:
             Msg_Dlg = Message_Dlg(MSG_BOX_INFO, 'Please select a Row without Code')
             Msg_Dlg.wait_window()

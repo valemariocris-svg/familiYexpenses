@@ -318,6 +318,8 @@ class Codes_DB_Private(Files_Names_Manager):
         nCount     = 0
         for TRrecord in self._TR_Codes_Table:
             nCount += 1     #  TESTING
+            if TRrecord[IX_TR_TR_CODE] == 59:
+                pass
             StrToForFind   = TRrecord[IX_TR_TR_STR_TO_FIND]
             StrToFind_List = GetStrList_ForFind(StrToForFind)
             if StrToForFind == '' and Full_Desc == '':
