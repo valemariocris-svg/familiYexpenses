@@ -236,18 +236,9 @@ class Transact_Db(Xlsx_Manager):
     #                   0      1       2      3       4       5       6       7       8
     # Record_List :  (Ident) Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes)
     # -------------------------------------------------------------------------------------------------
-    def Insert_oneRow_on_Transact_Db(self, Record_List):
-        Conto  = Record_List[IX_ROW_TOINS_CONTO]
-        Contab = Record_List[IX_ROW_TOINS_CONTAB]
-        Valuta = Record_List[IX_ROW_TOINS_VALUTA]
-        TRdesc = Record_List[IX_TRANSACT_TR_DESC]
-        Accred = Convert_To_Float(Record_List[IX_ROW_TOINS_ACCRED])
-        Addeb  = Convert_To_Float(Record_List[IX_ROW_TOINS_ADDEB])
-        TRcode = Record_List[IX_ROW_TOINS_TR_CODE]
-        FullDes = Record_List[IX_ROW_TOINS_FULL_DESC]
-
-        sql = """INSERT INTO TRANSACT (Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
-        parameters = (Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes)
+    def Insert_oneRow_on_Transact_Db(self, nRow, Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes):
+        sql = """INSERT INTO TRANSACT (nRow, Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        parameters = (nRow, Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes)
         status, data = self._query_execute(TRANSACT_FILE, sql, parameters, CLOSE_DB)
         if not status:
             return False, data

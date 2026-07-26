@@ -84,13 +84,14 @@ class Super_Top_Mngr(tk.Toplevel):
     def Clk_OnTree_NoCodes(self, Values):
         #  [nRow, Contab, Valuta, Accred, Addeb, FullDes
         Row      = int(Values[IX_NO_CODE_NROW])
+        Conto    = Values[IX_NO_CODE_CONTO]
         Valuta    = Values[IX_NO_CODE_VALUTA]
         FullDesc  = Values[IX_NO_CODE_FULL_DESCR]
         self.Txt_StrFullDesc1.Set_Text(Valuta + '  - ' + FullDesc)
 
         flAccred  = Convert_Str_To_Float(Values[IX_NO_CODE_ACCRED])
         flAddeb   = Convert_Str_To_Float(Values[IX_NO_CODE_ADDEB])
-        intValues = [Row, Values[IX_NO_CODE_CONTAB], Values[IX_NO_CODE_VALUTA],
+        intValues = [Row, Conto, Values[IX_NO_CODE_CONTAB], Values[IX_NO_CODE_VALUTA],
                      flAccred, flAddeb, Values[IX_NO_CODE_FULL_DESCR]]
         self.Row_WithoutCode = intValues
         self.Frame_WithCodes_ToIns.Clear_Focus()
@@ -151,7 +152,6 @@ class Super_Top_Mngr(tk.Toplevel):
             return
         self.Load_Trees()
         self.View_Frames(-1)
-
 
     # -------------------------------------------------------------------------------------------------
     # self.all_rows_inserted_list            = []

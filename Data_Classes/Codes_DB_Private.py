@@ -156,7 +156,8 @@ class Codes_DB_Private(Files_Names_Manager):
                 # IMPORTANTE: resettiamo l'oggetto a None così alla prossima chiamata
                 # il test 'if not self._database_connect' funzionerà correttamente
                 self._database_connect = None
-                return True, data
+                # return True, data
+            pass
 
     # -------------------------------------------------------------------------------------------
     def _get_codes_tables(self):

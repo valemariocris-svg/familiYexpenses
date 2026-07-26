@@ -3,8 +3,10 @@
 #              class  for  xlsx file managiging                              #
 # ========================================================================== #
 
-import sqlite3
-from openpyxl import load_workbook
+# import sqlite3
+# from openpyxl import load_workbook
+import pandas as pd
+import numpy as np
 import warnings
 from Data_Classes.Codes_DB import *
 
@@ -28,6 +30,9 @@ class Xlsx_Manager(Codes_db):
         self._Addeb  = None     # float
         self._Des2   = None     # str
 
+        # self._df: pd.DataFrame | None = None      da' warning
+        self._df: pd.DataFrame  # Si dichiara qui che self,_df e' tipo pd.DataFrame per il load di xlsx
+
         # ------------------------             A      B      C      D      E     F  ---------------
         self._Xlsx_Rows_From_Sheet     = []  # _Contab _Valuta _Des1 Accred _Addeb _Des2
         self._Xlsx_Rows_Desc_Compact   = []  #   ""     ""     comp     ""    ""   comp
@@ -40,7 +45,7 @@ class Xlsx_Manager(Codes_db):
         self._TotWihtout_Code = 0
         self._iYear_List      = []
 
-        # -------   _tAtt : temporary attributes  that will be coied on _Att  if all OK  -------------
+        # -------   _tAtt : temporary attributes  that will be copied on _Att  if all OK  -------------
         self._tXLSX_Rows_From_Sheet    = []
         self._tXLSX_Rows_Desc_Compact  = []
         self._tXlsx_Rows_Compact       = []
@@ -90,13 +95,6 @@ class Xlsx_Manager(Codes_db):
     # ------------------------------------------------------------------------------------
     def Get_Length_Xlsx(self):
         return len(self._Xlsx_Rows_From_Sheet)
-
-    # ------------------------------------------------------------------------------------
-    def Add_Row_NoCode_into_WithCode_list(self, Row_WithoutCode, TRcode, TRdesc):
-        self._Add_Row_NoCode_into_WithCode_list(Row_WithoutCode, TRcode, TRdesc)
-
-    def Delete_Row_NoCode(self, Row_WithoutCode):
-        return self._Delete_Row_NoCode(Row_WithoutCode)
 
     # -------------------------------------------------------------------------------------
     def Get_WithCodeList(self):
@@ -178,6 +176,7 @@ class Xlsx_Manager(Codes_db):
     #                       self._Xlsx_Rows_Desc_Compact                                      #
     #                       self._Xlsx_Rows_Compact                                           #
     # --------------------------------------------------------------------------------------- #
+    @property
     def  Load_Xlsx_Rows(self) -> tuple[bool, str | list]:
         self._Init_Xlsx_Data()
         Filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
@@ -193,11 +192,13 @@ class Xlsx_Manager(Codes_db):
         if self._tXlsx_Year is None or self._tXlsx_Conto is None or self._tXlsx_Month is None:
             return False, "FATAL ERROR 13\non extracting Year, Conto , Month from xlsx file"
 
-        for nRow in range(1, self._tTot_Rows+1):    # the first row is "1"
-            XlsxRow_AsItIs = self._Get_xlsx_Row_AsIs(nRow)
-            Checked_Row = self._Check_Values(XlsxRow_AsItIs)
-
+        for idx, row in enumerate(self._df.itertuples(index=False)):
+            xlsx_row__as_is = self._get_xlsx_as_is(idx, row)
+            pass
+            Checked_Row = self._Check_Values(xlsx_row__as_is)
+            #
             if Checked_Row:
+                self.nRow = idx
                 Des1_Comp = Compact_Descr_String(Checked_Row[IX_ROW_DESCR1])
                 Des2_Comp = Compact_Descr_String(Checked_Row[IX_ROW_DESCR2])
                 Full_Desc  = FullDescr_Setup(Des1_Comp, Des2_Comp)
@@ -205,9 +206,10 @@ class Xlsx_Manager(Codes_db):
                 self._Set_Year_Contab_Valuta(Checked_Row[IX_ROW_VALUTA])
                 Row_Desc_Comp = [self._nRow, self._Contab, self._Valuta, Des1_Comp, self._Accr, self._Addeb, Des2_Comp]
                 Row_Compact   = [self._nRow, self._Contab, self._Valuta, self._Accr, self._Addeb, Full_Desc]
-                self._tXLSX_Rows_From_Sheet.append(XlsxRow_AsItIs)    #_tXlsx_Rows_Sheet.append(Checked_Row)
+                self._tXLSX_Rows_From_Sheet.append(xlsx_row__as_is)    #_tXlsx_Rows_Sheet.append(Checked_Row)
                 self._tXLSX_Rows_Desc_Compact.append(Row_Desc_Comp)
                 self._tXlsx_Rows_Compact.append(Row_Compact)
+                pass
 
         if self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA or self._tXlsx_Conto == POSTA:
             self._Adjust_Rows_MostToLess()    # Invert order from Most Recent to Less
@@ -217,6 +219,45 @@ class Xlsx_Manager(Codes_db):
             return False, data
         self._Save_Xlsx_Data()
         return True, ''
+
+
+
+        if self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA or self._tXlsx_Conto == POSTA:
+            self._Adjust_Rows_MostToLess()    # Invert order from Most Recent to Less
+
+        status, data = self._create_With_Out_codes_lists()
+        if not status:
+            return False, data
+        self._Save_Xlsx_Data()
+        return True, ''
+
+
+
+
+        # for nRow in range(1, self._tTot_Rows+1):    # the first row is "1"
+        #     XlsxRow_AsItIs = self._Get_xlsx_Row_AsIs(nRow)
+        #     Checked_Row = self._Check_Valuesss(XlsxRow_AsItIs)
+        #
+        #     if Checked_Row:
+        #         Des1_Comp = Compact_Descr_String(Checked_Row[IX_ROW_DESCR1])
+        #         Des2_Comp = Compact_Descr_String(Checked_Row[IX_ROW_DESCR2])
+        #         Full_Desc  = FullDescr_Setup(Des1_Comp, Des2_Comp)
+        #         self._Set_Year_Contab_Valuta(Checked_Row[IX_ROW_CONTAB])
+        #         self._Set_Year_Contab_Valuta(Checked_Row[IX_ROW_VALUTA])
+        #         Row_Desc_Comp = [self._nRow, self._Contab, self._Valuta, Des1_Comp, self._Accr, self._Addeb, Des2_Comp]
+        #         Row_Compact   = [self._nRow, self._Contab, self._Valuta, self._Accr, self._Addeb, Full_Desc]
+        #         self._tXLSX_Rows_From_Sheet.append(XlsxRow_AsItIs)    #_tXlsx_Rows_Sheet.append(Checked_Row)
+        #         self._tXLSX_Rows_Desc_Compact.append(Row_Desc_Comp)
+        #         self._tXlsx_Rows_Compact.append(Row_Compact)
+        #
+        # if self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA or self._tXlsx_Conto == POSTA:
+        #     self._Adjust_Rows_MostToLess()    # Invert order from Most Recent to Less
+        #
+        # status, data = self._create_With_Out_codes_lists()
+        # if not status:
+        #     return False, data
+        # self._Save_Xlsx_Data()
+        # return True, ''
 
     # --------------------------------------------------------------------------------------------- #
     # _With_Code_Tree_List   : nRow   Contab  Valuta  TR_Desc   Accred  Addeb   TRcode  RowFullDes 
@@ -285,27 +326,24 @@ class Xlsx_Manager(Codes_db):
     def _Date_Check(self,XlsxRow_AsItIs):
         Date_Contab = XlsxRow_AsItIs[IX_ROW_CONTAB]
         Date_Valuta = XlsxRow_AsItIs[IX_ROW_VALUTA]
-        if Date_Contab is None or Date_Valuta is None:
+        if type(Date_Contab) is not datetime or type(Date_Valuta) is not datetime:
             return  False
-        iYear_Contab = int(Date_Contab[:4])
-        iYear_Valuta = int(Date_Valuta[:4])
-
-        # both Years  not equal to  current year: NOK
-        # 2022-2022  or 2024-2024
+        str_date_contab = Date_Contab.strftime("%Y-%m-%d")
+        str_date_valuta = Date_Valuta.strftime("%Y-%m-%d")
+        iYear_Contab    = int(str_date_contab[0:4])
+        iYear_Valuta    = int(str_date_valuta[0:4])
         if iYear_Contab != self._tXlsx_Year and iYear_Valuta != self._tXlsx_Year:
             return False
-        # both Years  equal to current year: OK
         elif iYear_Contab == self._tXlsx_Year and iYear_Valuta == self._tXlsx_Year:
             return True
-        # 2023-2022 for Contabile    2024-2023  for Valuta
         elif iYear_Contab == self._tXlsx_Year or iYear_Valuta == self._tXlsx_Year:
             return True
-        else:
-            return False
+        return False
 
     # ---------------------------------------------------------------------------------------------
     def _Check_Values(self, XlsxRow_AsItIs):
         # nRow = XlsxRow_AsItIs[IX_ROW_NROW]
+
         if not self._Date_Check(XlsxRow_AsItIs):
             return []
         else:
@@ -357,6 +395,27 @@ class Xlsx_Manager(Codes_db):
             else:
                 return None
         return None
+
+    # ---------------------------------------------------------------------------------------------
+    def _get_xlsx_as_is(self, idf, row):
+        # IX_ROW_NROW   = 0
+        # IX_ROW_CONTAB = 1
+        # IX_ROW_VALUTA = 2
+        # IX_ROW_DESCR1 = 3
+        # IX_ROW_ACCRED = 4
+        # IX_ROW_ADDEB  = 5
+        # IX_ROW_DESCR2 = 6
+
+        self.Dummy = 0
+        rowList     = list(row)
+        data_contab = rowList[0]
+        datavaluta  = rowList[1]
+        descr1      = rowList[2]
+        accred      = rowList[3]
+        addeb       = rowList[4]
+        descr2      = rowList[5]
+        pass
+        return [idf, data_contab, datavaluta, descr1, accred, addeb, descr2]
 
     # ---------------------------------------------------------------------------------------------
     def _Get_xlsx_Row_AsIs(self, nRow):
@@ -446,17 +505,46 @@ class Xlsx_Manager(Codes_db):
     # --------------------------------------------------------------------------------- #
     def _Get_Work_Sheet_Rows(self):
         filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
-        Work_Book = None
         try:
-            Work_Book = load_workbook(filename)
-        except sqlite3.Error:
-            self._tTot_Rows = -1
-            return
-        finally:
-            self.SheetName   = Work_Book.sheetnames[0]   # always the first sheet
-            self._Work_Sheet = Work_Book[self.SheetName]
-            self._tTot_Rows  = self._Work_Sheet.max_row
+            # header=None disattiva la ricerca dei titoli delle colonne.
+            # Le colonne si chiameranno semplicemente 0, 1, 2, 3...
+            self._df = pd.read_excel(filename, sheet_name=0, header=None)
+
+            xl_file = pd.ExcelFile(filename)
+            self.SheetName = xl_file.sheet_names[0]
+
+            # TRUCCO FONDAMENTALE:
+            # Sostituiamo NaN con None usando replace e object
+            self._df = self._df.astype(object).replace({np.nan: None})
             pass
+            # Convertiamo i campi vuoti (NaN) nel classico None di Python
+            self._df = self._df.astype(object).where(pd.notnull(self._df), None)
+            pass
+            self._tTot_Rows = len(self._df)
+            pass
+
+        except Exception as e:
+            print(f"Errore lettura Pandas: {e}")
+            self._tTot_Rows = -1
+            self._df = None
+            self.SheetName = ""
+            return -1
+        finally:
+            pass
+        return self._tTot_Rows
+    # def _Get_Work_Sheet_Rows(self):
+    #     filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
+    #     Work_Book = None
+    #     try:
+    #         Work_Book = load_workbook(filename)
+    #     except ValueError as e:
+    #         self._tTot_Rows = -1
+    #         return
+    #     finally:
+    #         self.SheetName   = Work_Book.sheetnames[0]   # always the first sheet
+    #         self._Work_Sheet = Work_Book[self.SheetName]
+    #         self._tTot_Rows  = self._Work_Sheet.max_row
+    #         pass
 
     # -----------------------------------------------------------------------------------
     def _Verify_Date(self, DateToCheck):
@@ -485,40 +573,5 @@ class Xlsx_Manager(Codes_db):
         strDay   = myDate[8:10]
         myDate = strYear + '-' + strMonth + '-' +strDay
         return myDate
-
-
-    # ------------------------------------------------------------------------------------- #
-    # List_Rows_WithoutCode : nRow  Contab  Valuta  Accr(str) Addeb(str)   FullDes          #
-    # List_Rows_WithCode    : nRow  Contab  Valuta  TR_Desc  Accr(str)  Addeb(str) TRcode   #
-    # ------------------------------------------------------------------------------------- #
-    def _Add_Row_NoCode_into_WithCode_list(self, Row_WithoutCode, TRcode, TRdesc):
-        nRow      = int(Row_WithoutCode[IX_NO_CODE_NROW])
-        Contab    = Row_WithoutCode[IX_NO_CODE_CONTAB]
-        Valuta    = Row_WithoutCode[IX_NO_CODE_VALUTA]
-        Accred    = Row_WithoutCode[IX_NO_CODE_ACCRED]
-        Addeb     = Row_WithoutCode[IX_NO_CODE_ADDEB]
-        FullDesc  = Row_WithoutCode[IX_NO_CODE_FULL_DESCR]
-        Row_ToAdd = [nRow, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDesc]
-        self._With_Code_Tree_List.append(Row_ToAdd)
-        self._TotWith_Code += 1
-
-    # ----------------------------------------------------------------------------------- #
-    # List_Rows_WithoutCode : nRow  _Contab  _Valuta  _Accr     _Addeb   FullDes          #
-    # List_Rows_WithCode    : nRow  _Contab  _Valuta  TR_Desc  Accred  _Addeb    TRcode   #
-    # ----------------------------------------------------------------------------------- #
-    # ---------------------------------------------------------------------------------------------
-    def _Delete_Row_NoCode(self, Row_WithoutCode):
-        if Row_WithoutCode in self._Wihtout_Code_Tree_List:
-            try:
-                self._Wihtout_Code_Tree_List.remove(Row_WithoutCode)
-                self._TotWihtout_Code -= 1
-                if self._TotWihtout_Code < 0:
-                    self._TotWihtout_Code = 0
-                return True, ''
-            except Exception as e:
-                return False, f"Error on deleting row:\n{Row_WithoutCode[IX_NO_CODE_FULL_DESCR]}\n\n {e} "
-            finally:
-                pass
-        return False, f"Error:\n{Row_WithoutCode[IX_NO_CODE_FULL_DESCR]}\n\nNOT in list "
 
 # =======================================================================================

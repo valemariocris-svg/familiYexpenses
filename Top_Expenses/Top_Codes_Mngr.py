@@ -30,9 +30,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.ComboList = self.Data.Get_GRdescr_Ordered_List()
         self.GR_Combo1 = TheCombo(self.Canv_CodData, self.StrVar, 80, 100, 32, 36,
                                   self.ComboList, GROUPSEL, self.Clk_Combo)
-
         self.geometry(TOP_MNGR_GEOMETRY)
-
         self.LocConto      = ''
         self.LocIntYear    = 0
         self.Set_Conto_Year()       # Conto Years etc are setted on Load_Xlsx_Lists
@@ -165,46 +163,65 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         self.Mod_Mngr.Top_Launcher(TOP_CODES_VIEW, TOP_CODES_MNGR,
                                    [VIEW_ALL_LARGE])  # Launch Top_Codes_View for ALL Large
 
-    # ---------------------------------------------------------------------------------------------
-    # Call from a click in Top_Codes_View Frame
-    def Clicked_On_CodesView(self, TR_Full_List):
-        if self.Top_View_Type != VIEW_ALL_LARGE:
-            if self.View_Without_Code:
-                if self.Row_WithoutCode:
-                    Result = self.Set_Selected_Code(TR_Full_List)
-                    if Result == YES:
-                        self.TR_Code = TR_Full_List[IX_TR_FULL_TR_CODE]
-                        self.TR_Desc = TR_Full_List[IX_TR_FULL_TR_DESC]
-                        self.Data.Add_Row_NoCode_into_WithCode_list(self.Row_WithoutCode, self.TR_Code, self.TR_Desc)
-                        self.Data.Delete_Row_NoCode(self.Row_WithoutCode)
-                        Total      = self.Data.Get_Total_Rows()
-                        Tot_NoCode = Total[IX_TOT_ROWS_WITHOUT_CODE]
-                        if Tot_NoCode:
-                            # self.Mod_Mngr.Top_Launcher(TOP_CODES_VIEW, TOP_CODES_MNGR, [VIEW_ALL_REDUC])  # Close the reduced Codes View
-                            self.Row_WithoutCode = None
-                            self.Load_Trees()
-                    else:
-                        pass    # NO  Code to Insert
-                else:
-                    Msg_Dlg = Message_Dlg(MSG_BOX_INFO, 'Please select a Row without Code')
-                    Msg_Dlg.wait_window()
-            else:
-                pass
-        else:
-            self.Frame_WithCodes_ToIns.Clear_Focus()           # === Clicked On Codes View No Code Waiting
-            self.Row_WithoutCode = None
-            self.TR_Code   = TR_Full_List[IX_TR_FULL_TR_CODE]
-            self.TR_Desc   = TR_Full_List[IX_TR_FULL_TR_DESC]
-            self.Txt_TR_Code1.Set_Text(self.TR_Code)
-            self.Txt_TR_Desc1.Set_Text(self.TR_Desc)
-            self.Txt_GR_Code1.Set_Text( TR_Full_List[IX_TR_FULL_GR_CODE])
-            self.GR_Combo1.SetSelText(TR_Full_List[IX_TR_FULL_GR_DESC])
-            self.Txt_CA_Code1.Set_Text(TR_Full_List[IX_TR_FULL_CA_CODE])
-            self.Txt_CAdesc1.Set_Text(TR_Full_List[IX_TR_FULL_CA_DESC])
-            self.Txt_StrToFind1.Set_Text(TR_Full_List[IX_TR_FULL_STR_TO_FIND])
-            self.Txt_StrFullDesc1.Set_Text(TR_Full_List[IX_TR_FULL_FULL_DESC])
+    # ----------------------------------------------------------------------------------- #
+    def Ask_for_abbina_code(self, TRcode_full_Rec):
+        self.TR_Code  = int(TRcode_full_Rec[IX_TR_FULL_TR_CODE])
+        messg  = f"per la riga: {self.Row_WithoutCode[IX_NO_CODE_NROW]}\n{self.Row_WithoutCode[IX_NO_CODE_FULL_DESCR]}\n\n"
+        messg += f"hai scelto\ncodice:      {TRcode_full_Rec[IX_TR_FULL_TR_CODE]}"
+        messg += f"\ndescrizione: {TRcode_full_Rec[IX_TR_FULL_TR_DESC]}\n"
+        messg += f"\n\nvuoi inserirlo nel database movimenti"
+        Msg_Dlg = Message_Dlg(MSG_BOX_ASK, messg)
+        Msg_Dlg.wait_window()
+        Reply   = Msg_Dlg.data
+        return Reply
 
     # ---------------------------------------------------------------------------------------------
+    # Call from a click in Top_Codes_View Frame
+    def Clicked_On_CodesView(self, TRcode_full_rec):
+        if self.Top_View_Type == VIEW_ALL_LARGE:
+            self.Frame_WithCodes_ToIns.Clear_Focus()  # === Clicked On Codes View No Code Waiting
+            self.Row_WithoutCode = None
+            self.TR_Code = TRcode_full_rec[IX_TR_FULL_TR_CODE]
+            self.TR_Desc = TRcode_full_rec[IX_TR_FULL_TR_DESC]
+            self.Txt_TR_Code1.Set_Text(self.TR_Code)
+            self.Txt_TR_Desc1.Set_Text(self.TR_Desc)
+            self.Txt_GR_Code1.Set_Text(TRcode_full_rec[IX_TR_FULL_GR_CODE])
+            self.GR_Combo1.SetSelText(TRcode_full_rec[IX_TR_FULL_GR_DESC])
+            self.Txt_CA_Code1.Set_Text(TRcode_full_rec[IX_TR_FULL_CA_CODE])
+            self.Txt_CAdesc1.Set_Text(TRcode_full_rec[IX_TR_FULL_CA_DESC])
+            self.Txt_StrToFind1.Set_Text(TRcode_full_rec[IX_TR_FULL_STR_TO_FIND])
+            self.Txt_StrFullDesc1.Set_Text(TRcode_full_rec[IX_TR_FULL_FULL_DESC])
+
+        else:
+            if not self.View_Without_Code:
+                if not self.Row_WithoutCode:
+                    Msg_Dlg = Message_Dlg(MSG_BOX_INFO, 'Please select a Row without Code')
+                    Msg_Dlg.wait_window()
+                    return
+            Result = self.Ask_for_abbina_code(TRcode_full_rec)
+            if Result != YES:
+                return
+
+            nRow    = self.Row_WithoutCode[IX_NO_CODE_NROW]
+            Conto   = self.Row_WithoutCode[IX_NO_CODE_CONTO]
+            Contab  = self.Row_WithoutCode[IX_NO_CODE_CONTAB]
+            Valuta  = self.Row_WithoutCode[IX_NO_CODE_VALUTA]
+            Accred  = self.Row_WithoutCode[IX_NO_CODE_ACCRED]
+            Addeb   = self.Row_WithoutCode[IX_NO_CODE_ADDEB]
+            TRdesc  = TRcode_full_rec[IX_TR_FULL_TR_DESC]
+            TRcode  = TRcode_full_rec[IX_TR_FULL_TR_CODE]
+            FullDes = self.Row_WithoutCode[IX_NO_CODE_FULL_DESCR]
+
+            status, data =self.Data.Insert_oneRow_on_Transact_Db(nRow, Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes)
+            if not status:
+                msg_dlg = Message_Dlg(MSG_BOX_ERR, data)
+                msg_dlg.wait_window()
+                pass
+            else:
+                pass
+            self.Load_Trees()
+    # ---------------------------------------------------------------------------------------------
+    # vedi sopra click su codice scelto
     def Clk_abbina_gen_code(self):
         if not self.Row_WithoutCode:
             Msg_Dlg = Message_Dlg(MSG_BOX_INFO, 'Please select a Row without Code')
@@ -220,16 +237,6 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         else:
             self.Mod_Mngr.Top_Launcher(TOP_CODES_VIEW, [TOP_CODES_MNGR], [VIEW_ALL_REDUC])
             self.Top_View_Type = VIEW_ALL_REDUC
-
-    # ----------------------------------------------------------------------------------- #
-    def Set_Selected_Code(self, TRfull_Rec):
-        self.TR_Code  = int(TRfull_Rec[IX_TR_FULL_TR_CODE])
-        TR_Desc = TRfull_Rec[IX_TR_FULL_TR_DESC]
-        Messg   = 'Confirm selected code: ' + str(self.TR_Code) + '\nDescription: ' + TR_Desc + '  '
-        Msg_Dlg = Message_Dlg(MSG_BOX_ASK, Messg)
-        Msg_Dlg.wait_window()
-        Reply   = Msg_Dlg.data
-        return Reply
 
     # ---------------------------------------------------------------------------------------------
     # _Wihtout_Code_Tree_List  nRow  Contab Valuta Accr   Addeb  FullDes
