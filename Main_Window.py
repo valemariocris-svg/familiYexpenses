@@ -45,7 +45,7 @@ class Main_Window(tk.Tk):
         self.Top_Codes_Mngr= None
         self.Top_View      = None
 
-        TheButton(self,  BTN_DEF_EN,  20, 250, 36, 'Gestione codi file xls e file movimenti',  self.Clk_Manage_Codes)
+        TheButton(self,  BTN_DEF_EN,  20, 250, 36, 'gestione Db codici righe xls e Db movimenti',  self.Clk_Manage_Codes)
         TheButton(self, BTN_DEF_EN,  20, 300, 36, 'QUERIES',         self.Clk_Queries)
         TheButton(self, BTN_BOL_EN,  24, 350, 32, '  E S C I   ',    self.Call_OnClose)
 

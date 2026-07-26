@@ -162,13 +162,38 @@ class Xlsx_Manager(Codes_db):
         self._With_Code_Tree_List    = self._tWith_Code_Tree_List
         self._Wihtout_Code_Tree_List = self._tWihtout_Code_Tree_List
 
+    # --------------------------------------------------------------------------------- #
+    #  Workbook is the container of all Worksheets                                      #
+    #  while the Worksheet is the container of Data of one Sheet                        #
+    # --------------------------------------------------------------------------------- #
+    def _Get_Work_Sheet_Rows(self):
+        filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
+        try:
+            self._df = pd.read_excel(
+                filename,
+                sheet_name=0,
+                header=None,    # Nessun titolo
+                # usecols="A:G",  # Forza a leggere sempre le colonne A, B, C, D, E, F, G
+                keep_default_na=False  # Le celle vuote diventano "" anziché NaN
+            )
+            self._tTot_Rows = len(self._df)
+
+        except Exception as e:
+            print(f"Errore lettura Pandas: {e}")
+            self._tTot_Rows = -1
+            self._df = None
+            return -1
+        return self._tTot_Rows
+
     # ----------------------------------------------------------------------------------------------- #
     def  Load_Xlsx_Rows(self) -> tuple[bool, str | list]:
         self._Init_Xlsx_Data()
         Filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
         if not Gl_Cek_Xlsx_Name(Filename):
             return False, "FATAL ERROR 12:\nxlsx filename not OK"
-        self._Get_Work_Sheet_Rows()
+
+        self._Get_Work_Sheet_Rows()  # ------------------>>>>>
+
         if self._tTot_Rows == -1:
             return False, "FATAL ERROR 13:\non loading workbook"
         elif self._tTot_Rows == 0:
@@ -179,11 +204,11 @@ class Xlsx_Manager(Codes_db):
             return False, "FATAL ERROR 13\non extracting Year, Conto , Month from xlsx file"
 
         for idx, row in enumerate(self._df.itertuples(index=False)):
-            pass    # idx ??
-            xlsx_row_as_is = self._get_xlsx_row_as_is(row)
-            pass
-            Checked_Row = self._Check_Values(xlsx_row_as_is)
-            #
+            rowList = list(row)
+            print(f"{idx+1}:  {type(rowList[0])}  {rowList[1]} {rowList[2]} {rowList[3]} {rowList[4]}  {rowList[5]}")
+
+            Checked_Row = self._Check_Values(rowList)
+
             if Checked_Row:
                 self._nRow = idx
                 Des1_Comp = Compact_Descr_String(Checked_Row[IX_ROW_DESCR1])
@@ -210,7 +235,7 @@ class Xlsx_Manager(Codes_db):
         self._Save_Xlsx_Data()
         return True, ''
     # ---------------------------------------------------------------------------------------------
-    def _get_xlsx_row_as_is(self, row):
+    # def _get_xlsx_row_as_is(self, row):
         # CONTO     A       B       C       D       E       F       G
         #           0       1       2       3       4       5       6
         # FIDEU     Contab  Valuta  Des1    Accred  Added   Des2
@@ -219,33 +244,33 @@ class Xlsx_Manager(Codes_db):
         # FORM nRow,Contab, Valuta, Des1,   Accred, Addeb,  Des2
         #        0     1       2      3        4      5       6
 
-        rowList   = list(row)
-        Contab    = rowList[0]
-        Valuta    = rowList[1]
-        Des1   = None
-        Accred = None
-        Addeb  = None
-        Des2   = None
-
-        if self._tXlsx_Conto == FIDEU:
-            Des1   = rowList[2]
-            Accred = rowList[3]
-            Addeb  = rowList[4]
-            Des2   = rowList[5]
-
-        elif self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA:
-            Des1   = rowList[1]
-            Accred = rowList[5]
-            Addeb  = rowList[3]
-            Des2   = ''
-
-        elif self._tXlsx_Conto == POSTA:
-            Des1 = rowList[4]
-            Accred = rowList[2]
-            Addeb = rowList[1]
-            Des2 = ''
-
-        return [Contab, Valuta, Des1, Accred, Addeb , Des2]
+        # rowList   = list(row)
+        # Contab    = rowList[0]
+        # Valuta    = rowList[1]
+        # Des1   = None
+        # Accred = None
+        # Addeb  = None
+        # Des2   = None
+        #
+        # if self._tXlsx_Conto == FIDEU:
+        #     Des1   = rowList[2]
+        #     Accred = rowList[3]
+        #     Addeb  = rowList[4]
+        #     Des2   = rowList[5]
+        #
+        # elif self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA:
+        #     Des1   = rowList[1]
+        #     Accred = rowList[5]
+        #     Addeb  = rowList[3]
+        #     Des2   = ''
+        #
+        # elif self._tXlsx_Conto == POSTA:
+        #     Des1 = rowList[4]
+        #     Accred = rowList[2]
+        #     Addeb = rowList[1]
+        #     Des2 = ''
+        #
+        # return [Contab, Valuta, Des1, Accred, Addeb , Des2]
 
     # --------------------------------------------------------------------------------------------- #
     # _With_Code_Tree_List   : nRow   Contab  Valuta  TR_Desc   Accred  Addeb   TRcode  RowFullDes 
@@ -404,30 +429,4 @@ class Xlsx_Manager(Codes_db):
         myDate = strYear + '-' + strMonth + '-' +strDay
         return myDate
 
-    # --------------------------------------------------------------------------------- #
-    #  Workbook is the container of all Worksheets                                      #
-    #  while the Worksheet is the container of Data of one Sheet                        #
-    # --------------------------------------------------------------------------------- #
-    def _Get_Work_Sheet_Rows(self):
-        filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
-        try:
-            # 1. Apriamo il file Excel una volta sola
-            with pd.ExcelFile(filename) as xl_file:
-                self.SheetName = xl_file.sheet_names[0]
-                # Leggiamo il primo foglio
-                self._df = pd.read_excel(xl_file, sheet_name=0, header=None)
-
-            # 2. Unica conversione pulita dei NaN in None (senza usare np o doppi passaggi)
-            self._df = self._df.where(pd.notna(self._df), None)
-
-            self._tTot_Rows = len(self._df)
-
-        except Exception as e:
-            print(f"Errore lettura Pandas: {e}")
-            self._tTot_Rows = -1
-            self._df = None
-            self.SheetName = ""
-            return -1
-
-        return self._tTot_Rows
 # =======================================================================================

@@ -1,6 +1,6 @@
 # ------------------------------------------------------------#
 #           *****     Constants.py      *****                 #
-#   there are 5 blocks:                                       #
+#   there are 9 blocks:                                       #
 #   1. windows settings                                       #
 #   2. filenames settings                                     #
 #   3. codes database settings                                #
@@ -12,9 +12,9 @@
 #   9. widgwts settings                                       #
 # ------------------------------------------------------------#
 
-# ------------------------------------------------------------#
-#        ----------     1. windows settings   ----------      #
-# ------------------------------------------------------------#
+# ================================================================================================= #
+#                                ----------     1. windows settings   ----------                    #
+# ================================================================================================= #
 
 BACKGND   ='#567688'    # for all widgets
 FORGND    = "white"     # for all   " "
@@ -50,9 +50,9 @@ else:
 XY_TO_HIDE   = 10000   # Hide widget
 COL_MUSTARD  = '#749D5F'
 
-# =========================================================== #
+# ----------------------------------------------------------- #
 #       CHAT:   exchanging   DATA between classes             #
-# =========================================================== #
+# ----------------------------------------------------------- #
 MAIN_WIND           = 'Main_Window     '
 MODULES_MNGR        = 'Modules Manager'       # Top_Level Launcher
 FILES_NAMES_MNGR    = 'Files_Names_Mngr'    # .txt .db .xlsx files names manager
@@ -137,9 +137,9 @@ NONE   = 'None'
 OK     = 'OK'
 NOK    = 'NOK'
 
-# ------------------------------------------------------------#
-#     ----------     3. codes database settings   --------    #
-# ------------------------------------------------------------#
+# ================================================================================================= #
+#                           ----------     3. codes database settings   --------                    #
+# ================================================================================================= #
 STRTOFIND   = 'String to find'
 TRDESC      = 'TR code description'
 GROUPSEL    = 'Select a group'
@@ -190,10 +190,9 @@ IX_GR_CA_CODE = 2
 # TABLE  CATEGORY_CODES
 IX_CA_CA_CODE = 0
 IX_CA_CA_DESC = 1
-# ***************************************************************** #
-EXTRAORDINARY_CAT_CODE = 7  # ***    DO NOT CHANGE  THIS CODE ***** #
-# ***************************************************************=* #
-
+# ----------------------------------------------------------------- #
+EXTRAORDINARY_CAT_CODE = 7  # ***    DO NOT CHANGE  THIS CODE ----- #
+# ----------------------------------------------------------------- #
 
 # View Codes List       TRcode TR_Desc   GR_Desc   CA_Desc   StrToFind
 IX_WIEW_TR_CODE    = 0
@@ -202,9 +201,10 @@ IX_WIEW_GR_DESCR   = 2 # these constants are not used
 IX_WIEW_CA_DESCR   = 3 # because GRdesc CAdesc StrToFind are
 IX_WIEW_STR_TOFIND = 4 # as on Codes Tables
 
-# ------------------------------------------------------------#
-#     ----------     4.   xlsx  rows settings     --------    #
-# ------------------------------------------------------------#
+
+# ================================================================================================= #
+#                           ----------     4.   xlsx  rows settings     --------                    #
+# ================================================================================================= #
 IX_XLSX_CONTO    = 0    # used on Data.Get_Full_Xlsx_Transact_Ident
 IX_XLSX_YEAR     = 1
 IX_XLSX_MONTH    = 2
@@ -228,7 +228,7 @@ IX_XLSX_WITH_TRDESC  = 6
 IX_XLSX_WITH_TRCODE  = 7
 IX_XLSX_WITH_FULLDES = 8
 
-# ----------------------  List of Controls  To Check on XLS rows Data ------------------------------------------
+#   List of Controls for XLS rows
 INTEGER       = 'Integer'
 NOT_INT       = 'String'
 NUMERIC       = 'Numeric'
@@ -261,11 +261,6 @@ LIST_FOR_XLSX_ROW_CONTROL = [
     [IX_ROW_CONTAB, DATE],    [IX_ROW_VALUTA, DATE],   [IX_ROW_DESCR1, STRING],
     [IX_ROW_ACCRED, NUMERIC], [IX_ROW_ADDEB, NUMERIC], [IX_ROW_DESCR2, STRING]]
 
-# ------------------------------------------------------------#
-#     ------     5. transactions database settings   -----    #
-# ------------------------------------------------------------#
-TRANSACT     = 'TRANSACT'
-
 IX_ROW_TOINS_NROW     = 0
 IX_ROW_TOINS_CONTO    = 1
 IX_ROW_TOINS_CONTAB   = 2
@@ -275,7 +270,12 @@ IX_ROW_TOINS_ADDEB    = 5
 IX_ROW_TOINS_TR_DESC  = 6
 IX_ROW_TOINS_TR_CODE  = 7
 IX_ROW_TOINS_FULL_DESC= 8  # DESC1 / DESC2
-#
+
+# ================================================================================================= #
+#                       ------     5. transactions database settings         -----                  #
+# ================================================================================================= #
+TRANSACT     = 'TRANSACT'
+
 IX_TRANSACT_IDENT    = 0  # auto inserted
 IX_TRANSACT_NROW     = 1
 IX_TRANSACT_CONTO    = 2
@@ -332,17 +332,17 @@ IX_WITH_CODE_TR_CODE    = 7
 IX_WITH_CODE_FULL_DESCR = 8  # the Fulll_Desc of Row inserted in Transact_Db
 
 
-
-# -------------------------------------------------------------------------------
-# used on File_Dialog and in _sql_execute for selecting database
+# ------------------------------------------------------------------------------ #
+#   ------  used on File_Dialog and in _sql_execute for selecting database       #
+# ------------------------------------------------------------------------------ #
 CODES_FILE    = 'Codes file'    # for File_Dialog
 XLSX_FILE     = 'Xlsx file'
 TRANSACT_FILE = 'Transact file' # the TRANSACT_FILENAME is used on managing transactions filename
 
 
-# =========================================================== #
-#             QUERIES  constants                              #
-# =========================================================== #
+# ================================================================================================= #
+#                        ------     6.   queries    settings   -----                                #
+# ================================================================================================= #
 ALL_MONTHS  = 'all Months'
 ALL_RECORDS = 'all Records'
 
@@ -446,9 +446,9 @@ CLOSE_DB  = True
 KEEP_OPEN = False
 SQL_CLOSE_DB  = "close database"
 
-# ------------------------------------------------------------#
-#     ------     7. selections dictionary settings   -----    #
-# ------------------------------------------------------------#
+# ================================================================================================= #
+#                       ------     7. selections dictionary settings   -----                        #
+# ================================================================================================= #
 Dict_Keys_List = [
     CODES_FILENAME, XLSX_FILENAME, TRANSACT_FILENAME, CODES_DIRECTORY, XLSX_FILENAME, TRANSACT_DIRECTORY,
 	CODES_VIEW_MODE, TRANSACT_INSERT_MODE, TRANSACT_VIEW_MODE, QUERY_CONTO, QUERY_START_MONTH,
@@ -477,10 +477,9 @@ Default_selections_dictionary  = {
     #
 }
 
-
-# ------------------------------------------------------------#
-#     ------     8. totals  dictionary  settings     -----    #
-# ------------------------------------------------------------#
+# ================================================================================================= #
+#                       ------     8. totals  dictionary  settings     -----                        #
+# ================================================================================================= #
 TOT_CONTO           = 'Conto for totals Db - xlsx'
 TOT_ROWS_INSERTED   = 'Total rows (std+gen) codes in Db'
 TOT_STD_COD_TOBE_INS = 'Total recods to be inserted in Db'
@@ -497,9 +496,9 @@ Totals_dict_default  = {
                       }
 
 
-# ------------------------------------------------------------#
-#     ----------     9.      widgets   settings   --------    #
-# ------------------------------------------------------------#
+# ================================================================================================= #
+#                       ----------     9.      widgets   settings   --------                        #
+# ================================================================================================= #
 LAB_BLUE     = 1
 LAB_FILE_SEL = 2
 LAB_ERR      = 3
