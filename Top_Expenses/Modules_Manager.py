@@ -143,7 +143,7 @@ class Modules_Manager:
                 return False
             return True
         else:
-            self.Data.Load_Xlsx_Rows
+            self.Data.Load_Xlsx_Rows()
             self.Chat.Tx_Request([Origin, [MAIN_WIND], VIEW_SELECTIONS, []])
             self.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(Origin)
             return True
@@ -154,7 +154,7 @@ class Modules_Manager:
         if File_Name == UNKNOWN:
             if not self.Sel_Xlsx_Mngr(Origin):
                 return False
-        status, data = self.Data.Load_Xlsx_Rows
+        status, data = self.Data.Load_Xlsx_Rows()
         if not status:
             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dlg.wait_window()
@@ -296,7 +296,7 @@ class Modules_Manager:
                 os.remove(Full_transact_filename)
                 print(f"file {transact_filename}\neliminato")
             else:
-                msg_dlg = Message_Dlg((MSG_BOX_ERR, f"file {transact_filename}\nnon esiste per la cancellazione"))
+                msg_dlg = Message_Dlg(MSG_BOX_ERR, f"file {transact_filename}\nnon esiste per la cancellazione")
                 msg_dlg.wait_window()
                 return False
             if not self.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(Origin):

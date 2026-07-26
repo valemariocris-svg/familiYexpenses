@@ -37,14 +37,10 @@ class Top_XLSX_Rows_View(tk.Toplevel):
 
         self.Txt1 = TheTextPoints(self, TXT_DISAB,  20, 860, 33, 4, '', 11)
         self.Txt2 = TheTextPoints(self, TXT_DISAB, 310, 860, 60, 4, '', 11)
-        # TheButton(self, BTN_DEF_EN,  20, 950, 16, 'Select Xlsx File ',   self.Clk_Sel_Xlsx)
-
-        self.StrVar_List = tk.StringVar
 
         self.Txt_Debit = TheTextPoints(self, TXT_ENAB, 310, 954, 12, 1, '', 11)
-        TheButton(self, BTN_DEF_EN, 440, 950, 16, 'Find Debit',  self.Clk_Find_Debit)
-
-        TheButton(self, BTN_DEF_EN, 650, 950, 15, 'E X I T ',    self.Call_OnClose)
+        TheButton(self, BTN_DEF_EN, 440, 950, 16, 'cerca addebito',  self.Clk_Find_Debit)
+        TheButton(self, BTN_DEF_EN, 650, 950, 15, ' E S C I  ',    self.Call_OnClose)
 
         # --------------------------   Create Treeview Frame   ------------------------------------
         self.Frame_Desc_x2     = TheFrame(self, 20, 20, self.Clk_On_Sheets_Row)
@@ -85,8 +81,7 @@ class Top_XLSX_Rows_View(tk.Toplevel):
         self.Frame_Desc_x2.Tree_Setup(Form_List)
 
     def View_Xlsx_Rows(self):
-        List = self.Data.Get_Xlsx_Rows_From_Sheet()
-
+        List = self.Data.Get_Xlsx_Rows_From_Sheet_normalized()
         XLS_Name  =Get_File_Name(self.Data.Get_sel_dictionary_value(XLSX_FILENAME))
         FrameText = ('     ' + XLS_Name + ':   ')
         FrameText += str(len(List)) + '   transactions  on  sheet  rows  '

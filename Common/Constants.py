@@ -1,8 +1,21 @@
 # ------------------------------------------------------------#
 #           *****     Constants.py      *****                 #
+#   there are 5 blocks:                                       #
+#   1. windows settings                                       #
+#   2. filenames settings                                     #
+#   3. codes database settings                                #
+#   4. xlsx rows settings                                     #
+#   5. transactions database settings                         #
+#   6. queries settings                                       #
+#   7. selections dictionary                                  #
+#   8. totals dictionary                                      #
+#   9. widgwts settings                                       #
 # ------------------------------------------------------------#
 
-# ------------------   Constants  for Widgets  ----------------
+# ------------------------------------------------------------#
+#        ----------     1. windows settings   ----------      #
+# ------------------------------------------------------------#
+
 BACKGND   ='#567688'    # for all widgets
 FORGND    = "white"     # for all   " "
 PRINT_ENABLED = True    # Enable printing
@@ -38,7 +51,7 @@ XY_TO_HIDE   = 10000   # Hide widget
 COL_MUSTARD  = '#749D5F'
 
 # =========================================================== #
-#       CHAT:   echanging   DATA between classes              #
+#       CHAT:   exchanging   DATA between classes             #
 # =========================================================== #
 MAIN_WIND           = 'Main_Window     '
 MODULES_MNGR        = 'Modules Manager'       # Top_Level Launcher
@@ -60,13 +73,6 @@ TOP_VIEW_MESS       = 'Top show messages '    # Toplevel to shaw messages
 TOP_TRANSACT_VERIFY = 'Top Transactions Verify'
 ANY                 = 'All Modules     '
 
-# Checkes to be made before a Tolevel launch
-CEK_CODES_DB     = 'Check codes DB OK  '
-CEK_XLSX_LIST    = 'Check xlsx lists   '
-CEK_TOP_MNGR     = 'Check Top Codes Mngr'
-CEK_TOP_INSERT   = 'Check Top_Insert    '
-CEK_TRANSACTIONS = 'Check Transactions Db'
-
 IX_TOP_CLASS = 0
 IX_TOP_NAME  = 1
 
@@ -85,39 +91,254 @@ CODE_CLIK_ON_XLSX   = 'Clkded On_Xlsx_Tree  '       # Clkd on Xlsx Row  Value = 
 CODE_CLEAR_FOCUS    = 'Clear Focus   '
 XLSX_UPDATED        = 'Xlsx updated'
 
-# =========================================================== #
-#             FILES  PARAMETERS                               #
-# =========================================================== #
+# ------------------------------------------------------------#
+#        ----------     2. filenames settings   ----------    #
+# ------------------------------------------------------------#
+DEFAULT_INIT_DIR       = '/home/mario'
+SELECTIONS_DIR_NAME    = '/home/mario/bExp_Selections'
+SELECTIONS_FULL_NAME   = '/home/mario/bExp_Selections/Selections'
+DICTIONARY_FULL_NAME   = '/home/mario/bExp_Selections/Sel_dictionary.json'
+
+CODES_FILENAME       = 'codes_filename'     # sel_dictionary
+XLSX_FILENAME        = 'xlsx_filename'
+TRANSACT_FILENAME    = 'transact_filename'
+CODES_DIRECTORY      = 'Codes directory'
+XLSX_DIRECTORY       = 'Xlsx directory'
+TRANSACT_DIRECTORY   = 'Transactions directory'
+
+LEN_CODES_FILENAME_MIN  = 22
+IDENT_CODES_FILENAME    = 'Codes_DB/Codes_DB_20'
+
+LEN_XLSX_FILENAME_MIN   = 17
+IDENT_XLSX_FILENAME     = 'Codes_DB/Codes_DB_20'
+
+LEN_TRANSACT_FILENAME= 16
+TRANSACT_ID  = 'TRANSACTIONS/Transact_'
+
+FIDEU       = 'FIDEU'      # Fideuram Account    Must be 5 chars length
+FLASH       = 'FLASH'      # Flash Card          Must be 5 chars length
+FIDFLH      = 'FID+FLH'    # FIDEU/FLASH/POSTA   Doesn't matter
+POSTA       = 'POSTA'      # Poste Italiane      Must be 5 chars length
+AMBRA       = 'AMBRA'      # Credit Card Ambra   Must be 5 chars length
+
+CONTO_LIST  = [FIDEU, FLASH, FIDFLH, POSTA, AMBRA]
+CONTO_RED   = {FIDEU:'F', FLASH:'L', POSTA:'P', AMBRA:'C'}
+
 UNKNOWN = 'unknown'
 NEW     = 'New file created'
-YES     = 'YES'
-NO      = 'NO'
-CHANGE  = 'CHANGE'
-EXIT    = 'EXIT'
 
 CATEG       = 'Category '
 GROUP       = 'Group'
 ADD         = 'Add '
 DEL         = 'Delete '
 UPDT_GR_CAT = "Update Group and Categ"
-MAX_CODE    = 10000
 
 NONE   = 'None'
 OK     = 'OK'
 NOK    = 'NOK'
-LOADED = 'Loaded'   # it means that the file or Db are Loaded but can contains error
-EMPTY  = 'Empty'
-MULTI  = 'Multiple Row Match'
-FILE_FAILS = 'Transactions file NOT found'
 
+# ------------------------------------------------------------#
+#     ----------     3. codes database settings   --------    #
+# ------------------------------------------------------------#
 STRTOFIND   = 'String to find'
 TRDESC      = 'TR code description'
 GROUPSEL    = 'Select a group'
 CATDESC     = 'Category'
 
-IX_CODES_LOADED      = 0
-IX_XLSX_LISTS_LOADED = 1
-IX_TRANSACT_LOADED   = 2
+VIEW_BY_CODE        = 'vis. per codice'
+VIEW_SEARCH         = 'vis. per stringa ricerca'
+VIEW_BYNAME         = 'vis. per nome'
+GENERIC_BYCODE      = 'vis. per codice generico'
+GENERIC_BYNAME      = 'vis. generici per nome'
+VIEW_EXTRAORDOIN    = 'vis. mov. straordinari'
+VIEW_STRTOSERCH_LEN = 'vis. per lungh. stringa ricerca'
+
+GENERIC_CODE_INIT    = int(10000)       #  NEVER NEVER CHANGE this CONSTANT variable
+TRANSACT_CODES_TABLE = 'Transactions Codes Table'
+GROUPS_CODES_TABLE   = 'Groups Codes Table'
+CATEG_CODES_TABLE    = 'Categories Codes Table'
+GENERIC_CODE         = 'GENERIC CODE'
+STANDARD_CODE        = 'STANDARD CODE'
+CODES_VIEW_SEL       = [VIEW_BY_CODE, VIEW_BYNAME, VIEW_SEARCH, GENERIC_BYCODE, GENERIC_BYNAME,
+                       VIEW_STRTOSERCH_LEN, VIEW_EXTRAORDOIN]
+
+IX_TR_TR_CODE       = 0  # UNIC TR CODE
+IX_TR_GR_CODE       = 1
+IX_TR_CA_CODE       = 2  # selected from GROUPS_TABLE
+                         # do not use this index in Code recods, it is something
+                         # to have the category of a Code it should be search
+                         # on the Group of TRcode through IX_GR_CA_CODE.
+                         # the chain is  TRcode--> GRcode --> CAcode
+IX_TR_TR_DESC       = 3
+IX_TR_TR_STR_TO_FIND= 4
+IX_TR_TR_FULL_DESC  = 5  # 2024-01-01  - '''''' // ''''''''
+
+IX_TR_FULL_TR_CODE     = 0
+IX_TR_FULL_GR_CODE     = 1
+IX_TR_FULL_CA_CODE     = 2
+IX_TR_FULL_TR_DESC     = 3
+IX_TR_FULL_GR_DESC     = 4
+IX_TR_FULL_CA_DESC     = 5
+IX_TR_FULL_STR_TO_FIND = 6
+IX_TR_FULL_FULL_DESC   = 7     # The full description of Row when the new code was created
+
+# TABLE  GROUP_CODES
+IX_GR_GR_CODE = 0
+IX_GR_GR_DESC = 1
+IX_GR_CA_CODE = 2
+
+# TABLE  CATEGORY_CODES
+IX_CA_CA_CODE = 0
+IX_CA_CA_DESC = 1
+# ***************************************************************** #
+EXTRAORDINARY_CAT_CODE = 7  # ***    DO NOT CHANGE  THIS CODE ***** #
+# ***************************************************************=* #
+
+
+# View Codes List       TRcode TR_Desc   GR_Desc   CA_Desc   StrToFind
+IX_WIEW_TR_CODE    = 0
+IX_WIEW_TR_DESCR   = 1
+IX_WIEW_GR_DESCR   = 2 # these constants are not used
+IX_WIEW_CA_DESCR   = 3 # because GRdesc CAdesc StrToFind are
+IX_WIEW_STR_TOFIND = 4 # as on Codes Tables
+
+# ------------------------------------------------------------#
+#     ----------     4.   xlsx  rows settings     --------    #
+# ------------------------------------------------------------#
+IX_XLSX_CONTO    = 0    # used on Data.Get_Full_Xlsx_Transact_Ident
+IX_XLSX_YEAR     = 1
+IX_XLSX_MONTH    = 2
+IX_TRANSACT_YEAR = 3
+
+IX_XLSX_NROW     = 0
+IX_XLSX_CONTAB   = 1
+IX_XLSX_VALUTA   = 2
+IX_XLSX_DESC1    = 3
+IX_XLSX_CREDIT   = 4
+IX_XLSX_DEBIT    = 5
+IX_XLSX_DESC2    = 6
+
+IX_XLSX_WITH_ROW     = 0
+IX_XLSX_WITH_CONTO   = 1
+IX_XLSX_WITH_CONTAB  = 2
+IX_XLSX_WITH_VALUTA  = 3
+IX_XLSX_WITH_ACCR    = 4
+IX_XLSX_WITH_DEBIT   = 5
+IX_XLSX_WITH_TRDESC  = 6
+IX_XLSX_WITH_TRCODE  = 7
+IX_XLSX_WITH_FULLDES = 8
+
+# ----------------------  List of Controls  To Check on XLS rows Data ------------------------------------------
+INTEGER       = 'Integer'
+NOT_INT       = 'String'
+NUMERIC       = 'Numeric'
+DATE          = 'Date'
+STRING        = 'String'
+VAL_DATE      = 'Valuta'
+CONTAB_DATE   = 'Contabile'
+DIRECT_NOCODE = -1
+
+VIEW_TOTAL_INLIST = 'View total in check list'
+VIEW_NOT_INLIST   = 'View total not in check list'
+
+# types of conversion for displaying in frames
+SIC          = 'sic'   # no conversion
+YMD          = 'year_month day' # convert datetime in year-month
+INT_TOSTRING = 'integer to str'
+FLOAT_TOSTR  = 'float to string'    # convert float to str 1.234,56
+
+# Xlsx_Rows_From_Sheet_normalized :  nRow  Contab  Valuta  Des1  Accr  Addeb  Des2
+IX_ROW_NROW   = 0
+IX_ROW_CONTAB = 1
+IX_ROW_VALUTA = 2
+IX_ROW_DESCR1 = 3
+IX_ROW_ACCRED = 4
+IX_ROW_ADDEB  = 5
+IX_ROW_DESCR2 = 6
+
+LIST_FOR_XLSX_ROW_CONTROL = [
+    [IX_ROW_NROW,   INTEGER],
+    [IX_ROW_CONTAB, DATE],    [IX_ROW_VALUTA, DATE],   [IX_ROW_DESCR1, STRING],
+    [IX_ROW_ACCRED, NUMERIC], [IX_ROW_ADDEB, NUMERIC], [IX_ROW_DESCR2, STRING]]
+
+# ------------------------------------------------------------#
+#     ------     5. transactions database settings   -----    #
+# ------------------------------------------------------------#
+TRANSACT     = 'TRANSACT'
+
+IX_ROW_TOINS_NROW     = 0
+IX_ROW_TOINS_CONTO    = 1
+IX_ROW_TOINS_CONTAB   = 2
+IX_ROW_TOINS_VALUTA   = 3
+IX_ROW_TOINS_ACCRED   = 4
+IX_ROW_TOINS_ADDEB    = 5
+IX_ROW_TOINS_TR_DESC  = 6
+IX_ROW_TOINS_TR_CODE  = 7
+IX_ROW_TOINS_FULL_DESC= 8  # DESC1 / DESC2
+#
+IX_TRANSACT_IDENT    = 0  # auto inserted
+IX_TRANSACT_NROW     = 1
+IX_TRANSACT_CONTO    = 2
+IX_TRANSACT_CONTAB   = 3
+IX_TRANSACT_VALUTA   = 4
+IX_TRANSACT_ACCRED   = 5
+IX_TRANSACT_ADDEB    = 6
+IX_TRANSACT_TR_DESC  = 7
+IX_TRANSACT_TR_CODE  = 8
+IX_TRANSACT_FULL_DESC= 9  # DESC1 / DESC2
+
+CONTABILE   = 'contabile'
+VALUTA      = 'valuta'
+
+# ALL_REC     = 'all records'
+STEP        = 'Inserisci uno per volta'
+CONTINUOUS  = 'Inserisci tutti i movimenti'
+NREC        = 'Insert total rows'
+CONTINUE_LIST = [STEP, CONTINUOUS, NREC]
+
+TRANSACT_VIEW_ALL            = 'mostra mov. come nel Db'
+TRANSACT_VIEW_CONTAB_ASC     = 'mostra mov. ord. per contab.'
+TRANSACT_VIEW_STANDARD_CODE  = 'mostra mov. con codice standard'
+TRANSACT_VIEW_GENERIC        = 'mostra mov. con codice generico'
+TRANSACT_VIEW_SEL = [TRANSACT_VIEW_ALL, TRANSACT_VIEW_CONTAB_ASC,
+                     TRANSACT_VIEW_STANDARD_CODE, TRANSACT_VIEW_GENERIC, FIDEU, FLASH]
+
+# tXlsx_Rows_Compact :     nRow  _Contab  Valuta  Accr  Addeb  Full_Desc
+IX_ROW_COMP_NROW    = 0
+IX_ROW_COMP_CONTAB  = 1
+IX_ROW_COMP_VAL     = 2
+IX_ROW_COMP_ACCR    = 3
+IX_ROW_COMP_ADDEB   = 4
+IX_ROW_COMP_FULLDES = 5  # (Descr1/Descr2
+
+# Wihtout_Code_Tree_List     nRow Contabile _Valuta Accred _Addeb FullDesc
+IX_NO_CODE_NROW       = 0
+IX_NO_CODE_CONTO      = 1
+IX_NO_CODE_CONTAB     = 2
+IX_NO_CODE_VALUTA     = 3
+IX_NO_CODE_ACCRED     = 4
+IX_NO_CODE_ADDEB      = 5
+IX_NO_CODE_FULL_DESCR = 6    # the Fulll_Desc of Row inserted in Transact_Db
+
+# With_Code_Tree_List        nRow Contabile _Valuta Accred _Addeb TRdesc TRcode
+IX_WITH_CODE_NROW       = 0
+IX_WITH_CODE_CONTO      = 1
+IX_WITH_CODE_CONTAB     = 2
+IX_WITH_CODE_VALUTA     = 3
+IX_WITH_CODE_ACCRED     = 4
+IX_WITH_CODE_ADDEB      = 5
+IX_WITH_CODE_TR_DESCR   = 6
+IX_WITH_CODE_TR_CODE    = 7
+IX_WITH_CODE_FULL_DESCR = 8  # the Fulll_Desc of Row inserted in Transact_Db
+
+
+
+# -------------------------------------------------------------------------------
+# used on File_Dialog and in _sql_execute for selecting database
+CODES_FILE    = 'Codes file'    # for File_Dialog
+XLSX_FILE     = 'Xlsx file'
+TRANSACT_FILE = 'Transact file' # the TRANSACT_FILENAME is used on managing transactions filename
+
 
 # =========================================================== #
 #             QUERIES  constants                              #
@@ -209,235 +430,85 @@ IX_QUERY_ACCRED   = 4
 IX_QUERY_ADDEB    = 5
 IX_QUERY_IDENT    = 6
 
-IX_TREE_ROW    = 0      # Tree number of columns to view
-IX_TREE_COLMN  = 1
-IX_TREE_HEAD   = 2
-IX_TREE_ANCHOR = 3
-IX_TREE_WIDTH  = 4
+QUERY_CONTO          = 'query_conto'
+QUERY_START_MONTH    = 'query_start_month'
+QUERY_TOT_MONTHS     = 'query_total_months'
+QUERY_VAL_CONT_DATE  = 'query_val_cont_date'
+QUERY_CODE_SEL       = 'query_code_selection'
+QUERY_GROUP_SEL      = 'query_group_selection'
+QUERY_CATEGORY_SEL   = 'query_category_selection'
 
-NO_FOCUS       = -1
+CODES_VIEW_MODE      = 'codes_view_mode'
+TRANSACT_INSERT_MODE = 'transact_insert_mode'
+TRANSACT_VIEW_MODE   = 'transact_view_mode'
 
-VIEW_BY_CODE        = 'vis. per codice'
-VIEW_SEARCH         = 'vis. per stringa ricerca'
-VIEW_BYNAME         = 'vis. per nome'
-GENERIC_BYCODE      = 'vis. per codice generico'
-GENERIC_BYNAME      = 'vis. generici per nome'
-VIEW_EXTRAORDOIN    = 'vis. mov. straordinari'
-VIEW_STRTOSERCH_LEN = 'vis. per lungh. stringa ricerca'
+CLOSE_DB  = True
+KEEP_OPEN = False
+SQL_CLOSE_DB  = "close database"
 
-GENERIC_CODE_INIT    = int(10000)       #  NEVER NEVER CHANGE this CONSTANT variable
-TRANSACT_CODES_TABLE = 'Transactions Codes Table'
-GROUPS_CODES_TABLE   = 'Groups Codes Table'
-CATEG_CODES_TABLE    = 'Categories Codes Table'
-GENERIC_CODE         = 'GENERIC CODE'
-STANDARD_CODE        = 'STANDARD CODE'
-CODES_VIEW_SEL       = [VIEW_BY_CODE, VIEW_BYNAME, VIEW_SEARCH, GENERIC_BYCODE, GENERIC_BYNAME,
-                       VIEW_STRTOSERCH_LEN, VIEW_EXTRAORDOIN]
+# ------------------------------------------------------------#
+#     ------     7. selections dictionary settings   -----    #
+# ------------------------------------------------------------#
+Dict_Keys_List = [
+    CODES_FILENAME, XLSX_FILENAME, TRANSACT_FILENAME, CODES_DIRECTORY, XLSX_FILENAME, TRANSACT_DIRECTORY,
+	CODES_VIEW_MODE, TRANSACT_INSERT_MODE, TRANSACT_VIEW_MODE, QUERY_CONTO, QUERY_START_MONTH,
+    QUERY_TOT_MONTHS, QUERY_VAL_CONT_DATE, QUERY_CODE_SEL, QUERY_GROUP_SEL, QUERY_CATEGORY_SEL,
+    CODES_VIEW_MODE, TRANSACT_INSERT_MODE]
 
-# =========================================================== #
-#             DATA BASES  STRUCTURE                           #
-# =========================================================== #
-CHECK_DBCODES_LOADED  = 1
-CHECK_TEMT_DBCODES    = 2
-
-# ***************************************************************** #
-EXTRAORDINARY_CAT_CODE = 7  # ***    DO NOT CHANGE  THIS CODE ***** #
-# ***************************************************************=* #
-
-#   -----  Database  Codes_DB_yyy-mm-dd.db -----------------
-LEN_CODES_FILENAME_MIN  = 22
-LEN_XLSX_FILENAME_MIN   = 17
-IDENT_CODES_FILENAME    = 'Codes_DB/Codes_DB_20'
-IDENT_XLSX_FILENAME     = 'Codes_DB/Codes_DB_20'
-
-IX_TR_TR_CODE       = 0  # UNIC TR CODE
-IX_TR_GR_CODE       = 1
-IX_TR_CA_CODE       = 2  # selected from GROUPS_TABLE
-                         # do not use this index in Code recods, it is something
-                         # to have the category of a Code it should be search
-                         # on the Group of TRcode through IX_GR_CA_CODE.
-                         # the chain is  TRcode--> GRcode --> CAcode
-IX_TR_TR_DESC       = 3
-IX_TR_TR_STR_TO_FIND= 4
-IX_TR_TR_FULL_DESC  = 5  # 2024-01-01  - '''''' // ''''''''
-
-IX_TR_FULL_TR_CODE     = 0
-IX_TR_FULL_GR_CODE     = 1
-IX_TR_FULL_CA_CODE     = 2
-IX_TR_FULL_TR_DESC     = 3
-IX_TR_FULL_GR_DESC     = 4
-IX_TR_FULL_CA_DESC     = 5
-IX_TR_FULL_STR_TO_FIND = 6
-IX_TR_FULL_FULL_DESC   = 7     # The full description of Row when the new code was created
-
-MAX_TR_CODE_NUM = 100
-MAX_GR_CODE_NUM = 50
-
-# TABLE  GROUP_CODES
-IX_GR_GR_CODE = 0
-IX_GR_GR_DESC = 1
-IX_GR_CA_CODE = 2
-
-# TABLE  CATEGORY_CODES
-IX_CA_CA_CODE = 0
-IX_CA_CA_DESC = 1
-
-IX_XLSX_CONTO    = 0    # used on Data.Get_Full_Xlsx_Transact_Ident
-IX_XLSX_YEAR     = 1
-IX_XLSX_MONTH    = 2
-IX_TRANSACT_YEAR = 3
-
-IX_XLSX_NROW     = 0
-IX_XLSX_CONTAB   = 1
-IX_XLSX_VALUTA   = 2
-IX_XLSX_DESC1    = 3
-IX_XLSX_CREDIT   = 4
-IX_XLSX_DEBIT    = 5
-IX_XLSX_DESC2    = 6
-
-IX_XLSX_WITH_ROW     = 0
-IX_XLSX_WITH_CONTO   = 1
-IX_XLSX_WITH_CONTAB  = 2
-IX_XLSX_WITH_VALUTA  = 3
-IX_XLSX_WITH_ACCR    = 4
-IX_XLSX_WITH_DEBIT   = 5
-IX_XLSX_WITH_TRDESC  = 6
-IX_XLSX_WITH_TRCODE  = 7
-IX_XLSX_WITH_FULLDES = 8
+#  -------------------------------------------
+Default_selections_dictionary  = {
+    CODES_FILENAME:         UNKNOWN,
+    XLSX_FILENAME:          UNKNOWN,
+    TRANSACT_FILENAME:      UNKNOWN,
+    CODES_DIRECTORY:        UNKNOWN,
+    XLSX_DIRECTORY:         UNKNOWN,
+    TRANSACT_DIRECTORY:     UNKNOWN,
+    #
+    CODES_VIEW_MODE:        VIEW_BYNAME,
+    TRANSACT_INSERT_MODE:   STEP,
+    TRANSACT_VIEW_MODE:     TRANSACT_VIEW_ALL,
+    QUERY_CONTO:            FIDEU,
+    QUERY_START_MONTH:      JAN,
+    QUERY_TOT_MONTHS:       ONE_MONTH,
+    QUERY_VAL_CONT_DATE:    VALUTA,
+    QUERY_CODE_SEL:         ALL_CODES,
+    QUERY_GROUP_SEL:        ALL_GROUPS,
+    QUERY_CATEGORY_SEL:     ALL_CAT,
+    #
+}
 
 
-#   -----  Database  /TRNSACTIONS/Transact_2024.db  ----------
-# TRANSACTIONS = 'TRANSACTIONS'
-TRANSACT     = 'TRANSACT'
-TRANSACT_ID  = 'TRANSACTIONS/Transact_'
-LEN_TRANSACT_FILENAME= 16
-
-IX_ROW_TOINS_NROW     = 0
-IX_ROW_TOINS_CONTO    = 1
-IX_ROW_TOINS_CONTAB   = 2
-IX_ROW_TOINS_VALUTA   = 3
-IX_ROW_TOINS_ACCRED   = 4
-IX_ROW_TOINS_ADDEB    = 5
-IX_ROW_TOINS_TR_DESC  = 6
-IX_ROW_TOINS_TR_CODE  = 7
-IX_ROW_TOINS_FULL_DESC= 8  # DESC1 / DESC2
-#
-IX_TRANSACT_IDENT    = 0  # auto inserted
-IX_TRANSACT_NROW     = 1
-IX_TRANSACT_CONTO    = 2
-IX_TRANSACT_CONTAB   = 3
-IX_TRANSACT_VALUTA   = 4
-IX_TRANSACT_ACCRED   = 5
-IX_TRANSACT_ADDEB    = 6
-IX_TRANSACT_TR_DESC  = 7
-IX_TRANSACT_TR_CODE  = 8
-IX_TRANSACT_FULL_DESC= 9  # DESC1 / DESC2
-
-FIDEU       = 'FIDEU'      # Fideuram Account    Must be 5 chars length
-FLASH       = 'FLASH'      # Flash Card          Must be 5 chars length
-FIDFLH      = 'FID+FLH' # FIDEU/FLASH/POSTA   Doesn't matter
-POSTA       = 'POSTA'      # Poste Italiane      Must be 5 chars length
-AMBRA       = 'AMBRA'      # Credit Card Ambra   Must be 5 chars length
-CONTO_LIST  = [FIDEU, FLASH, FIDFLH, POSTA, AMBRA]
-CONTO_RED   = {FIDEU:'F', FLASH:'L', POSTA:'P', AMBRA:'C'}
-
-CONTABILE   = 'contabile'
-VALUTA      = 'valuta'
-
-# ALL_REC     = 'all records'
-STEP        = 'Inserisci uno per volta'
-CONTINUOUS  = 'Inserisci tutti i movimenti'
-NREC        = 'Insert total rows'
-CONTINUE_LIST = [STEP, CONTINUOUS, NREC]
-
-TRANSACT_VIEW_ALL          = 'mostra mov. come nel Db'
-TRANSACT_VIEW_CONTAB_ASC   = 'mostra mov. ord. per contab.'
-TRANSACT_VIEW_STANDARD_CODE  = 'mostra mov. con codice standard'
-TRANSACT_VIEW_GENERIC      = 'mostra mov. con codice generico'
-TRANSACT_VIEW_SEL = [TRANSACT_VIEW_ALL, TRANSACT_VIEW_CONTAB_ASC,
-                     TRANSACT_VIEW_STANDARD_CODE, TRANSACT_VIEW_GENERIC, FIDEU, FLASH]
-
-NOTASK        = 'Not Ask Dialog'
-ASK           = 'Ask Dialog'
-STOP          = 'Stop'
-NOSELECT      = 'nessuna scelta'
-
-# -----------------------------------    Codes     ---------------------------------------------------------
-#                         0       1        2         3         4        5        6        7        8
-# View Codes List       TRcode TR_Desc   GR_Desc   CA_Desc   StrToFind
-#_Records_ToInsert_List Ident  Conto    Contab    Valuta    TRdesc    Accred   Addeb   TRcode  Full_Desc
-# Transact DB List      Ident  Conto    Contab    Valuta    TR_Desc   Accred   Addeb   TRcode  FullDesc
-# On Top_Queries  Only TRcode is used:
-#                 TRdesc GRdesc CAdesc are refreshed as in Codes Tables.
-#
-
-# =====================================          XLSX             ========================================= #
-#                            0      1       2      3       4         5       6                              #
-# XLS_Row_List           : nRow   Contab  Valuta  Des1      Accr    Addeb   Des2      as in xlsx File       #
-# XLS_Row_Compact        : nRow   Contab  Valuta  Des1Comp  Accr    Addeb   Des2Comp                        #
-# _Wihtout_Code_Tree_List: nRow   Contab  Valuta  Accr      Addeb   FullDes             7          8        #
-# _With_Code_Tree_List   : nRow   Contab  Valuta  TR_Desc   Accred  Addeb   TRcode  RowFullDes              #                                 #
-#                                                                                                           #
-# Query_View_List        : Date    TR_Desc   Accred    Addeb                                                #
-# ========================================================================================================= #
-IX_TOT_ROWS_OK           = 0
-IX_TOT_ROWS_WITH_CODE    = 1
-IX_TOT_ROWS_WITHOUT_CODE = 2
-
-Len_Xlsx_Filename_Min = 18
-# XLS_Row_List          (as in xlsx spreadsheet)
-IX_ROW_NROW   = 0
-IX_ROW_CONTAB = 1
-IX_ROW_VALUTA = 2
-IX_ROW_DESCR1 = 3
-IX_ROW_ACCRED = 4
-IX_ROW_ADDEB  = 5
-IX_ROW_DESCR2 = 6
-
-# all Xlsx Rows         (Compact)
-IX_ROW_COMP_NROW    = 0
-IX_ROW_COMP_CONTAB  = 1
-IX_ROW_COMP_VAL     = 2
-IX_ROW_COMP_ACCR    = 3
-IX_ROW_COMP_ADDEB   = 4
-IX_ROW_COMP_FULLDES = 5  # (Descr1/Descr2
-
-# List_WithoutCode      (only without code)
-IX_NO_CODE_NROW       = 0
-IX_NO_CODE_CONTO      = 1
-IX_NO_CODE_CONTAB     = 2
-IX_NO_CODE_VALUTA     = 3
-IX_NO_CODE_ACCRED     = 4
-IX_NO_CODE_ADDEB      = 5
-IX_NO_CODE_FULL_DESCR = 6     # The Fulll_Desc of Row inserted in Transact_Db
-
-# List_WithCode         (only with code)
-IX_WITH_CODE_NROW       = 0
-IX_WITH_CODE_CONTO      = 1
-IX_WITH_CODE_CONTAB     = 2
-IX_WITH_CODE_VALUTA     = 3
-IX_WITH_CODE_ACCRED     = 4
-IX_WITH_CODE_ADDEB      = 5
-IX_WITH_CODE_TR_DESCR   = 6
-IX_WITH_CODE_TR_CODE    = 7
-IX_WITH_CODE_FULL_DESCR = 8  # The Fulll_Desc of Row inserted in Transact_Db
-
-# List_View_Codes
-IX_WIEW_TR_CODE    = 0
-IX_WIEW_TR_DESCR   = 1
-IX_WIEW_GR_DESCR   = 2 # these constants are not used
-IX_WIEW_CA_DESCR   = 3 # because GRdesc CAdesc StrToFind are
-IX_WIEW_STR_TOFIND = 4 # as on Codes Tables
+# ------------------------------------------------------------#
+#     ------     8. totals  dictionary  settings     -----    #
+# ------------------------------------------------------------#
+TOT_CONTO           = 'Conto for totals Db - xlsx'
+TOT_ROWS_INSERTED   = 'Total rows (std+gen) codes in Db'
+TOT_STD_COD_TOBE_INS = 'Total recods to be inserted in Db'
+TOT_NOCOD_TO_INSERT  = 'Total rows no code to be inserted'
+TOT_CALCULATED       = 'Totale calcolato'
+TOT_ROWS_IN_XLSX     = 'Total rows in xlsx'
+Totals_dict_default  = {
+                        TOT_CONTO:           FIDEU,
+                        TOT_ROWS_INSERTED:    100,       #  sweep 1  on With_Codes  inserted
+                        TOT_STD_COD_TOBE_INS:  20,       #    "  "       " " "      not inserted
+                        TOT_NOCOD_TO_INSERT:   10,       #  =  0 + 1 + 2
+                        TOT_CALCULATED:        0,
+                        TOT_ROWS_IN_XLSX:      0,
+                      }
 
 
-# =============================================================
-#             WIDGETS  CONSTANTS                              =
-# =============================================================
-# XY_TO_HIDE = 10000 # setted higher for use
+# ------------------------------------------------------------#
+#     ----------     9.      widgets   settings   --------    #
+# ------------------------------------------------------------#
 LAB_BLUE     = 1
 LAB_FILE_SEL = 2
 LAB_ERR      = 3
 VIEW_MESSAGE = 'View Message'
+
+YES     = 'YES'
+NO      = 'NO'
+CHANGE  = 'CHANGE'
+EXIT    = 'EXIT'
 
 BTN_DEF_EN  = 1      # Button Default greeen     Enabled
 BTN_COL_EN  = 2      # Button Colored (brown)
@@ -471,111 +542,16 @@ TXT_DIS_BLACK = 'TXT_DIS_BLACK'  # Text Disabled   Black on Light Blue
 TXT_MSG_WHITE = 'TXT_MSG_WHITE'  # Text for MsgBox White on Mustard
 TXT_MSG_ERR   = 'TXT_MSG_ERR'    # Text for MsgBox Red on Mustard
 
+IX_TREE_ROW    = 0      # Tree number of columns to view
+IX_TREE_COLMN  = 1
+IX_TREE_HEAD   = 2
+IX_TREE_ANCHOR = 3
+IX_TREE_WIDTH  = 4
 
-# ----------------------  List of Controls  To Check on XLS rows Data ------------------------------------------
-INTEGER       = 'Integer'
-NOT_INT       = 'String'
-NUMERIC       = 'Numeric'
-DATE          = 'Date'
-STRING        = 'String'
-VAL_DATE      = 'Valuta'
-CONTAB_DATE   = 'Contabile'
-DIRECT_NOCODE = -1
+NO_FOCUS       = -1
+NOTASK        = 'Not Ask Dialog'
+ASK           = 'Ask Dialog'
+STOP          = 'Stop'
+NOSELECT      = 'nessuna scelta'
 
-LIST_FOR_XLSX_ROW_CONTROL = [
-    [IX_ROW_NROW,   INTEGER],
-    [IX_ROW_CONTAB, DATE],    [IX_ROW_VALUTA, DATE],   [IX_ROW_DESCR1, STRING],
-    [IX_ROW_ACCRED, NUMERIC], [IX_ROW_ADDEB, NUMERIC], [IX_ROW_DESCR2, STRING]]
-
-VIEW_TOTAL_INLIST = 'View total in check list'
-VIEW_NOT_INLIST   = 'View total not in check list'
-
-# types of conversion for displaying in frames
-SIC          = 'sic'   # no conversion
-YMD          = 'year_month day' # convert datetime in year-month
-INT_TOSTRING = 'integer to str'
-FLOAT_TOSTR  = 'float to string'    # convert float to str 1.234,56
-
-SELECTIONS_DIR_NAME    = '/home/mario/bExp_Selections'
-SELECTIONS_FULL_NAME   = '/home/mario/bExp_Selections/Selections'
-DICTIONARY_FULL_NAME   = '/home/mario/bExp_Selections/Sel_dictionary.json'
-
-DEFAULT_INIT_DIR       = '/home/mario'
-
-# -------------------------------------------------------------------------------
-# used on File_Dialog and in _sql_execute for selecting database
-CODES_FILE    = 'Codes file'    # for File_Dialog
-XLSX_FILE     = 'Xlsx file'
-TRANSACT_FILE = 'Transact file' # the TRANSACT_FILENAME is used on managing transactions filename
-
-# -------------------------------------------------------------------------------
-CODES_FILENAME       = 'codes_filename'     # for selections dictionary names
-XLSX_FILENAME        = 'xlsx_filename'
-TRANSACT_FILENAME    = 'transact_filename'
-CODES_DIRECTORY      = 'Codes directory'
-XLSX_DIRECTORY       = 'Xlsx directory'
-TRANSACT_DIRECTORY   = 'Transactions directory'
-
-QUERY_CONTO          = 'query_conto'
-QUERY_START_MONTH    = 'query_start_month'
-QUERY_TOT_MONTHS     = 'query_total_months'
-QUERY_VAL_CONT_DATE  = 'query_val_cont_date'
-QUERY_CODE_SEL       = 'query_code_selection'
-QUERY_GROUP_SEL      = 'query_group_selection'
-QUERY_CATEGORY_SEL   = 'query_category_selection'
-
-CODES_VIEW_MODE      = 'codes_view_mode'
-TRANSACT_INSERT_MODE = 'transact_insert_mode'
-TRANSACT_VIEW_MODE   = 'transact_view_mode'
-
-CLOSE_DB  = True
-KEEP_OPEN = False
-SQL_CLOSE_DB  = "close database"
-
-Dict_Keys_List = [
-    CODES_FILENAME, XLSX_FILENAME, TRANSACT_FILENAME, CODES_DIRECTORY, XLSX_FILENAME, TRANSACT_DIRECTORY,
-	CODES_VIEW_MODE, TRANSACT_INSERT_MODE, TRANSACT_VIEW_MODE, QUERY_CONTO, QUERY_START_MONTH,
-    QUERY_TOT_MONTHS, QUERY_VAL_CONT_DATE, QUERY_CODE_SEL, QUERY_GROUP_SEL, QUERY_CATEGORY_SEL,
-    CODES_VIEW_MODE, TRANSACT_INSERT_MODE]
-
-#  -------------------------------------------
-Default_selections_dictionary  = {
-    CODES_FILENAME:         UNKNOWN,
-    XLSX_FILENAME:          UNKNOWN,
-    TRANSACT_FILENAME:      UNKNOWN,
-    CODES_DIRECTORY:        UNKNOWN,
-    XLSX_DIRECTORY:         UNKNOWN,
-    TRANSACT_DIRECTORY:     UNKNOWN,
-    #
-    CODES_VIEW_MODE:        VIEW_BYNAME,
-    TRANSACT_INSERT_MODE:   STEP,
-    TRANSACT_VIEW_MODE:     TRANSACT_VIEW_ALL,
-    QUERY_CONTO:            FIDEU,
-    QUERY_START_MONTH:      JAN,
-    QUERY_TOT_MONTHS:       ONE_MONTH,
-    QUERY_VAL_CONT_DATE:    VALUTA,
-    QUERY_CODE_SEL:         ALL_CODES,
-    QUERY_GROUP_SEL:        ALL_GROUPS,
-    QUERY_CATEGORY_SEL:     ALL_CAT,
-    #
-}
-
-# Headings = ['#0','Conto', 'Cod.Std', 'Cod.Gener', 'Da inser.', 'Totale Db', 'Cod.Std.Ins.','Cod.Std. da ins.', 'NoCod Ins.', ' NoCod. da ins ', 'Totale xlsx']
-#
-# -----------------------------------------------------------------------------------------------------------
-TOT_CONTO           = 'Conto for totals Db - xlsx'
-TOT_ROWS_INSERTED   = 'Total rows (std+gen) codes in Db'
-TOT_STD_COD_TOBE_INS = 'Total recods to be inserted in Db'
-TOT_NOCOD_TO_INSERT  = 'Total rows no code to be inserted'
-TOT_CALCULATED       = 'Totale calcolato'
-TOT_ROWS_IN_XLSX     = 'Total rows in xlsx'
-Totals_dict_default  = {
-                        TOT_CONTO:           FIDEU,
-                        TOT_ROWS_INSERTED:    100,       #  sweep 1  on With_Codes  inserted
-                        TOT_STD_COD_TOBE_INS:  20,       #    "  "       " " "      not inserted
-                        TOT_NOCOD_TO_INSERT:   10,       #  =  0 + 1 + 2
-                        TOT_CALCULATED:        0,
-                        TOT_ROWS_IN_XLSX:      0,
-                      }
-
-# ===========================================================================================================
+# =========================     E  N  D  ====================================================

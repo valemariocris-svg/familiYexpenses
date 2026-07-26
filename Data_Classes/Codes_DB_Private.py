@@ -187,7 +187,6 @@ class Codes_DB_Private(Files_Names_Manager):
     # -------------------------------------------------------------------------------------- #
     #      private  _methods invoked only inside  the data classes  chain                    #
     #    in case of error on loading TR-GR-CA Tables nothing is changed                      #
-    #    return [OK, '']   [STRING, Err Diagnostic]   [MULTI, [_Multi_Codes_Matching_List]   #
     # -------------------------------------------------------------------------------------- #
     def _Load_Codes_Tables(self):
         self._tTR_Codes_Table  = []  # TRCode GRcode   SPcode   TRdesc  StrToSear  FullDesc

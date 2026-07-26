@@ -131,7 +131,6 @@ class Codes_db(Codes_DB_Private):
                 self._Extraorinary_TRcode_List.append(TRrec[IX_TR_TR_CODE])
         return self._Extraorinary_TRcode_List
 
-
     # ---------------------------------------------------------------------------------------
     def Check_If_Code_Exist(self, TRcode):
         sql = "SELECT EXISTS(SELECT 1 FROM TRANSACT_CODES WHERE TR_Code = ?)"
@@ -148,7 +147,7 @@ class Codes_db(Codes_DB_Private):
     #          any Xlsx Record. The assignement must be made for each Xlsx Record                 #
     # ------------------------------------------------------------------------------------------- #
     def Get_New_Code(self, codType) -> tuple[bool, int]:
-        status = False
+        # status = False
         data   = []
         if codType == STANDARD_CODE:
             sql_query = "SELECT MAX(TR_Code) FROM TRANSACT_CODES WHERE TR_Code < ?"
