@@ -166,6 +166,46 @@ class Xlsx_Manager(Codes_db):
     #  Workbook is the container of all Worksheets                                      #
     #  while the Worksheet is the container of Data of one Sheet                        #
     # --------------------------------------------------------------------------------- #
+    """
+    # ---------------------------------------------------------------------------------------------
+    def _get_xlsx_row_as_is(self, row):
+        # CONTO     A       B       C       D       E       F       G
+        #           0       1       2       3       4       5       6
+        # FIDEU     Contab  Valuta  Des1    Accred  Added   Des2
+        # FLH-AMBR  Contab  Valuta  Des1            Addeb-          Accred
+        # POSTA     Contab  Valuta  Addeb-  Accred  Des1
+        # FORM nRow,Contab, Valuta, Des1,   Accred, Addeb,  Des2
+        #        0     1       2      3        4      5       6
+
+        rowList   = list(row)
+        Contab    = rowList[0]
+        Valuta    = rowList[1]
+        Des1   = None
+        Accred = None
+        Addeb  = None
+        Des2   = None
+
+        if self._tXlsx_Conto == FIDEU:
+            Des1   = rowList[2]
+            Accred = rowList[3]
+            Addeb  = rowList[4]
+            Des2   = rowList[5]
+
+        elif self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA:
+            Des1   = rowList[1]
+            Accred = rowList[5]
+            Addeb  = rowList[3]
+            Des2   = ''
+
+        elif self._tXlsx_Conto == POSTA:
+            Des1 = rowList[4]
+            Accred = rowList[2]
+            Addeb = rowList[1]
+            Des2 = ''
+
+        return [Contab, Valuta, Des1, Accred, Addeb , Des2]
+
+    """
     def _Get_Work_Sheet_Rows(self):
         filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
         try:
@@ -206,10 +246,8 @@ class Xlsx_Manager(Codes_db):
         for idx, row in enumerate(self._df.itertuples(index=False)):
             rowList = list(row)
             print(f"{idx+1}:  {type(rowList[0])}  {rowList[1]} {rowList[2]} {rowList[3]} {rowList[4]}  {rowList[5]}")
-
             Checked_Row = self._Check_Values(rowList)
-
-            if Checked_Row:
+            if len(Checked_Row) != 0:
                 self._nRow = idx
                 Des1_Comp = Compact_Descr_String(Checked_Row[IX_ROW_DESCR1])
                 Des2_Comp = Compact_Descr_String(Checked_Row[IX_ROW_DESCR2])
@@ -234,43 +272,6 @@ class Xlsx_Manager(Codes_db):
             return False, data
         self._Save_Xlsx_Data()
         return True, ''
-    # ---------------------------------------------------------------------------------------------
-    # def _get_xlsx_row_as_is(self, row):
-        # CONTO     A       B       C       D       E       F       G
-        #           0       1       2       3       4       5       6
-        # FIDEU     Contab  Valuta  Des1    Accred  Added   Des2
-        # FLH-AMBR  Contab  Valuta  Des1            Addeb-          Accred
-        # POSTA     Contab  Valuta  Addeb-  Accred  Des1
-        # FORM nRow,Contab, Valuta, Des1,   Accred, Addeb,  Des2
-        #        0     1       2      3        4      5       6
-
-        # rowList   = list(row)
-        # Contab    = rowList[0]
-        # Valuta    = rowList[1]
-        # Des1   = None
-        # Accred = None
-        # Addeb  = None
-        # Des2   = None
-        #
-        # if self._tXlsx_Conto == FIDEU:
-        #     Des1   = rowList[2]
-        #     Accred = rowList[3]
-        #     Addeb  = rowList[4]
-        #     Des2   = rowList[5]
-        #
-        # elif self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA:
-        #     Des1   = rowList[1]
-        #     Accred = rowList[5]
-        #     Addeb  = rowList[3]
-        #     Des2   = ''
-        #
-        # elif self._tXlsx_Conto == POSTA:
-        #     Des1 = rowList[4]
-        #     Accred = rowList[2]
-        #     Addeb = rowList[1]
-        #     Des2 = ''
-        #
-        # return [Contab, Valuta, Des1, Accred, Addeb , Des2]
 
     # --------------------------------------------------------------------------------------------- #
     # _With_Code_Tree_List   : nRow   Contab  Valuta  TR_Desc   Accred  Addeb   TRcode  RowFullDes 
@@ -340,13 +341,14 @@ class Xlsx_Manager(Codes_db):
                     return []
                 else:
                     Xlsx_Row_List_Checked.append(ItemChecked)
-            return Xlsx_Row_List_Checked  # as in Xlsx Rows
+            return Xlsx_Row_List_Checked
 
     # ---------------------------------------------------------------------------------------------
     def _Date_Check(self, XlsxRow_AsItIs):
-        Date_Contab = XlsxRow_AsItIs[IX_ROW_CONTAB]
-        Date_Valuta = XlsxRow_AsItIs[IX_ROW_VALUTA]
-        if type(Date_Contab) is not datetime or type(Date_Valuta) is not datetime:
+        Date_Contab = XlsxRow_AsItIs[IX_SHEET_CONTAB]
+        Date_Valuta = XlsxRow_AsItIs[IX_SHEET_VALUTA]
+        DateType = type(Date_Contab)
+        if DateType is not datetime or type(Date_Valuta) is not datetime:
             return  False
         str_date_contab = Date_Contab.strftime("%Y-%m-%d")
         str_date_valuta = Date_Valuta.strftime("%Y-%m-%d")
@@ -388,18 +390,6 @@ class Xlsx_Manager(Codes_db):
         elif Type == DATE:            #   ---  Date verified on Load_xlsx_rows
             return Item
         return None
-
-
-    # --------_Year_Setup--------------------------------------------------------------------------------------
-    # def _Date_Setup(self, Contab, Valuta):
-    #     self._Contab = None
-    #     self._Contab = None
-    #     Date = self._Verify_Date(Contab)
-    #     if Date:
-    #         self._Contab = Date
-    #     Date = self._Verify_Date(Valuta)
-    #     if Date:
-    #         self._Valuta = Date
 
     # -----------------------------------------------------------------------------------
     def _Verify_Date(self, DateToCheck):

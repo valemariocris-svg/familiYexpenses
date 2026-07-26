@@ -228,6 +228,24 @@ IX_XLSX_WITH_TRDESC  = 6
 IX_XLSX_WITH_TRCODE  = 7
 IX_XLSX_WITH_FULLDES = 8
 
+# Xlsx_Rows from data sheet:  Contab  Valuta  Des1  Accr  Addeb  Des2
+IX_SHEET_CONTAB = 0
+IX_SHEET_VALUTA = 1
+IX_SHEET_DESCR1 = 2
+IX_SHEET_ACCRED = 3
+IX_SHEET_ADDEB  = 4
+IX_SHEET_DESCR2 = 5
+
+# Xlsx_Rows_From_Sheet_normalized :  nRow  Contab  Valuta  Des1  Accr  Addeb  Des2
+IX_ROW_NROW   = 0
+IX_ROW_CONTAB = 1
+IX_ROW_VALUTA = 2
+IX_ROW_DESCR1 = 3
+IX_ROW_ACCRED = 4
+IX_ROW_ADDEB  = 5
+IX_ROW_DESCR2 = 6
+
+
 #   List of Controls for XLS rows
 INTEGER       = 'Integer'
 NOT_INT       = 'String'
@@ -247,29 +265,11 @@ YMD          = 'year_month day' # convert datetime in year-month
 INT_TOSTRING = 'integer to str'
 FLOAT_TOSTR  = 'float to string'    # convert float to str 1.234,56
 
-# Xlsx_Rows_From_Sheet_normalized :  nRow  Contab  Valuta  Des1  Accr  Addeb  Des2
-IX_ROW_NROW   = 0
-IX_ROW_CONTAB = 1
-IX_ROW_VALUTA = 2
-IX_ROW_DESCR1 = 3
-IX_ROW_ACCRED = 4
-IX_ROW_ADDEB  = 5
-IX_ROW_DESCR2 = 6
 
 LIST_FOR_XLSX_ROW_CONTROL = [
     [IX_ROW_NROW,   INTEGER],
     [IX_ROW_CONTAB, DATE],    [IX_ROW_VALUTA, DATE],   [IX_ROW_DESCR1, STRING],
     [IX_ROW_ACCRED, NUMERIC], [IX_ROW_ADDEB, NUMERIC], [IX_ROW_DESCR2, STRING]]
-
-IX_ROW_TOINS_NROW     = 0
-IX_ROW_TOINS_CONTO    = 1
-IX_ROW_TOINS_CONTAB   = 2
-IX_ROW_TOINS_VALUTA   = 3
-IX_ROW_TOINS_ACCRED   = 4
-IX_ROW_TOINS_ADDEB    = 5
-IX_ROW_TOINS_TR_DESC  = 6
-IX_ROW_TOINS_TR_CODE  = 7
-IX_ROW_TOINS_FULL_DESC= 8  # DESC1 / DESC2
 
 # ================================================================================================= #
 #                       ------     5. transactions database settings         -----                  #
@@ -494,7 +494,6 @@ Totals_dict_default  = {
                         TOT_CALCULATED:        0,
                         TOT_ROWS_IN_XLSX:      0,
                       }
-
 
 # ================================================================================================= #
 #                       ----------     9.      widgets   settings   --------                        #
