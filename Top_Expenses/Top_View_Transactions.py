@@ -153,7 +153,6 @@ class Top_View_Transact(tk.Toplevel):
         # -------------------------------------------------------------------------------------------------
         #   (auto)  Id, riga, conto, contab, valuta, accred, addeb, TRdesc, TRcode, full_desc
         template = [INT_TOSTRING, INT_TOSTRING, SIC, YMD, YMD, FLOAT_TOSTR, FLOAT_TOSTR, SIC, INT_TOSTRING, SIC]
-
         view_list = []
         for Rec in List:
             rec_toView = convert_rcord_toView(template, Rec)

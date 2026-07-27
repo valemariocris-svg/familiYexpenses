@@ -75,7 +75,7 @@ class Super_Top_Mngr(tk.Toplevel):
         nColToVis = 0   # no more used
         Headings  = ['#0', 'Row', 'Conto', 'Contab', 'Valuta  ', 'Accred  ', 'Addeb  ', 'Descrizione completa']
         Anchor    = ['c',   'w',    'c',   'c',      'c',        'e',         'e',       'w']
-        Width     = [0,      50,     40,    80,       70,         70,          70,       460]
+        Width     = [0,      80,     40,    90,       90,         80,          80,       380]
         Form_List = [Nrows, nColToVis, Headings, Anchor, Width]
         result = self.Frame_NoCodes_ToIns.Tree_Setup(Form_List)
         self.View_frames_error(result)
@@ -83,8 +83,8 @@ class Super_Top_Mngr(tk.Toplevel):
     # -------------------------------------------------------------------------------------------------
     def Clk_OnTree_NoCodes(self, Values):
         #  [nRow, Contab, Valuta, Accred, Addeb, FullDes
-        Row      = int(Values[IX_NO_CODE_NROW])
-        Conto    = Values[IX_NO_CODE_CONTO]
+        Row       = int(Values[IX_NO_CODE_NROW])
+        Conto     = Values[IX_NO_CODE_CONTO]
         Valuta    = Values[IX_NO_CODE_VALUTA]
         FullDesc  = Values[IX_NO_CODE_FULL_DESCR]
         self.Txt_StrFullDesc1.Set_Text(Valuta + '  - ' + FullDesc)
@@ -103,9 +103,9 @@ class Super_Top_Mngr(tk.Toplevel):
         self.Frame_WithCodes_ToIns.Frame_Title('  ')
         Nrows     = 25
         nColToVis = 0   # no more used
-        Headings = ['#0',  'Row ', 'Conto', 'Contab ', 'Valuta ', 'Accred  ', 'Addeb  ', 'Descrizione ', 'Codice ']
-        Anchor   = ['c',   'w',     'c',    'c',       'e',       'e',         'w',       'w',           'c'    ]
-        Width    = [ 0,     80,      50,     90,        90,        80,          80,        210,           100    ]
+        Headings = ['#0',  'Row ', 'Conto', 'Contab ', 'Valuta ', 'Accred  ', 'Addeb  ', 'Descrizione ', 'Codice ', 'Full']
+        Anchor   = ['c',   'w',     'c',    'c',       'e',       'e',         'e',       'w',           'c',       'w']
+        Width    = [ 0,     80,      50,     90,        90,        80,          80,        210,           100,       0 ]
         Form_List = [Nrows, nColToVis, Headings, Anchor, Width]
         result = self.Frame_WithCodes_ToIns.Tree_Setup(Form_List)
         self.View_frames_error(result)
@@ -175,10 +175,22 @@ class Super_Top_Mngr(tk.Toplevel):
         self.Frame_NoCodes_ToIns.Frame_Title(TitleNoCode)
         self.Frame_WithCodes_ToIns.Frame_Title(TitleWith)
 
-        result = self.Frame_NoCodes_ToIns.Load_Row_Values(noCode_rows_to_be_inserted_list)
+        # Wihtout_Code_Tree_List     nRow Conto Contabile Valuta Accred Addeb FullDesc
+        noCode_rows_to_view_list = []
+        template = [INT_TOSTRING, SIC, YMD, YMD, FLOAT_TOSTR, FLOAT_TOSTR, SIC]
+        for row in noCode_rows_to_be_inserted_list:
+            row_to_view = convert_rcord_toView(template, row)
+            noCode_rows_to_view_list.append(row_to_view)
+        result = self.Frame_NoCodes_ToIns.Load_Row_Values(noCode_rows_to_view_list)
         self.View_frames_error(result)
 
-        result = self.Frame_WithCodes_ToIns.Load_Row_Values(std_cod_to_be_inserted)
+        # With_Code_Tree_List  nRow Conto Contabile _Valuta Accred _Addeb TRdesc TRcode
+        witCode_rows_to_view_list = []
+        template = [INT_TOSTRING, SIC, YMD, YMD, FLOAT_TOSTR, FLOAT_TOSTR, SIC, INT_TOSTRING, SIC]
+        for row in std_cod_to_be_inserted:
+            row_to_view = convert_rcord_toView(template, row)
+            witCode_rows_to_view_list.append(row_to_view)
+        result = self.Frame_WithCodes_ToIns.Load_Row_Values(witCode_rows_to_view_list)
         self.View_frames_error(result)
 
         self.View_Frames(len_NoCode_to_be_inserted)

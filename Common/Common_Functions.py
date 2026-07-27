@@ -235,8 +235,9 @@ def Set_Month_Day(FullDate, Counts):
     return MonthDay_Date
 
 # -------------------------------------------------------------------------------------------------
-def get_year_month_day(strDate):    # '2026-09-02-12:00:00
-    return strDate[0:10]
+def get_year_month_day(Date):    # '2026-09-02-12:00:00
+    str_date = Date.strftime("%Y-%m-%d")
+    return str_date[0:10]
 
 # -------------------------------------------------------------------------------------------------
 def convert_rcord_toView(template, Rec):
@@ -272,7 +273,6 @@ def Convert_Str_To_Float(Value):
 # Gestione immediata del None
     if Value is None:
         return 0.0
-
     try:
         # Questo copre int, float e stringhe numeriche pulite (es: "123.45")
         return float(Value)
@@ -281,17 +281,6 @@ def Convert_Str_To_Float(Value):
         return 0.0
     finally:
         pass
-
-# -------------------------------------------------------------------------------------------------------------
-def Convert_To_Float(Value):    # return always a float (0.00) in case of not number
-    Type = type(Value)
-    if Type is str:
-        return 0.00
-    if Value is None:
-        return 0.0
-    if Type is int or Type is float:
-        return float(Value)
-    return 0.00
 
 # ---------------------------------------------------------------------------------------
 def convert_float_toString(Float):
@@ -313,7 +302,6 @@ def convert_float_toString(Float):
     it_format = passo2.replace("X", ".")  # Diventa: "1.234,6"
 
     return it_format
-
 
 # ---------------------------------------------------------------------------------------
 def Float_ToString_Setup(Val):

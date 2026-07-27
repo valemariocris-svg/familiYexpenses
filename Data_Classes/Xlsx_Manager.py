@@ -26,23 +26,9 @@ class Xlsx_Manager(Codes_db):
         #  nRow timeContab timeValuta  Des1  Accred  Addeb  Des2
 
         self._data_sheet_frame: pd.DataFrame  # type declaration: _data_sheet_frame pd.DataFrame
-        # self. _nRow  = None     # int
-        # self._Contab = None     # str
-        # self._Valuta = None     # str
-        # self._Des1   = None     # str
-        # self._Accr   = None     # float
-        # self._Addeb  = None     # float
-        # self._Des2   = None     # str
-        #
-        # self._Tot_Rows        = 0
-        # self._Tot_NOK         = 0
-        # self._Tot_OK          = 0
-        # self._TotWith_Code    = 0
-        # self._TotWihtout_Code = 0
-        # self._iYear_List      = []
 
         # -------   _tAtt : temporary attributes  that will be copied on _Att  if all OK  -------------
-        self._tXLSX_Rows_From_Sheet_normalized    = []
+        self._tXLSX_Rows_From_Sheet_normalized  = []
 
         self._tXlsx_Rows_Compact      = []     # temporaries to not dommage the _list
         self._tWith_Code_Tree_List    = []
@@ -108,9 +94,6 @@ class Xlsx_Manager(Codes_db):
                 Des1_Comp = Compact_Descr_String(Checked_Row[IX_SHEET_DESCR1])
                 Des2_Comp = Compact_Descr_String(Checked_Row[IX_SHEET_DESCR2])
                 Full_Desc  = FullDescr_Setup(Des1_Comp, Des2_Comp)
-
-                # self._Set_Year_Contab_Valuta(Checked_Row[IX_ROW_CONTAB])
-                # self._Set_Year_Contab_Valuta(Checked_Row[IX_ROW_VALUTA])
                 Row_Compact = [ Checked_Row[IX_SHEET_NROW],
                                 Checked_Row[IX_SHEET_CONTAB],
                                 Checked_Row[IX_SHEET_VALUTA],
@@ -180,7 +163,7 @@ class Xlsx_Manager(Codes_db):
     # --------------------------------------------------------------------------------------------
     def _Save_Xlsx_Data(self):
         self._Xlsx_Rows_From_Sheet_normalized   = self._tXLSX_Rows_From_Sheet_normalized
-        # self._Xlsx_Rows_Desc_Compact = self._tXlsx_Rows_Desc_Compact
+
         self._Xlsx_Rows_Compact      = self._tXlsx_Rows_Compact
 
         # ------------------------
@@ -197,6 +180,7 @@ class Xlsx_Manager(Codes_db):
 
         self._With_Code_Tree_List    = self._tWith_Code_Tree_List
         self._Wihtout_Code_Tree_List = self._tWihtout_Code_Tree_List
+        pass
 
     # --------------------------------------------------------------------------------- #
     #  Workbook is the container of all Worksheets                                      #
@@ -246,7 +230,7 @@ class Xlsx_Manager(Codes_db):
                 Des2   = row_list[5]
 
             elif self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA:
-                Des1 = row_list[1]
+                Des1 = row_list[2]
                 Accred = row_list[5]
                 Addeb = row_list[3]
                 Des2 = ''
@@ -307,58 +291,50 @@ class Xlsx_Manager(Codes_db):
         pass
 
     # ---------------------------------------------------------------------------------------------
-    # def _Set_Year_Contab_Valuta(self, Date):
-    #     self.Dummy = 0
-    #     str_date_contab = Date.strftime("%Y-%m-%d")
-    #     iYear = int(Date[0:4])
-    #     if len(self._tiYear_List) < 2 and not iYear in self._iYear_List:
-    #         self._tiYear_List.append(iYear)
-
-    # ---------------------------------------------------------------------------------------------
     def _Check_Values(self, frameRow):
-            Xlsx_Row_List_Checked = []
-            nRow = frameRow[IX_SHEET_NROW]
-            if not type(nRow is int):
+        Xlsx_Row_List_Checked = []
+        nRow = frameRow[IX_SHEET_NROW]
+        if not type(nRow is int):
+            return []
+        Xlsx_Row_List_Checked.append(nRow)
+
+        Contab = frameRow[IX_SHEET_CONTAB]
+        if isinstance(Contab, datetime):
+            Xlsx_Row_List_Checked.append(Contab)
+        else:
+            return []
+
+        Valuta = frameRow[IX_SHEET_VALUTA]
+        if isinstance(Valuta, datetime):
+            Xlsx_Row_List_Checked.append(Valuta)
+        else:
+            return []
+
+        str_date_contab = Contab.strftime("%Y-%m-%d")
+        str_date_valuta = Valuta.strftime("%Y-%m-%d")
+        iYear_Contab = int(str_date_contab[0:4])
+        iYear_Valuta = int(str_date_valuta[0:4])
+        if iYear_Contab != self._tXlsx_Year and iYear_Valuta != self._tXlsx_Year:
+            return []
+
+        Descr1 = frameRow[IX_SHEET_DESCR1]  # the first description must be "dddd"
+        Descr2 = frameRow[IX_SHEET_DESCR2]
+        if type(Descr1) is not str:
+            Descr1 = ''
+        if type(Descr2) is not str:
+            Descr2 = ''
+        if Descr1 == '' and Descr2 == '':   # at least one description mus te filled string
                 return []
-            Xlsx_Row_List_Checked.append(nRow)
+        Xlsx_Row_List_Checked.append(Descr1)
 
-            Contab = frameRow[IX_SHEET_CONTAB]
-            if isinstance(Contab, datetime):
-                Xlsx_Row_List_Checked.append(Contab)
-            else:
-                return []
+        # this values will be always float
+        Accred = self._Convert_Str_To_Float(frameRow[IX_SHEET_ACCRED])
+        Xlsx_Row_List_Checked.append(Accred)
+        Addeb  = self._Convert_Str_To_Float(frameRow[IX_SHEET_ADDEB])
+        Xlsx_Row_List_Checked.append(Addeb)
 
-            Valuta = frameRow[IX_SHEET_VALUTA]
-            if isinstance(Valuta, datetime):
-                Xlsx_Row_List_Checked.append(Valuta)
-            else:
-                return []
-
-            str_date_contab = Contab.strftime("%Y-%m-%d")
-            str_date_valuta = Valuta.strftime("%Y-%m-%d")
-            iYear_Contab = int(str_date_contab[0:4])
-            iYear_Valuta = int(str_date_valuta[0:4])
-            if iYear_Contab != self._tXlsx_Year and iYear_Valuta != self._tXlsx_Year:
-                return []
-
-            Descr1 = frameRow[IX_SHEET_DESCR1]  # the first description must be "dddd"
-            Descr2 = frameRow[IX_SHEET_DESCR2]
-            if type(Descr1) is not str:
-                Descr1 = ''
-            if type(Descr2) is not str:
-                Descr2 = ''
-            if Descr1 == '' and Descr2 == '':   # at least one description mus te filled string
-                    return []
-            Xlsx_Row_List_Checked.append(Descr1)
-
-            # this values will be always float
-            Accred = self._Convert_Str_To_Float([IX_SHEET_ACCRED])
-            Xlsx_Row_List_Checked.append(Accred)
-            Addeb  = self._Convert_Str_To_Float(frameRow[IX_SHEET_ADDEB])
-            Xlsx_Row_List_Checked.append(Addeb)
-
-            Xlsx_Row_List_Checked.append(Descr2)
-            return Xlsx_Row_List_Checked
+        Xlsx_Row_List_Checked.append(Descr2)
+        return Xlsx_Row_List_Checked
 
     # ---------------------------------------------------------------------------------------------
     def _Convert_Str_To_Float(self, Value):

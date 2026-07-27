@@ -388,10 +388,8 @@ class Super_Top_Queries(tk.Toplevel):
     # -------------------------------------------------------------------------------------------------
     def Get_Credit_Debit(self, Rec):
         self.Dummy = 0
-        Credit = Convert_To_Float(Rec[2])
-        Debit  = Convert_To_Float(Rec[3])
-        # Credit = self.Convert_To_Float(Rec[2])
-        # Debit  = self.Convert_To_Float(Rec[3])
+        Credit = Convert_Str_To_Float(Rec[2])
+        Debit  = Convert_Str_To_Float(Rec[3])
         return [Credit, Debit]
 
     # ------------------------------------------------------------------------------------------------------------
@@ -402,8 +400,8 @@ class Super_Top_Queries(tk.Toplevel):
         Credit     = Rec[IX_QUERY_ACCRED]         # can be  float or '' or ' '
         Debit      = Rec[IX_QUERY_ADDEB]
 
-        floatCredit = Convert_To_Float(Credit)
-        floatDebit  = Convert_To_Float(Debit)
+        floatCredit = Convert_Str_To_Float(Credit)
+        floatDebit  = Convert_Str_To_Float(Debit)
 
         strCredit   = Float_ToString_Setup(floatCredit)
         strDebit    = Float_ToString_Setup(floatDebit)

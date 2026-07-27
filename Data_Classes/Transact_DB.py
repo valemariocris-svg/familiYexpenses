@@ -251,8 +251,8 @@ class Transact_Db(Xlsx_Manager):
             Conto   = row[IX_ROW_TOINS_CONTO]
             Contab  = row[IX_ROW_TOINS_CONTAB]
             Valuta  = row[IX_ROW_TOINS_VALUTA]
-            Accred  = Convert_To_Float(row[IX_ROW_ACCRED])
-            Addeb   = Convert_To_Float(row[IX_ROW_ADDEB])
+            Accred  = Convert_Str_To_Float(row[IX_ROW_ACCRED])
+            Addeb   = Convert_Str_To_Float(row[IX_ROW_ADDEB])
             TRdesc  = row[IX_ROW_TOINS_TR_DESC]
             TRcode  = row[IX_ROW_TOINS_TR_CODE]
             FullDes = row[IX_ROW_TOINS_FULL_DESC]
