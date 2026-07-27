@@ -1,5 +1,6 @@
 # =============================================================================================== #
-#   Create:                                                                                       #
+#                 manages all  lists  for   xlsx  rows                                            #
+# =============================================================================================== #
 # Xlsx_Rows_From_Sheet_normalized   nRow    Contab  Valuta    Des1    Accr   Addeb     Des2       #
 # Xlsx_Rows_Desc_CompactnRow        Contab  Valuta  Des1Comp  Accr   Addeb    Des2Comp            #
 # tXlsx_Rows_Compact                nRow  _Contab   Valuta   Accr     Addeb  Full_Desc            #
@@ -7,6 +8,7 @@
 # self._tWith_Code_Tree_List        nRow Contabile _Valuta Accred _Addeb TRdesc TRcode            #
 # self._tWihtout_Code_Tree_List     nRow Contabile _Valuta Accred _Addeb FullDesc                 #
 # ----------------------------------------------------------------------------------------------- #
+
 import pandas as pd
 import warnings
 from Data_Classes.Codes_DB import *
@@ -23,38 +25,30 @@ class Xlsx_Manager(Codes_db):
         # one row on xlsx file   ---------------------------------------------------------------
         #  nRow timeContab timeValuta  Des1  Accred  Addeb  Des2
 
-        self._nRow   = None     # int
-        self._Contab = None     # str
-        self._Valuta = None     # str
-        self._Des1   = None     # str
-        self._Accr   = None     # float
-        self._Addeb  = None     # float
-        self._Des2   = None     # str
-
-        # self._df: pd.DataFrame | None = None      da' warning
-        self._df: pd.DataFrame  # Si dichiara qui che self,_df e' tipo pd.DataFrame per il load di xlsx
-
-        # ------------------------
-        self._Xlsx_Rows_From_Sheet_normalized = []
-        # self._Xlsx_Rows_Desc_Compact   = []
-        self._Xlsx_Rows_Compact        = []
-        # ------------------------
-        self._Tot_Rows        = 0
-        self._Tot_NOK         = 0
-        self._Tot_OK          = 0
-        self._TotWith_Code    = 0
-        self._TotWihtout_Code = 0
-        self._iYear_List      = []
+        self._data_sheet_frame: pd.DataFrame  # type declaration: _data_sheet_frame pd.DataFrame
+        # self. _nRow  = None     # int
+        # self._Contab = None     # str
+        # self._Valuta = None     # str
+        # self._Des1   = None     # str
+        # self._Accr   = None     # float
+        # self._Addeb  = None     # float
+        # self._Des2   = None     # str
+        #
+        # self._Tot_Rows        = 0
+        # self._Tot_NOK         = 0
+        # self._Tot_OK          = 0
+        # self._TotWith_Code    = 0
+        # self._TotWihtout_Code = 0
+        # self._iYear_List      = []
 
         # -------   _tAtt : temporary attributes  that will be copied on _Att  if all OK  -------------
         self._tXLSX_Rows_From_Sheet_normalized    = []
-        # self._tXlsx_Rows_Desc_Compact  = []
-        self._tXlsx_Rows_Compact       = []
 
-        self._tWith_Code_Tree_List     = []
-        self._tWihtout_Code_Tree_List  = []
+        self._tXlsx_Rows_Compact      = []     # temporaries to not dommage the _list
+        self._tWith_Code_Tree_List    = []
+        self._tWihtout_Code_Tree_List = []
 
-        self._With_Code_Tree_List    = []
+        self._With_Code_Tree_List    = []      # updated from _t after a successfull Load
         self._Wihtout_Code_Tree_List = []
         self._Records_ToInsert_List  = []
 
@@ -65,15 +59,16 @@ class Xlsx_Manager(Codes_db):
         self._tTotWith_Code    = 0
         self._tTotWithout_Code = 0
         self._tiYear_List      = []
-        # -----------------------------------------------------------------------------------------
-        self._tXlsx_Conto    = None  # these attributs are not saved on Selections
-        self._tXlsx_Year     = None  # calculated in _Set_Xlsx_Conto_Year_Month()
-        self._tXlsx_Month    = None  #    """      "     """      """
 
-        self._Xlsx_Month_Contab_List         = []
-        self._Xlsx_Month_Valuta_List         = []
-        self._Xlsx_Month_Generic_Valuta_List = []
-        self._Xlsx_Month_Generic_Contab_List = []
+        # -----------------------------------------------------------------------------------------
+        # self._tXlsx_Conto    = None  # these attributs are not saved on Selections
+        # self._tXlsx_Year     = None  # calculated in _Set_Xlsx_Conto_Year_Month()
+        # self._tXlsx_Month    = None  #    """      "     """      """
+
+        # self._Xlsx_Month_Contab_List         = []
+        # self._Xlsx_Month_Valuta_List         = []
+        # self._Xlsx_Month_Generic_Valuta_List = []
+        # self._Xlsx_Month_Generic_Contab_List = []
 
         # ------------------------------------------------------------ #
         #  -----  the values  are filled  from  Transact_DB.py  ------ #
@@ -89,9 +84,52 @@ class Xlsx_Manager(Codes_db):
     # ----------------------------------------------------------------------------------- #
     #            ----------------      public   methods   -----------------               #
     # ----------------------------------------------------------------------------------- #
-    def Get_Total_Rows(self):
-        # IX_TOT_ROWS_OK, IX_TOT_ROWS_WITH_CODE, IX_TOT_ROWS_WITHOUT_CODE
-        return [self._Tot_OK, self._TotWith_Code, self._TotWihtout_Code]
+    # ----------------------------------------------------------------------------------------------- #
+    def Load_Xlsx_Rows(self) -> tuple[bool, str | list]:
+        self._Init_Xlsx_Data()
+        self._Set_Xlsx_Conto_Year_Month()
+        if self._tXlsx_Year is None or self._tXlsx_Conto is None or self._tXlsx_Month is None:
+            return False, "FATAL ERROR 13\non extracting Year, Conto , Month from xlsx file"
+
+        Filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
+        if not Gl_Cek_Xlsx_Name(Filename):
+            return False, "FATAL ERROR 12:\nxlsx filename not OK"
+
+        status, data = self._get_work_sheet_rows_normalized()
+        if not status:
+            return False, data
+
+        # Xlsx_Rows_From_Sheet_normalized :  nRow  Contab  Valuta  Des1  Accr  Addeb  Des2
+        for row in self._Xlsx_Rows_From_Sheet_normalized:
+            if row[IX_SHEET_NROW] == 30:
+                pass
+            Checked_Row = self._Check_Values(row)
+            if len(Checked_Row) != 0:
+                Des1_Comp = Compact_Descr_String(Checked_Row[IX_SHEET_DESCR1])
+                Des2_Comp = Compact_Descr_String(Checked_Row[IX_SHEET_DESCR2])
+                Full_Desc  = FullDescr_Setup(Des1_Comp, Des2_Comp)
+
+                # self._Set_Year_Contab_Valuta(Checked_Row[IX_ROW_CONTAB])
+                # self._Set_Year_Contab_Valuta(Checked_Row[IX_ROW_VALUTA])
+                Row_Compact = [ Checked_Row[IX_SHEET_NROW],
+                                Checked_Row[IX_SHEET_CONTAB],
+                                Checked_Row[IX_SHEET_VALUTA],
+                                Checked_Row[IX_SHEET_ACCRED],
+                                Checked_Row[IX_SHEET_ADDEB],
+                                Full_Desc ]
+                pass
+                self._tXLSX_Rows_From_Sheet_normalized.append(Checked_Row)
+                self._tXlsx_Rows_Compact.append(Row_Compact)
+                pass
+
+        if self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA or self._tXlsx_Conto == POSTA:
+            self._tXlsx_Rows_Compact.sort(reverse=True)
+
+        status, data = self._create_With_Out_codes_lists()
+        if not status:
+            return False, data
+        self._Save_Xlsx_Data()
+        return True, ''
 
     # ------------------------------------------------------------------------------------
     def Get_Length_Xlsx(self):
@@ -100,10 +138,10 @@ class Xlsx_Manager(Codes_db):
     def Get_Xlsx_Rows_From_Sheet_normalized(self):
         return self._Xlsx_Rows_From_Sheet_normalized
 
-    def Clear_Xlsx_Conto_Year_Month(self):
-        self._tXlsx_Conto = None
-        self._tXlsx_Year  = None
-        self._tXlsx_Month = None
+    # def Clear_Xlsx_Conto_Year_Month(self):
+    #     self._tXlsx_Conto = None
+    #     self._tXlsx_Year  = None
+    #     self._tXlsx_Month = None
 
     # --------------------------------------------------------------------------------------------
     def _Set_Xlsx_Conto_Year_Month(self):
@@ -122,9 +160,7 @@ class Xlsx_Manager(Codes_db):
     # --------------------------------------------------------------------------------------------
     def _Init_Xlsx_Data(self):
         self._tXlsx_Rows_From_Sheet_normalized = []
-        # self._tXlsx_Rows_Desc_Compact = []
         self._tXlsx_Rows_Compact      = []
-
         self._tWith_Code_Tree_List    = []
         self._tWihtout_Code_Tree_List = []
 
@@ -137,9 +173,9 @@ class Xlsx_Manager(Codes_db):
         self._tiYear_List = []
 
         # -----------------------------------------------------------------------------------------
-        self._tXlsx_Conto    = None  # or on selecting new file  FIDEU_2024_01.xlsx
         self._tXlsx_Year     = None  # they are  calculated on startup
         self._tXlsx_Month    = None
+        self._tXlsx_Conto    = None  # or on selecting new file  FIDEU_2024_01.xlsx
 
     # --------------------------------------------------------------------------------------------
     def _Save_Xlsx_Data(self):
@@ -166,111 +202,61 @@ class Xlsx_Manager(Codes_db):
     #  Workbook is the container of all Worksheets                                      #
     #  while the Worksheet is the container of Data of one Sheet                        #
     # --------------------------------------------------------------------------------- #
-    """
-    # ---------------------------------------------------------------------------------------------
-    def _get_xlsx_row_as_is(self, row):
-        # CONTO     A       B       C       D       E       F       G
-        #           0       1       2       3       4       5       6
-        # FIDEU     Contab  Valuta  Des1    Accred  Added   Des2
-        # FLH-AMBR  Contab  Valuta  Des1            Addeb-          Accred
-        # POSTA     Contab  Valuta  Addeb-  Accred  Des1
-        # FORM nRow,Contab, Valuta, Des1,   Accred, Addeb,  Des2
-        #        0     1       2      3        4      5       6
-
-        rowList   = list(row)
-        Contab    = rowList[0]
-        Valuta    = rowList[1]
-        Des1   = None
-        Accred = None
-        Addeb  = None
-        Des2   = None
-
-        if self._tXlsx_Conto == FIDEU:
-            Des1   = rowList[2]
-            Accred = rowList[3]
-            Addeb  = rowList[4]
-            Des2   = rowList[5]
-
-        elif self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA:
-            Des1   = rowList[1]
-            Accred = rowList[5]
-            Addeb  = rowList[3]
-            Des2   = ''
-
-        elif self._tXlsx_Conto == POSTA:
-            Des1 = rowList[4]
-            Accred = rowList[2]
-            Addeb = rowList[1]
-            Des2 = ''
-
-        return [Contab, Valuta, Des1, Accred, Addeb , Des2]
-
-    """
-    def _Get_Work_Sheet_Rows(self):
+    def _get_work_sheet_rows_normalized(self) -> tuple[bool, str]:
         filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
         try:
-            self._df = pd.read_excel(
+            self._data_sheet_frame = pd.read_excel(
                 filename,
                 sheet_name=0,
                 header=None,    # Nessun titolo
                 # usecols="A:G",  # Forza a leggere sempre le colonne A, B, C, D, E, F, G
                 keep_default_na=False  # Le celle vuote diventano "" anziché NaN
             )
-            self._tTot_Rows = len(self._df)
+            self._tTot_Rows = len(self._data_sheet_frame)
+            if self._tTot_Rows == 0:
+                return False, f"il file xlsx non contiene nessuna riga!"
 
         except Exception as e:
             print(f"Errore lettura Pandas: {e}")
             self._tTot_Rows = -1
-            self._df = None
-            return -1
-        return self._tTot_Rows
+            self._data_sheet_frame = None
+            return False, f"Errore Pandas: {e}\nnel caricamento di Dataframe"
 
-    # ----------------------------------------------------------------------------------------------- #
-    def  Load_Xlsx_Rows(self) -> tuple[bool, str | list]:
-        self._Init_Xlsx_Data()
-        Filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
-        if not Gl_Cek_Xlsx_Name(Filename):
-            return False, "FATAL ERROR 12:\nxlsx filename not OK"
+        self._Xlsx_Rows_From_Sheet_normalized = []
+        for nRow_in_xlsx, row_list in enumerate(self._data_sheet_frame.values.tolist(), start=1):
+            # CONTO     A       B       C       D       E       F       G
+            #           0       1       2       3       4       5       6
+            # FIDEU     Contab  Valuta  Des1    Accred  Added   Des2
+            # FLH-AMBR  Contab  Valuta  Des1            Addeb-          Accred
+            # POSTA     Contab  Valuta  Addeb-  Accred  Des1
+            # FORM nRow,Contab, Valuta, Des1,   Accred, Addeb,  Des2
+            #        0     1       2      3        4      5       6
 
-        self._Get_Work_Sheet_Rows()  # ------------------>>>>>
+            Contab = row_list[0]
+            Valuta = row_list[1]
+            Des1   = None
+            Accred = None
+            Addeb  = None
+            Des2   = None
 
-        if self._tTot_Rows == -1:
-            return False, "FATAL ERROR 13:\non loading workbook"
-        elif self._tTot_Rows == 0:
-            return False, "none rows found in xlsx"
+            if self._tXlsx_Conto == FIDEU:
+                Des1   = row_list[2]
+                Accred = row_list[3]
+                Addeb  = row_list[4]
+                Des2   = row_list[5]
 
-        self._Set_Xlsx_Conto_Year_Month()
-        if self._tXlsx_Year is None or self._tXlsx_Conto is None or self._tXlsx_Month is None:
-            return False, "FATAL ERROR 13\non extracting Year, Conto , Month from xlsx file"
+            elif self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA:
+                Des1 = row_list[1]
+                Accred = row_list[5]
+                Addeb = row_list[3]
+                Des2 = ''
 
-        for idx, row in enumerate(self._df.itertuples(index=False)):
-            rowList = list(row)
-            print(f"{idx+1}:  {type(rowList[0])}  {rowList[1]} {rowList[2]} {rowList[3]} {rowList[4]}  {rowList[5]}")
-            Checked_Row = self._Check_Values(rowList)
-            if len(Checked_Row) != 0:
-                self._nRow = idx
-                Des1_Comp = Compact_Descr_String(Checked_Row[IX_ROW_DESCR1])
-                Des2_Comp = Compact_Descr_String(Checked_Row[IX_ROW_DESCR2])
-                Full_Desc  = FullDescr_Setup(Des1_Comp, Des2_Comp)
-
-                self._Set_Year_Contab_Valuta(Checked_Row[IX_ROW_CONTAB])
-                self._Set_Year_Contab_Valuta(Checked_Row[IX_ROW_VALUTA])
-
-                # Row_Desc_Comp = [self._nRow, self._Contab, self._Valuta, Des1_Comp, self._Accr, self._Addeb, Des2_Comp]
-                Row_Compact   = [self._nRow, self._Contab, self._Valuta, self._Accr, self._Addeb, Full_Desc]
-                self._tXLSX_Rows_From_Sheet_normalized.append(Checked_Row)
-                # self._tXlsx_Rows_Desc_Compact.append(Row_Desc_Comp)
-                self._tXlsx_Rows_Compact.append(Row_Compact)
-                pass
-
-        if self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA or self._tXlsx_Conto == POSTA:
-            # self._tXlsx_Rows_Desc_Compact.sort(reverse=True)    # Invert order from Most Recent to Less
-            self._tXlsx_Rows_Compact.sort(reverse=True)
-
-        status, data = self._create_With_Out_codes_lists()
-        if not status:
-            return False, data
-        self._Save_Xlsx_Data()
+            elif self._tXlsx_Conto == POSTA:
+                Des1   = row_list[4]
+                Accred = row_list[2]
+                Addeb  = row_list[1]
+                Des2 = ''
+            self._Xlsx_Rows_From_Sheet_normalized.append([nRow_in_xlsx, Contab, Valuta, Des1, Accred, Addeb, Des2])
         return True, ''
 
     # --------------------------------------------------------------------------------------------- #
@@ -282,7 +268,7 @@ class Xlsx_Manager(Codes_db):
         self._tTotWithout_Code        = 0
 
         for Row in self._tXlsx_Rows_Compact:
-            Full_Desc = Row[IX_ROW_COMP_FULLDES]
+            Full_Desc  = Row[IX_ROW_COMP_FULLDES]
             TRcodeList  = self._Find_StrToFind_InFullDesc(Full_Desc)
             nCode = len (TRcodeList)
             if nCode == 1:                          # Unic code found for Row
@@ -321,102 +307,71 @@ class Xlsx_Manager(Codes_db):
         pass
 
     # ---------------------------------------------------------------------------------------------
-    def _Set_Year_Contab_Valuta(self, Date):
-        self.Dummy = 0
-        iYear = int(Date[0:4])
-        if len(self._tiYear_List) < 2 and not iYear in self._iYear_List:
-            self._tiYear_List.append(iYear)
+    # def _Set_Year_Contab_Valuta(self, Date):
+    #     self.Dummy = 0
+    #     str_date_contab = Date.strftime("%Y-%m-%d")
+    #     iYear = int(Date[0:4])
+    #     if len(self._tiYear_List) < 2 and not iYear in self._iYear_List:
+    #         self._tiYear_List.append(iYear)
 
     # ---------------------------------------------------------------------------------------------
-    def _Check_Values(self, XlsxRow_AsItIs):
-        if not self._Date_Check(XlsxRow_AsItIs):
-            return []
-        else:
+    def _Check_Values(self, frameRow):
             Xlsx_Row_List_Checked = []
-            for Item_ToCheck in LIST_FOR_XLSX_ROW_CONTROL:
-                Value = XlsxRow_AsItIs[Item_ToCheck[0]]
-                Type = Item_ToCheck[1]
-                ItemChecked = self._Check_Val(Value, Type)
-                if ItemChecked is None:
+            nRow = frameRow[IX_SHEET_NROW]
+            if not type(nRow is int):
+                return []
+            Xlsx_Row_List_Checked.append(nRow)
+
+            Contab = frameRow[IX_SHEET_CONTAB]
+            if isinstance(Contab, datetime):
+                Xlsx_Row_List_Checked.append(Contab)
+            else:
+                return []
+
+            Valuta = frameRow[IX_SHEET_VALUTA]
+            if isinstance(Valuta, datetime):
+                Xlsx_Row_List_Checked.append(Valuta)
+            else:
+                return []
+
+            str_date_contab = Contab.strftime("%Y-%m-%d")
+            str_date_valuta = Valuta.strftime("%Y-%m-%d")
+            iYear_Contab = int(str_date_contab[0:4])
+            iYear_Valuta = int(str_date_valuta[0:4])
+            if iYear_Contab != self._tXlsx_Year and iYear_Valuta != self._tXlsx_Year:
+                return []
+
+            Descr1 = frameRow[IX_SHEET_DESCR1]  # the first description must be "dddd"
+            Descr2 = frameRow[IX_SHEET_DESCR2]
+            if type(Descr1) is not str:
+                Descr1 = ''
+            if type(Descr2) is not str:
+                Descr2 = ''
+            if Descr1 == '' and Descr2 == '':   # at least one description mus te filled string
                     return []
-                else:
-                    Xlsx_Row_List_Checked.append(ItemChecked)
+            Xlsx_Row_List_Checked.append(Descr1)
+
+            # this values will be always float
+            Accred = self._Convert_Str_To_Float([IX_SHEET_ACCRED])
+            Xlsx_Row_List_Checked.append(Accred)
+            Addeb  = self._Convert_Str_To_Float(frameRow[IX_SHEET_ADDEB])
+            Xlsx_Row_List_Checked.append(Addeb)
+
+            Xlsx_Row_List_Checked.append(Descr2)
             return Xlsx_Row_List_Checked
 
     # ---------------------------------------------------------------------------------------------
-    def _Date_Check(self, XlsxRow_AsItIs):
-        Date_Contab = XlsxRow_AsItIs[IX_SHEET_CONTAB]
-        Date_Valuta = XlsxRow_AsItIs[IX_SHEET_VALUTA]
-        DateType = type(Date_Contab)
-        if DateType is not datetime or type(Date_Valuta) is not datetime:
-            return  False
-        str_date_contab = Date_Contab.strftime("%Y-%m-%d")
-        str_date_valuta = Date_Valuta.strftime("%Y-%m-%d")
-        iYear_Contab    = int(str_date_contab[0:4])
-        iYear_Valuta    = int(str_date_valuta[0:4])
-        if iYear_Contab != self._tXlsx_Year and iYear_Valuta != self._tXlsx_Year:
-            return False
-        elif iYear_Contab == self._tXlsx_Year and iYear_Valuta == self._tXlsx_Year:
-            return True
-        elif iYear_Contab == self._tXlsx_Year or iYear_Valuta == self._tXlsx_Year:
-            return True
-        return False
-
-    # ---------------------------------------------------------------------------------------------
-    def _Check_Val(self, Item, Type):
+    def _Convert_Str_To_Float(self, Value):
         self.Dummy = 0
-        ItemType  = type(Item)
-        if Type == STRING:            #   ---  String   -----  (Descriptions)
-            if ItemType is str:
-                if len(Item) < 3:     # PAM
-                    return 'Not assigned'
-                return Item
-            elif Item is None:
-                return 'Not assigned'
-            else:
-                return None
-        elif Type == INTEGER:         #   ---  Integer  -----   (Row Id number)
-            if ItemType is int:
-                return Item
-            return None
-        elif Type == NUMERIC:         #   ---  Numeric  -----  (Accred  _Addeb)
-            if ItemType is float:
-                return Item
-            elif ItemType is int:
-                return float(Item)
-            else:
-                if Item is None:
-                    return 0.00
-        elif Type == DATE:            #   ---  Date verified on Load_xlsx_rows
-            return Item
-        return None
+        if Value is None:
+            return 0.0
+        try:
+            # Questo copre int, float e stringhe numeriche pulite (es: "123.45")
+            return float(Value)
+        except (ValueError, TypeError):
+            # Se la conversione fallisce (es: c'è del testo o simboli strani)
+            return 0.0
+        finally:
+            pass
 
-    # -----------------------------------------------------------------------------------
-    def _Verify_Date(self, DateToCheck):
-        self.Dummy = 0
-        myDate = DateToCheck
-        if DateToCheck is None:
-            return ''
-        Type = type(DateToCheck)
-        if Type is datetime:
-            strDate = str(DateToCheck)
-            myDate  = strDate[:10]
-        elif Type is not str:
-            return ''
-        # DateTemplate = 'DD?MM?YYYY'
-        DateTemplate = 'YYYY?MM?DD'
-        if len(myDate) != 10:
-            return ''
-        for i in range(0, 10):
-            if DateTemplate[i] == '?':
-                pass
-            else:
-                if not myDate[i].isdecimal():
-                    return ''
-        strYear  = myDate[0:4]
-        strMonth = myDate[5:7]
-        strDay   = myDate[8:10]
-        myDate = strYear + '-' + strMonth + '-' +strDay
-        return myDate
-
-# =======================================================================================
+# =================================================================================================

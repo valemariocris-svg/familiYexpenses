@@ -12,6 +12,16 @@
 #   9. widgwts settings                                       #
 # ------------------------------------------------------------#
 
+# ----------------------------------------------------------------------------------------------- #
+# Xlsx_Rows_From_Sheet_normalized   nRow  Contab  Valuta  Des1      Accr   Addeb       Des2       #
+# tXlsx_Rows_Compact                nRow  Contab  Valuta  Accr      Addeb  Full_Desc              #
+#                                                                                                 #
+# With_Code_Tree_List        nRow Contabile _Valuta Accred _Addeb TRdesc TRcode                   #
+# Wihtout_Code_Tree_List     nRow Contabile _Valuta Accred _Addeb FullDesc                        #
+#                                                                                                 #
+# ----------------------------------------------------------------------------------------------- #
+
+
 # ================================================================================================= #
 #                                ----------     1. windows settings   ----------                    #
 # ================================================================================================= #
@@ -205,36 +215,14 @@ IX_WIEW_STR_TOFIND = 4 # as on Codes Tables
 # ================================================================================================= #
 #                           ----------     4.   xlsx  rows settings     --------                    #
 # ================================================================================================= #
-IX_XLSX_CONTO    = 0    # used on Data.Get_Full_Xlsx_Transact_Ident
-IX_XLSX_YEAR     = 1
-IX_XLSX_MONTH    = 2
-IX_TRANSACT_YEAR = 3
-
-IX_XLSX_NROW     = 0
-IX_XLSX_CONTAB   = 1
-IX_XLSX_VALUTA   = 2
-IX_XLSX_DESC1    = 3
-IX_XLSX_CREDIT   = 4
-IX_XLSX_DEBIT    = 5
-IX_XLSX_DESC2    = 6
-
-IX_XLSX_WITH_ROW     = 0
-IX_XLSX_WITH_CONTO   = 1
-IX_XLSX_WITH_CONTAB  = 2
-IX_XLSX_WITH_VALUTA  = 3
-IX_XLSX_WITH_ACCR    = 4
-IX_XLSX_WITH_DEBIT   = 5
-IX_XLSX_WITH_TRDESC  = 6
-IX_XLSX_WITH_TRCODE  = 7
-IX_XLSX_WITH_FULLDES = 8
-
-# Xlsx_Rows from data sheet:  Contab  Valuta  Des1  Accr  Addeb  Des2
-IX_SHEET_CONTAB = 0
-IX_SHEET_VALUTA = 1
-IX_SHEET_DESCR1 = 2
-IX_SHEET_ACCRED = 3
-IX_SHEET_ADDEB  = 4
-IX_SHEET_DESCR2 = 5
+# Xlsx_Rows from data sheet:  nRow Contab  Valuta  Des1  Accr  Addeb  Des2
+IX_SHEET_NROW   = 0
+IX_SHEET_CONTAB = 1
+IX_SHEET_VALUTA = 2
+IX_SHEET_DESCR1 = 3
+IX_SHEET_ACCRED = 4
+IX_SHEET_ADDEB  = 5
+IX_SHEET_DESCR2 = 6
 
 # Xlsx_Rows_From_Sheet_normalized :  nRow  Contab  Valuta  Des1  Accr  Addeb  Des2
 IX_ROW_NROW   = 0
@@ -245,6 +233,39 @@ IX_ROW_ACCRED = 4
 IX_ROW_ADDEB  = 5
 IX_ROW_DESCR2 = 6
 
+# tXlsx_Rows_Compact :     nRow  _Contab  Valuta  Accr  Addeb  Full_Desc
+IX_ROW_COMP_NROW    = 0
+IX_ROW_COMP_CONTAB  = 1
+IX_ROW_COMP_VAL     = 2
+IX_ROW_COMP_ACCR    = 3
+IX_ROW_COMP_ADDEB   = 4
+IX_ROW_COMP_FULLDES = 5  # (Descr1/Descr2
+
+# Wihtout_Code_Tree_List     nRow Contabile _Valuta Accred _Addeb FullDesc
+IX_NO_CODE_NROW       = 0
+IX_NO_CODE_CONTO      = 1
+IX_NO_CODE_CONTAB     = 2
+IX_NO_CODE_VALUTA     = 3
+IX_NO_CODE_ACCRED     = 4
+IX_NO_CODE_ADDEB      = 5
+IX_NO_CODE_FULL_DESCR = 6    # Des1 + Des2
+
+# With_Code_Tree_List        nRow Contabile _Valuta Accred _Addeb TRdesc TRcode
+IX_WITH_CODE_NROW       = 0
+IX_WITH_CODE_CONTO      = 1
+IX_WITH_CODE_CONTAB     = 2
+IX_WITH_CODE_VALUTA     = 3
+IX_WITH_CODE_ACCRED     = 4
+IX_WITH_CODE_ADDEB      = 5
+IX_WITH_CODE_TR_DESCR   = 6
+IX_WITH_CODE_TR_CODE    = 7
+IX_WITH_CODE_FULL_DESCR = 8  # the Fulll_Desc of Row inserted in Transact_Db
+
+
+IX_XLSX_CONTO    = 0    # used on Data.Get_Full_Xlsx_Transact_Ident
+IX_XLSX_YEAR     = 1
+IX_XLSX_MONTH    = 2
+IX_TRANSACT_YEAR = 3
 
 #   List of Controls for XLS rows
 INTEGER       = 'Integer'
@@ -256,20 +277,11 @@ VAL_DATE      = 'Valuta'
 CONTAB_DATE   = 'Contabile'
 DIRECT_NOCODE = -1
 
-VIEW_TOTAL_INLIST = 'View total in check list'
-VIEW_NOT_INLIST   = 'View total not in check list'
-
 # types of conversion for displaying in frames
 SIC          = 'sic'   # no conversion
 YMD          = 'year_month day' # convert datetime in year-month
 INT_TOSTRING = 'integer to str'
 FLOAT_TOSTR  = 'float to string'    # convert float to str 1.234,56
-
-
-LIST_FOR_XLSX_ROW_CONTROL = [
-    [IX_ROW_NROW,   INTEGER],
-    [IX_ROW_CONTAB, DATE],    [IX_ROW_VALUTA, DATE],   [IX_ROW_DESCR1, STRING],
-    [IX_ROW_ACCRED, NUMERIC], [IX_ROW_ADDEB, NUMERIC], [IX_ROW_DESCR2, STRING]]
 
 # ================================================================================================= #
 #                       ------     5. transactions database settings         -----                  #
@@ -302,35 +314,6 @@ TRANSACT_VIEW_STANDARD_CODE  = 'mostra mov. con codice standard'
 TRANSACT_VIEW_GENERIC        = 'mostra mov. con codice generico'
 TRANSACT_VIEW_SEL = [TRANSACT_VIEW_ALL, TRANSACT_VIEW_CONTAB_ASC,
                      TRANSACT_VIEW_STANDARD_CODE, TRANSACT_VIEW_GENERIC, FIDEU, FLASH]
-
-# tXlsx_Rows_Compact :     nRow  _Contab  Valuta  Accr  Addeb  Full_Desc
-IX_ROW_COMP_NROW    = 0
-IX_ROW_COMP_CONTAB  = 1
-IX_ROW_COMP_VAL     = 2
-IX_ROW_COMP_ACCR    = 3
-IX_ROW_COMP_ADDEB   = 4
-IX_ROW_COMP_FULLDES = 5  # (Descr1/Descr2
-
-# Wihtout_Code_Tree_List     nRow Contabile _Valuta Accred _Addeb FullDesc
-IX_NO_CODE_NROW       = 0
-IX_NO_CODE_CONTO      = 1
-IX_NO_CODE_CONTAB     = 2
-IX_NO_CODE_VALUTA     = 3
-IX_NO_CODE_ACCRED     = 4
-IX_NO_CODE_ADDEB      = 5
-IX_NO_CODE_FULL_DESCR = 6    # the Fulll_Desc of Row inserted in Transact_Db
-
-# With_Code_Tree_List        nRow Contabile _Valuta Accred _Addeb TRdesc TRcode
-IX_WITH_CODE_NROW       = 0
-IX_WITH_CODE_CONTO      = 1
-IX_WITH_CODE_CONTAB     = 2
-IX_WITH_CODE_VALUTA     = 3
-IX_WITH_CODE_ACCRED     = 4
-IX_WITH_CODE_ADDEB      = 5
-IX_WITH_CODE_TR_DESCR   = 6
-IX_WITH_CODE_TR_CODE    = 7
-IX_WITH_CODE_FULL_DESCR = 8  # the Fulll_Desc of Row inserted in Transact_Db
-
 
 # ------------------------------------------------------------------------------ #
 #   ------  used on File_Dialog and in _sql_execute for selecting database       #

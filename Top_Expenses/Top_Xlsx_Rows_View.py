@@ -1,14 +1,12 @@
 # ================================================================================= #
 #                  *****     Top_XLSX_Rows_View.py     *****                        #
-# Showing Xlsx Rows exactly as in Xlsx file                                         #
-# XLS_Row_List : nRow  Contab  Valuta  Descr1  Accred  Addeb  Descr2                #
 # ================================================================================= #
 
 from Common.Common_Functions import *
 from Chat import Ms_Chat
 from Data_Classes.Transact_DB import Data_Manager
 
-from Widgt.Dialogs import Print_Received_Message, Message_Dlg
+from Widgt.Dialogs import Print_Received_Message
 from Widgt.Tree_Widg import TheFrame
 from Widgt.Widgets import *
 
@@ -45,7 +43,7 @@ class Top_XLSX_Rows_View(tk.Toplevel):
         # --------------------------   Create Treeview Frame   ------------------------------------
         self.Frame_Desc_x2     = TheFrame(self, 20, 20, self.Clk_On_Sheets_Row)
         self.Frame_Frame_Desc_x2_Setup()
-        self.Frame_Sheets_Rows_View()
+        self.View_Xlsx_Rows()
 
     # ---------------------------------------------------------------------------------------------
     def Call_OnClose(self):
@@ -89,9 +87,9 @@ class Top_XLSX_Rows_View(tk.Toplevel):
         self.Frame_Desc_x2.Load_Row_Values(List)
         self.Frame_Desc_x2.Frame_View()
 
-    # ---------------------------------------------------------------------------------------------
-    def Frame_Sheets_Rows_View(self):
-        self.View_Xlsx_Rows()
+    # # ---------------------------------------------------------------------------------------------
+    # def Frame_Sheets_Rows_View(self):
+    #     self.View_Xlsx_Rows()
 
     # ---------------------------------------------------------------------------------------------
     def Clk_Find_Debit(self):

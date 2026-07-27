@@ -313,19 +313,13 @@ class Codes_DB_Private(Files_Names_Manager):
 
     # ---------------------------------------------------------------------------------------
     def _Find_StrToFind_InFullDesc(self, Full_Desc):
-        nFound     = 0
         TRcodeList = []    # [Code1, Code2, ...]
-        nCount     = 0
         for TRrecord in self._TR_Codes_Table:
-            nCount += 1     #  TESTING
-            if TRrecord[IX_TR_TR_CODE] == 59:
-                pass
             StrToForFind   = TRrecord[IX_TR_TR_STR_TO_FIND]
             StrToFind_List = GetStrList_ForFind(StrToForFind)
             if StrToForFind == '' and Full_Desc == '':
-                pass
-            if StrToFind_in_Fulldescr(StrToFind_List, Full_Desc):
-                nFound += 1
+                pass        # empties : not possible to find
+            elif StrToFind_in_Fulldescr(StrToFind_List, Full_Desc):
                 TRcodeList.append(TRrecord[IX_TR_TR_CODE])
         return TRcodeList
 
