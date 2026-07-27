@@ -24,7 +24,7 @@ class Transact_Db(Xlsx_Manager):
 
         self.all_rows_inserted_list            = []     # the basic rows lists for insert
         self.std_code_rows_to_be_insertd_list  = []
-        self.noCode_rows_to_be_inserted_list        = []
+        self.noCode_rows_to_be_inserted_list   = []
 
         self._transactions_map                 = {}  # dictionary for finding recods on transact Db
         self.Totals_dict                       = Totals_dict_default
@@ -140,7 +140,7 @@ class Transact_Db(Xlsx_Manager):
     #    d) Richiamare questa sequenza ad ogni modifica effettuata in Top_Codes_Mng (per xlsx, insert)      #
     #    e) per aggiornamenti Codes_database questa sequenza dev esser sempre invocata                      #
     # ----------------------------------------------------------------------------------------------------- #
-    # Codice std inseriti 	Codice std da inserire 	Codici gener. Inseriti	noCode da inserire
+    # Codice std inseriti /	Codice std da inserire / NoCode da inserire
     def Create_rows_to_insert_list(self):
         self.all_rows_inserted_list           = []
         self.std_code_rows_to_be_insertd_list = []
@@ -159,7 +159,7 @@ class Transact_Db(Xlsx_Manager):
 
             # Crea la chiave unica (una tupla) e la inserisce nel dizionario
             key = (nRow, conto, dateContab, dateValuta, credit, debit)
-            self._transactions_map[key] = record[IX_ROW_TOINS_NROW]  # numero riga
+            self._transactions_map[key] = record[IX_TRANSACT_IDENT]  # numero riga
         # creazione della lista dei record caricati da .XLSX ma non presenti nel database
         # esaminando la lista delle righe xlsx, di cui si e' trovato un codice Db
         for row in self._tWith_Code_Tree_List:
@@ -169,9 +169,9 @@ class Transact_Db(Xlsx_Manager):
             dateValuta = row[IX_WITH_CODE_VALUTA]
             credit     = row[IX_WITH_CODE_ACCRED]
             debit      = row[IX_WITH_CODE_ADDEB]
-            TRdesc     = row[IX_XLSX_WITH_TRDESC]
-            TRcode     = row[IX_XLSX_WITH_TRCODE]
-            FullDesc   = row[IX_XLSX_WITH_FULLDES]
+            TRdesc     = row[IX_WITH_CODE_TR_DESCR]
+            TRcode     = row[IX_WITH_CODE_TR_CODE]
+            FullDesc   = row[IX_WITH_CODE_FULL_DESCR]
             pass
             record = [nRow, conto, dateContab, dateValuta, credit, debit, TRdesc,
                       TRcode, FullDesc]

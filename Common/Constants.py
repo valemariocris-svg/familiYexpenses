@@ -288,6 +288,18 @@ FLOAT_TOSTR  = 'float to string'    # convert float to str 1.234,56
 # ================================================================================================= #
 TRANSACT     = 'TRANSACT'
 
+# record to insert = [nRow, conto, dateContab, dateValuta, credit, debit,
+#                     TRdesc, TRcode, FullDesc]
+IX_ROW_TOINS_NROW      = 0
+IX_ROW_TOINS_CONTO     = 1
+IX_ROW_TOINS_CONTAB    = 2
+IX_ROW_TOINS_VALUTA    = 3
+IX_ROW_TOINS_ACCRED    = 4
+IX_ROW_TOINS_ADDEB     = 5
+IX_ROW_TOINS_TR_DESC   = 6
+IX_ROW_TOINS_TR_CODE   = 7
+IX_ROW_TOINS_FULL_DESC = 8
+
 IX_TRANSACT_IDENT    = 0  # auto inserted
 IX_TRANSACT_NROW     = 1
 IX_TRANSACT_CONTO    = 2
