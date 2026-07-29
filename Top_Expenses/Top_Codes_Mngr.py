@@ -138,14 +138,19 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         messg = f"Confermi di inserire\nle  {total} righe con codice standard\nnel database dei movimenti"
         msg_dlg = Message_Dlg(MSG_BOX_ASK, messg)
         msg_dlg.wait_window()
-        status, data = self.Data.Insert_std_code_rows_to_be_insertd()
+
+        status, data = self.Data.Insert_std_code_rows_to_be_insertd()   # the final step
+
         if not status:
             msg_dlg = Message_Dlg(MSG_BOX_ERR, data)
             msg_dlg.wait_window()
         else:
             msg_dlg = Message_Dlg(MSG_BOX_INFO, "tutte le righe\nsono state inserite\ncorrettamente nel database")
             msg_dlg.wait_window()
+
+            # a change on transactions modify also lists from xlsx (inserted, std_tobe_inserted, nocdes
             self.Mod_Mngr.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(TOP_CODES_MNGR)
+
             self.Load_Trees()
             if self.Chat.Check_Name_Is_On_Participants_List(TOP_VIEW_TRANSACT):
                 self.Mod_Mngr.Top_Launcher(TOP_VIEW_TRANSACT, TOP_CODES_MNGR, [])       # to close

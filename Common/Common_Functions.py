@@ -117,6 +117,7 @@ def CheckInteger(strInt):
             return False
     return True
 
+# Transactions filename
 def Check_strYear(strYear, Min, Max):
     for Digit in strYear:
         if Digit < '0' or Digit > '9':
@@ -126,17 +127,7 @@ def Check_strYear(strYear, Min, Max):
         return False
     return True
 
-
-def SetNoZero(Value):
-    if type(Value) is float:
-        if Value == 0.0:
-            return ''
-        else:
-            return Value
-    else:
-        return Value
-
-# -----------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------
 def FullDescr_Setup(Desc1, Desc2):
     Len1 = 0
     Len2 = 0
@@ -149,7 +140,7 @@ def FullDescr_Setup(Desc1, Desc2):
     Full_Desc = str(Desc1) + ' // ' + str(Desc2)
     return Full_Desc
 
-# -----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------
 def Print_Received_Message(Txtr, Recvr, Request, Values_List):
     if not type(Txtr) == str:
         Txtr = UNKNOWN
@@ -159,6 +150,7 @@ def Print_Received_Message(Txtr, Recvr, Request, Values_List):
     strToPrint += '   VALUES: ' + str(Values_List)
     # PRINT(strToPrint)
 
+# ---------------------------------------------------------------------------------------
 def Get_List_Item(List, Ncol_For_Find, ValueToFind, Ncol_To_Get, default):
     index = -1
     for Rec in List:
@@ -167,6 +159,7 @@ def Get_List_Item(List, Ncol_For_Find, ValueToFind, Ncol_To_Get, default):
             return Rec[Ncol_To_Get]
     return default
 
+# ---------------------------------------------------------------------------------------
 def Get_List_Record(List, Ncol_For_Find, ValueToFind, default):
     index = -1
     for Rec in List:
@@ -177,12 +170,7 @@ def Get_List_Record(List, Ncol_For_Find, ValueToFind, default):
     return default
 
 # -----------------------------------------------------------------------------
-def Get_Xlsx_FullMonth(Xlsx_Name):
-    # FIDEU_2024_09-1.xlsx
-    Filename    = Get_File_Name(Xlsx_Name)
-    return Filename[11:13]
-
-# -----------------------------------------------------------------------------
+# Super_Top_Queries
 def Get_Transactions_Year(transact_filename):
     if transact_filename is UNKNOWN:
         return 0
@@ -190,6 +178,8 @@ def Get_Transactions_Year(transact_filename):
     return int(Filename[9:13])
 
 # 2024-12-15  2024/12/25
+# ---------------------------------------------------------------------------------------
+# codes database
 def Check_strDate(String):
     for Char in String:
         if '0' <= Char <='9':
@@ -201,6 +191,7 @@ def Check_strDate(String):
         else:
             return False
     return True
+
 # -----------------------------------------------------------------------------
 def Get_YearMonthDay(FullDate):
     if FullDate   is None:
@@ -212,6 +203,7 @@ def Get_YearMonthDay(FullDate):
     iDay   = int(FullDate[8:10])
     return [iYear, iMonth, iDay]
 
+# ---------------------------------------------------------------------------------------
 def Calc_Delta_Time(Contabile, Valuta):
     YearMonthDay_Contab = Get_YearMonthDay(Contabile)
     Mont_Init_Day = MONTH_INITDAY[YearMonthDay_Contab[1] - 1]
@@ -224,6 +216,7 @@ def Calc_Delta_Time(Contabile, Valuta):
     return Delta
 
 # ---------------------------------------------------------------------------------------------
+# Top_Queries
 def Set_Month_Day(FullDate, Counts):
     iMonth    = int(FullDate[5:7]) -1
     if Counts == 1:
@@ -235,12 +228,15 @@ def Set_Month_Day(FullDate, Counts):
     return MonthDay_Date
 
 # -------------------------------------------------------------------------------------------------
+# Transactions_Db
 def get_year_month_day(Date):    # '2026-09-02-12:00:00
-    str_date = Date.strftime("%Y-%m-%d")
-    return str_date[0:10]
+    if isinstance(Date, datetime):
+        str_date = Date.strftime("%m/%d/%Y, %H:%M:%S")
+        return str_date
+    return " "
 
 # -------------------------------------------------------------------------------------------------
-def convert_rcord_toView(template, Rec):
+def convert_record_toView(template, Rec):
     converted_record = []
     for index in range(0, len(template)):
         if template[index] == SIC:
@@ -258,14 +254,12 @@ def convert_rcord_toView(template, Rec):
             return '????'
     return converted_record
 
-
 # ----------------------------------------------------------------------------#
 def TestForSign(Sign, FoundNotZ):
     if Sign and FoundNotZ == 1:
         return '-'
     else:
         return ''
-
 
 # -------------------------------------------------------------------------------------------------------------
 # strVal = '(-)DDD.DD   Called from reading Xlsx Rows
@@ -304,6 +298,7 @@ def convert_float_toString(Float):
     return it_format
 
 # ---------------------------------------------------------------------------------------
+# Top_Queries
 def Float_ToString_Setup(Val):
     Digit_List = []
     strValue = ''
@@ -373,6 +368,7 @@ def Float_ToString_Setup(Val):
 
 # -----------------------------------------------------------------------------
 # used on _Checked   and 2 times in Codes_Db
+# Top_Codes_Mngr
 def GetStrList_ForFind(strToFind):
     if strToFind[0:1] != '#':
         return [strToFind]
@@ -391,7 +387,7 @@ def GetStrList_ForFind(strToFind):
     return strList
 
 # -----------------------------------------------------------------------------
- # used on Insert coce in codes Table
+ # Top_Codes_Mngr
 def GetStrList_ForFind_Checked(strToFind):
     Len = len(strToFind)
     if Len < 3:
@@ -436,15 +432,6 @@ def StrToFind_in_Fulldescr(strToFind_List, FullDesc):
             else:
                 CurrIndex = Index
         return True
-
-# -------------------------------------------------------------------------------------
-def GetNum_fromString(String):
-    if "/" in String:
-        return OK, int(String.split('/')[0])
-    else:
-        return NOK, 9999
-
-
 
 # -------------------------------------------------------------------------------------
 import glob

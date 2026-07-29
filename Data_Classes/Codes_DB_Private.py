@@ -100,6 +100,7 @@ class Codes_DB_Private(Files_Names_Manager):
     #  Apre il Codes DB, esegue una query (SELECT o UPDATE) e chiude
     #  la connect se CLOSE_DB   oppure  NO se  KEEP_OPEN
     def _query_execute(self, database, sql, parameters=(), close=True, all_records=False):
+        sql_clean = ''
         # Validazione rapida del database
         if database not in [CODES_FILE, TRANSACT_FILE]:
             return False, f"Error: Database {database} not recognized"
@@ -145,7 +146,7 @@ class Codes_DB_Private(Files_Names_Manager):
                 return True, ''
 
         except sqlite3.Error as e:
-            str_Err = f"FATAL ERROR 24:\nError on fetching codes records:\n{e}"
+            str_Err = f"FATAL ERROR 24:\nError on {sql_clean}\n{database}\n{e}"
             return False, str_Err
         finally:
             # 4. Chiusura garantita (anche in caso di errore)

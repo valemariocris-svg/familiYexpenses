@@ -6,12 +6,6 @@
 from Data_Classes.Codes_DB_Private import Codes_DB_Private
 from Common.Common_Functions import *
 
-"""
-from operator import itemgetter
-list_of_lists = [['Urban', 10000000, 200, 3], ['Rural', 5000000, 150, 8], ['Suburban', 8000000, 300, 4]]
-sorted_list   = sorted(list_of_lists, key=itemgetter(1)? 0 or 1)
-"""
-
 # ---------------------------------------------------------------------------------
 class Codes_db(Codes_DB_Private):
     def __init__(self):

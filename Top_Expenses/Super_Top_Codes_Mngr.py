@@ -179,7 +179,7 @@ class Super_Top_Mngr(tk.Toplevel):
         noCode_rows_to_view_list = []
         template = [INT_TOSTRING, SIC, YMD, YMD, FLOAT_TOSTR, FLOAT_TOSTR, SIC]
         for row in noCode_rows_to_be_inserted_list:
-            row_to_view = convert_rcord_toView(template, row)
+            row_to_view = convert_record_toView(template, row)
             noCode_rows_to_view_list.append(row_to_view)
         result = self.Frame_NoCodes_ToIns.Load_Row_Values(noCode_rows_to_view_list)
         self.View_frames_error(result)
@@ -188,7 +188,7 @@ class Super_Top_Mngr(tk.Toplevel):
         witCode_rows_to_view_list = []
         template = [INT_TOSTRING, SIC, YMD, YMD, FLOAT_TOSTR, FLOAT_TOSTR, SIC, INT_TOSTRING, SIC]
         for row in std_cod_to_be_inserted:
-            row_to_view = convert_rcord_toView(template, row)
+            row_to_view = convert_record_toView(template, row)
             witCode_rows_to_view_list.append(row_to_view)
         result = self.Frame_WithCodes_ToIns.Load_Row_Values(witCode_rows_to_view_list)
         self.View_frames_error(result)

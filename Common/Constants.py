@@ -12,15 +12,26 @@
 #   9. widgwts settings                                       #
 # ------------------------------------------------------------#
 
-# ----------------------------------------------------------------------------------------------- #
-# Xlsx_Rows_From_Sheet_normalized   nRow  Contab  Valuta  Des1      Accr   Addeb       Des2       #
-# tXlsx_Rows_Compact                nRow  Contab  Valuta  Accr      Addeb  Full_Desc              #
-#                                                                                                 #
-# With_Code_Tree_List        nRow Contabile _Valuta Accred _Addeb TRdesc TRcode                   #
-# Wihtout_Code_Tree_List     nRow Contabile _Valuta Accred _Addeb FullDesc                        #
-#                                                                                                 #
-# ----------------------------------------------------------------------------------------------- #
-
+# ------------------------------------------------------------------------------------------------- #
+# Xlsx_Rows_From_Sheet_normalized   nRow  Contab  Valuta  Des1      Accr   Addeb       Des2         #
+# tXlsx_Rows_Compact                nRow  Contab  Valuta  Accr      Addeb  Full_Desc                #
+#                                                                                                   #
+# With_Code_Tree_List        nRow Contabile _Valuta Accred _Addeb TRdesc TRcode                     #
+# Wihtout_Code_Tree_List     nRow Contabile _Valuta Accred _Addeb FullDesc                          #
+#                                                                                                   #
+# ------------------------------------------------------------------------------------------------- #
+# Per caricare i dati:                                                                              #
+# puoi passare tranquillamente int e float, ci pensa Tkinter a convertirli.                         #
+# Per formattare la grafica: se ti servono decimali fissi (es. 2.50 anziché 2.5),                   #
+# conviene formattare prima la stringa in Python (es. f"{prezzo:.2f}").                             #
+# Per ordinare le colonne: ricordati di riconvertire le stringhe in numeri durante l'ordinamento!   #
+# ------------------------------------------------------------------------------------------------- #
+# Quindi nel tree usare solo stringe formattate,                                                    #
+# nel Db movimenti:                                                                                 #
+# date_time = strftime("%m/%d/%Y, %H:%M:%S")         float = float per eseguire calcoli             #
+# nei  tree:                                                                                        #
+# date_time ma contratti nei tree a seconda dei casi float = str_float formattati in italiano ./,   #
+# ------------------------------------------------------------------------------------------------- #
 
 # ================================================================================================= #
 #                                ----------     1. windows settings   ----------                    #

@@ -155,7 +155,7 @@ class Top_View_Transact(tk.Toplevel):
         template = [INT_TOSTRING, INT_TOSTRING, SIC, YMD, YMD, FLOAT_TOSTR, FLOAT_TOSTR, SIC, INT_TOSTRING, SIC]
         view_list = []
         for Rec in List:
-            rec_toView = convert_rcord_toView(template, Rec)
+            rec_toView = convert_record_toView(template, Rec)
             view_list.append(rec_toView)
         #
         self.Frame_Transactions.Frame_Title(FrameText)

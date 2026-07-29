@@ -152,8 +152,8 @@ class Transact_Db(Xlsx_Manager):
         for record in self._Transact_Records_as_is:
             nRow       = record[IX_TRANSACT_NROW]
             conto      = record[IX_TRANSACT_CONTO]
-            dateContab = record[IX_TRANSACT_CONTAB]
-            dateValuta = record[IX_TRANSACT_VALUTA]
+            dateContab = record[IX_TRANSACT_CONTAB] # is string
+            dateValuta = record[IX_TRANSACT_VALUTA] # is string
             credit     = record[IX_TRANSACT_ACCRED]
             debit      = record[IX_TRANSACT_ADDEB]
 
@@ -165,8 +165,8 @@ class Transact_Db(Xlsx_Manager):
         for row in self._tWith_Code_Tree_List:
             conto      = self._tXlsx_Conto      # settato nel tirar su .xlsx
             nRow       = row[IX_WITH_CODE_NROW]
-            dateContab = row[IX_WITH_CODE_CONTAB]
-            dateValuta = row[IX_WITH_CODE_VALUTA]
+            dateContab = get_year_month_day(row[IX_WITH_CODE_CONTAB])   # convert to str for Db
+            dateValuta = get_year_month_day(row[IX_WITH_CODE_VALUTA])   # convert to str for Db
             credit     = row[IX_WITH_CODE_ACCRED]
             debit      = row[IX_WITH_CODE_ADDEB]
             TRdesc     = row[IX_WITH_CODE_TR_DESCR]
@@ -261,10 +261,12 @@ class Transact_Db(Xlsx_Manager):
             parameters = (nRow, Conto, Contab, Valuta, Accred, Addeb, TRdesc, TRcode, FullDes)
             status, data = self._query_execute(TRANSACT_FILE, sql, parameters, KEEP_OPEN)
             if not status:
-                self._query_execute(TRANSACT_FILE, SQL_CLOSE_DB, (), CLOSE_DB)
-                messg  = f"FATAL ERROR 41:\non inserting row\n{nRow}  {Contab}  {Valuta}  {Accred}  {Addeb}\n"
-                messg += f"{TRdesc}  {TRcode}\n{FullDes}\n"
-                return False, messg
+                data = f"{data}\n\non inserting row\n{nRow}  {Contab}  {Valuta}  {Accred}  {Addeb}\n"
+                return False, data
+            # self._query_execute(TRANSACT_FILE, SQL_CLOSE_DB, (), CLOSE_DB)
+            #     messg  = f"FATAL ERROR 41:\non inserting row\n{nRow}  {Contab}  {Valuta}  {Accred}  {Addeb}\n"
+            #     messg += f"{TRdesc}  {TRcode}\n{FullDes}\n"
+            #     return False, messg
 
         self._query_execute(TRANSACT_FILE, SQL_CLOSE_DB, (), CLOSE_DB)
         return True, ''
