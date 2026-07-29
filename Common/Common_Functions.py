@@ -236,13 +236,22 @@ def get_year_month_day(Date):    # '2026-09-02-12:00:00
     return " "
 
 # -------------------------------------------------------------------------------------------------
+# per visualizzazioni su tree, con record da xlsx, che e' in datetime
+def get_day_month_year_for_view_xlsx(Date):    # '2026-09-02-12:00:00
+    if isinstance(Date, datetime):
+        str_date = Date.strftime("%m/%d/%Y, %H:%M:%S")
+        strIt = f"{str_date[3:5]}/{str_date[0:2]}/{str_date[8:10]}"
+        return strIt
+    return " "
+
+# -------------------------------------------------------------------------------------------------
 def convert_record_toView(template, Rec):
     converted_record = []
     for index in range(0, len(template)):
         if template[index] == SIC:
             converted_record.append(Rec[index])
         elif template[index] == YMD:
-            conv_value = get_year_month_day(Rec[index])
+            conv_value = get_day_month_year_for_view_xlsx(Rec[index])
             converted_record.append(conv_value)
         elif template[index] == FLOAT_TOSTR:
             conv_value = convert_float_toString(Rec[index])
@@ -261,7 +270,7 @@ def TestForSign(Sign, FoundNotZ):
     else:
         return ''
 
-# -------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------
 # strVal = '(-)DDD.DD   Called from reading Xlsx Rows
 def Convert_Str_To_Float(Value):
 # Gestione immediata del None

@@ -9,8 +9,8 @@
 # self._tWihtout_Code_Tree_List     nRow Contabile _Valuta Accred _Addeb FullDesc                 #
 # ----------------------------------------------------------------------------------------------- #
 
-import pandas as pd
 import warnings
+from openpyxl import load_workbook
 from Data_Classes.Codes_DB import *
 
 class Xlsx_Manager(Codes_db):
@@ -25,11 +25,9 @@ class Xlsx_Manager(Codes_db):
         # one row on xlsx file   ---------------------------------------------------------------
         #  nRow timeContab timeValuta  Des1  Accred  Addeb  Des2
 
-        self._data_sheet_frame: pd.DataFrame  # type declaration: _data_sheet_frame pd.DataFrame
-
         # -------   _tAtt : temporary attributes  that will be copied on _Att  if all OK  -------------
-        self._tXLSX_Rows_From_Sheet_normalized  = []
-
+        self.SheetName                         = ""
+        self._Xlsx_Rows_From_Sheet_normalized  = []
         self._tXlsx_Rows_Compact      = []     # temporaries to not dommage the _list
         self._tWith_Code_Tree_List    = []
         self._tWihtout_Code_Tree_List = []
@@ -86,9 +84,7 @@ class Xlsx_Manager(Codes_db):
             return False, data
 
         # Xlsx_Rows_From_Sheet_normalized :  nRow  Contab  Valuta  Des1  Accr  Addeb  Des2
-        for row in self._Xlsx_Rows_From_Sheet_normalized:
-            if row[IX_SHEET_NROW] == 30:
-                pass
+        for row in self._tXlsx_Rows_From_Sheet_normalized:
             Checked_Row = self._Check_Values(row)
             if len(Checked_Row) != 0:
                 Des1_Comp = Compact_Descr_String(Checked_Row[IX_SHEET_DESCR1])
@@ -100,8 +96,6 @@ class Xlsx_Manager(Codes_db):
                                 Checked_Row[IX_SHEET_ACCRED],
                                 Checked_Row[IX_SHEET_ADDEB],
                                 Full_Desc ]
-                pass
-                self._tXLSX_Rows_From_Sheet_normalized.append(Checked_Row)
                 self._tXlsx_Rows_Compact.append(Row_Compact)
                 pass
 
@@ -120,11 +114,6 @@ class Xlsx_Manager(Codes_db):
 
     def Get_Xlsx_Rows_From_Sheet_normalized(self):
         return self._Xlsx_Rows_From_Sheet_normalized
-
-    # def Clear_Xlsx_Conto_Year_Month(self):
-    #     self._tXlsx_Conto = None
-    #     self._tXlsx_Year  = None
-    #     self._tXlsx_Month = None
 
     # --------------------------------------------------------------------------------------------
     def _Set_Xlsx_Conto_Year_Month(self):
@@ -162,7 +151,7 @@ class Xlsx_Manager(Codes_db):
 
     # --------------------------------------------------------------------------------------------
     def _Save_Xlsx_Data(self):
-        self._Xlsx_Rows_From_Sheet_normalized   = self._tXLSX_Rows_From_Sheet_normalized
+        self._Xlsx_Rows_From_Sheet_normalized   = self._tXlsx_Rows_From_Sheet_normalized
 
         self._Xlsx_Rows_Compact      = self._tXlsx_Rows_Compact
 
@@ -186,61 +175,56 @@ class Xlsx_Manager(Codes_db):
     #  Workbook is the container of all Worksheets                                      #
     #  while the Worksheet is the container of Data of one Sheet                        #
     # --------------------------------------------------------------------------------- #
-    def _get_work_sheet_rows_normalized(self) -> tuple[bool, str]:
+    def _Get_Work_Sheet_Rows(self) -> tuple[bool, str]:
         filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
+        Work_Book = None
         try:
-            self._data_sheet_frame = pd.read_excel(
-                filename,
-                sheet_name=0,
-                header=None,    # Nessun titolo
-                # usecols="A:G",  # Forza a leggere sempre le colonne A, B, C, D, E, F, G
-                keep_default_na=False  # Le celle vuote diventano "" anziché NaN
-            )
-            self._tTot_Rows = len(self._data_sheet_frame)
-            if self._tTot_Rows == 0:
-                return False, f"il file xlsx non contiene nessuna riga!"
-
+            Work_Book = load_workbook(filename)
         except Exception as e:
-            print(f"Errore lettura Pandas: {e}")
+            Err = f"Error on Worksheet loading\n  {e}"
             self._tTot_Rows = -1
-            self._data_sheet_frame = None
-            return False, f"Errore Pandas: {e}\nnel caricamento di Dataframe"
+            return False, Err
+        finally:
+            self.SheetName = Work_Book.sheetnames[0]  # always the first sheet
+            self._Work_Sheet = Work_Book[self.SheetName]
+            self._tTot_Rows = self._Work_Sheet.max_row
+            return True, ''
 
-        self._Xlsx_Rows_From_Sheet_normalized = []
-        for nRow_in_xlsx, row_list in enumerate(self._data_sheet_frame.values.tolist(), start=1):
-            # CONTO     A       B       C       D       E       F       G
-            #           0       1       2       3       4       5       6
-            # FIDEU     Contab  Valuta  Des1    Accred  Added   Des2
-            # FLH-AMBR  Contab  Valuta  Des1            Addeb-          Accred
-            # POSTA     Contab  Valuta  Addeb-  Accred  Des1
-            # FORM nRow,Contab, Valuta, Des1,   Accred, Addeb,  Des2
-            #        0     1       2      3        4      5       6
-
-            Contab = row_list[0]
-            Valuta = row_list[1]
-            Des1   = None
-            Accred = None
-            Addeb  = None
-            Des2   = None
+    # -----------------------------------------------------------------------------------
+    def _get_work_sheet_rows_normalized(self) -> tuple[bool, str]:
+        status, data = self._Get_Work_Sheet_Rows()
+        if not status:
+            return False, data
+        if self._tTot_Rows == 0:
+            return False, f"FATAL ERROR 61:\nil file xlsx non contiene nessuna riga!",
+        Des1    = None
+        Accred  = None
+        Addeb   = None
+        Des2    = None
+        # CONTO     A       B       C       D       E       F       G
+        #           0       1       2       3       4       5       6
+        # FIDEU     Contab  Valuta  Des1    Accred  Added   Des2
+        # FLH-AMBR  Contab  Valuta  Des1            Addeb-          Accred
+        # POSTA     Contab  Valuta  Addeb-  Accred  Des1
+        # FORM nRow,Contab, Valuta, Des1,   Accred, Addeb,  Des2
+        #        0     1       2      3        4      5       6
+        for nRow in range(1, self._tTot_Rows+1):
+            Contab = self._Work_Sheet['A' + str(nRow)].value
+            Valuta = self._Work_Sheet['B' + str(nRow)].value
 
             if self._tXlsx_Conto == FIDEU:
-                Des1   = row_list[2]
-                Accred = row_list[3]
-                Addeb  = row_list[4]
-                Des2   = row_list[5]
+                Des1   = self._Work_Sheet['C' + str(nRow)].value
+                Accred = self._Work_Sheet['D' + str(nRow)].value
+                Addeb  = self._Work_Sheet['E' + str(nRow)].value
+                Des2   = self._Work_Sheet['F' + str(nRow)].value
 
             elif self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA:
-                Des1 = row_list[2]
-                Accred = row_list[5]
-                Addeb = row_list[3]
-                Des2 = ''
-
+                Des1   = self._Work_Sheet['C' + str(nRow)].value
+                Accred = self.float_check(self._Work_Sheet['D' + str(nRow)].value, True)
+                Addeb  = self.float_check(self._Work_Sheet['G' + str(nRow)].value, True)
             elif self._tXlsx_Conto == POSTA:
-                Des1   = row_list[4]
-                Accred = row_list[2]
-                Addeb  = row_list[1]
-                Des2 = ''
-            self._Xlsx_Rows_From_Sheet_normalized.append([nRow_in_xlsx, Contab, Valuta, Des1, Accred, Addeb, Des2])
+                pass
+            self._tXlsx_Rows_From_Sheet_normalized.append([nRow, Contab, Valuta, Des1, Accred, Addeb, Des2])
         return True, ''
 
     # --------------------------------------------------------------------------------------------- #
@@ -289,22 +273,23 @@ class Xlsx_Manager(Codes_db):
         self._tWith_Code_Tree_List.append(RecForIns)
         self._tTotWith_Code += 1
         pass
+    pass
 
     # ---------------------------------------------------------------------------------------------
-    def _Check_Values(self, frameRow):
+    def _Check_Values(self, Xlsx_row):
         Xlsx_Row_List_Checked = []
-        nRow = frameRow[IX_SHEET_NROW]
+        nRow = Xlsx_row[IX_SHEET_NROW]
         if not type(nRow is int):
             return []
         Xlsx_Row_List_Checked.append(nRow)
 
-        Contab = frameRow[IX_SHEET_CONTAB]
+        Contab = Xlsx_row[IX_SHEET_CONTAB]
         if isinstance(Contab, datetime):
             Xlsx_Row_List_Checked.append(Contab)
         else:
             return []
 
-        Valuta = frameRow[IX_SHEET_VALUTA]
+        Valuta = Xlsx_row[IX_SHEET_VALUTA]
         if isinstance(Valuta, datetime):
             Xlsx_Row_List_Checked.append(Valuta)
         else:
@@ -317,8 +302,8 @@ class Xlsx_Manager(Codes_db):
         if iYear_Contab != self._tXlsx_Year and iYear_Valuta != self._tXlsx_Year:
             return []
 
-        Descr1 = frameRow[IX_SHEET_DESCR1]  # the first description must be "dddd"
-        Descr2 = frameRow[IX_SHEET_DESCR2]
+        Descr1 = Xlsx_row[IX_SHEET_DESCR1]  # the first description must be "dddd"
+        Descr2 = Xlsx_row[IX_SHEET_DESCR2]
         if type(Descr1) is not str:
             Descr1 = ''
         if type(Descr2) is not str:
@@ -328,13 +313,23 @@ class Xlsx_Manager(Codes_db):
         Xlsx_Row_List_Checked.append(Descr1)
 
         # this values will be always float
-        Accred = self._Convert_Str_To_Float(frameRow[IX_SHEET_ACCRED])
+        Accred = self._Convert_Str_To_Float(Xlsx_row[IX_SHEET_ACCRED])
         Xlsx_Row_List_Checked.append(Accred)
-        Addeb  = self._Convert_Str_To_Float(frameRow[IX_SHEET_ADDEB])
+        Addeb  = self._Convert_Str_To_Float(Xlsx_row[IX_SHEET_ADDEB])
         Xlsx_Row_List_Checked.append(Addeb)
 
         Xlsx_Row_List_Checked.append(Descr2)
         return Xlsx_Row_List_Checked
+
+    # ---------------------------------------------------------------------------------------
+    def float_check(self, value, negate):
+        self.Dummy = 0
+        if isinstance(value, float | int):
+            if negate:
+                value = -value
+            return value
+        return 0.0
+
 
     # ---------------------------------------------------------------------------------------------
     def _Convert_Str_To_Float(self, Value):

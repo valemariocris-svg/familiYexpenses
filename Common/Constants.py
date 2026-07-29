@@ -31,6 +31,8 @@
 # date_time = strftime("%m/%d/%Y, %H:%M:%S")         float = float per eseguire calcoli             #
 # nei  tree:                                                                                        #
 # date_time ma contratti nei tree a seconda dei casi float = str_float formattati in italiano ./,   #
+# OKIO la data da xlsx vien tirata su come datetime e quindi va trasformata subito in               #
+# data completa dato che da Db movimenti viene salvata (TEXT) come data completa                    #
 # ------------------------------------------------------------------------------------------------- #
 
 # ================================================================================================= #
