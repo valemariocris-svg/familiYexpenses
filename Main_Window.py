@@ -2,7 +2,7 @@
 
 # *********************************************************************************************** #
 #                            ***   Main_Window.py   ***                                           #
-#               2026-07-18    the first version  with  github                                     #
+#                          the first version  with  github                                        #
 # *********************************************************************************************** #
 
 from Top_Expenses.Modules_Manager import Modul_Mngr
@@ -35,7 +35,7 @@ class Main_Window(tk.Tk):
         self.Txt1 = TheText(self, TXT_DISAB, 20, 20, 36, 11, '')
 
         self.geometry(MAIN_WIND_GEOMETRY)
-        self.title('* Gestione spese familiari  Vers. 3.0  17 Lug 2026 *')
+        self.title('* spese familiari  Vers. 3.1  30 Lug 2026 *')
 
         Widgets_Styles()   # Setup Styles  once called
 
