@@ -29,7 +29,7 @@
 # visualizzioni tree         "GG/MM/AAA"  e float                                                   #
 # click on tree              all is strings  accred/added is not used                               #
 # insert on Db               "AAAA/MM/GG HH:mm:SS"                                                  #
-# per creare rows to nsert   date on xlsx datetime ---->"AAAA/MM/GG HH:mm:SS" as in transact Db     #
+# per creare rows to insert  date on xlsx datetime ---->"AAAA/MM/GG HH:mm:SS" as in transact Db     #
 # ------------------------------------------------------------------------------------------------- #
 # row to insert as in transactions Db
 # [1,
@@ -41,7 +41,8 @@
 # 'F.A.S.I. quota trimestrale',
 # 59,
 # 'PAGAMENTO ADUE // COD. DISP.: 6626022030444997 NOME: F.A.S.I. MANDATO: 1972640237768']
-#
+# ------------------------------------------------------------------------------------------------- #
+
 
 # ================================================================================================= #
 #                                ----------     1. windows settings   ----------                    #

@@ -135,6 +135,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
 
     # ********************************************************************************************
     def Clk_ins_std_code_transact(self):
+        self.Chat.Tx_Request([TOP_CODES_MNGR, [TOP_VIEW_TRANSACT], CODE_TO_CLOSE, [] ]) # [Txr, [RecList], Request, [Values]]
         total = self.Data.get_tot_std_cod_to_be_inserted()
         messg = f"Confermi di inserire\nle  {total} righe con codice standard\nnel database dei movimenti"
         msg_dlg = Message_Dlg(MSG_BOX_ASK, messg)
@@ -151,7 +152,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
 
             # a change on transactions modify also lists from xlsx (inserted, std_tobe_inserted, nocdes
             self.Mod_Mngr.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(TOP_CODES_MNGR)
-
+            self.Chat.Tx_Request([TOP_CODES_MNGR, [TOP_VIEW_TRANSACT], CODE_TO_CLOSE, [] ])          # [Txr, [RecList], Request, [Values]]
             self.Load_Trees()
             if self.Chat.Check_Name_Is_On_Participants_List(TOP_VIEW_TRANSACT):
                 self.Mod_Mngr.Top_Launcher(TOP_VIEW_TRANSACT, TOP_CODES_MNGR, [])       # to close
@@ -289,6 +290,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
 
     # ------------     ***   Add new normal or generic  record  ***     ---------------------------
     def Add_Code(self):
+        self.Chat.Tx_Request([TOP_CODES_MNGR, [TOP_VIEW_TRANSACT], CODE_TO_CLOSE, []])
         self.Txt_TR_Code1.Set_Text(str(self.TR_Code))
         if not self.Check_codes_record():
             return
@@ -320,6 +322,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
 
     # ------------------------     ***   Update TR code Record      -------------------------------
     def Clk_Update(self):
+        self.Chat.Tx_Request([TOP_CODES_MNGR, [TOP_VIEW_TRANSACT], CODE_TO_CLOSE], [])
         if not self.Check_TRcode_Desc(BOTH_TR_GR):
             return
         self.Row_WithoutCode = None
@@ -340,11 +343,13 @@ class Top_Codes_Mngr(Super_Top_Mngr):
 
     # ---------------------------------------------------------------------------------------------
     def Clk_Ricrea_Transact_Db(self):
+        self.Chat.Tx_Request([TOP_CODES_MNGR, [TOP_VIEW_TRANSACT], CODE_TO_CLOSE, [] ])
         if self.Mod_Mngr.regenerate_transact_Db(TOP_CODES_MNGR):
             self.Load_Trees()
 
-    # ------------------------     ***   Delete  a code record on codes Db    ---------------------
+    # ------------------------     ***   Delete  a code record on cdes Db    ---------------------
     def Clk_Delete(self):
+        self.Chat.Tx_Request([TOP_CODES_MNGR, [TOP_VIEW_TRANSACT], CODE_TO_CLOSE, [] ])
         if not self.Get_Confirm('Delete'):
             return
         status, data = self.Data.Delete_DB_TR_Record(self.TR_Code)
