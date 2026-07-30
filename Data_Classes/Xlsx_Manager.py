@@ -29,6 +29,7 @@ class Xlsx_Manager(Codes_db):
         self.SheetName                         = ""
         self._Xlsx_Rows_From_Sheet_normalized  = []
         self._tXlsx_Rows_Compact      = []     # temporaries to not dommage the _list
+        self.tXlsx_Rows_for_view      = []
         self._tWith_Code_Tree_List    = []
         self._tWihtout_Code_Tree_List = []
 
@@ -44,15 +45,6 @@ class Xlsx_Manager(Codes_db):
         self._tTotWithout_Code = 0
         self._tiYear_List      = []
 
-        # -----------------------------------------------------------------------------------------
-        # self._tXlsx_Conto    = None  # these attributs are not saved on Selections
-        # self._tXlsx_Year     = None  # calculated in _Set_Xlsx_Conto_Year_Month()
-        # self._tXlsx_Month    = None  #    """      "     """      """
-
-        # self._Xlsx_Month_Contab_List         = []
-        # self._Xlsx_Month_Valuta_List         = []
-        # self._Xlsx_Month_Generic_Valuta_List = []
-        # self._Xlsx_Month_Generic_Contab_List = []
 
         # ------------------------------------------------------------ #
         #  -----  the values  are filled  from  Transact_DB.py  ------ #
@@ -87,9 +79,20 @@ class Xlsx_Manager(Codes_db):
         for row in self._tXlsx_Rows_From_Sheet_normalized:
             Checked_Row = self._Check_Values(row)
             if len(Checked_Row) != 0:
-                Des1_Comp = Compact_Descr_String(Checked_Row[IX_SHEET_DESCR1])
-                Des2_Comp = Compact_Descr_String(Checked_Row[IX_SHEET_DESCR2])
+                Des1      = Checked_Row[IX_SHEET_DESCR1]
+                Des2      = Checked_Row[IX_SHEET_DESCR2]
+                Des1_Comp = Compact_Descr_String(Des1)
+                Des2_Comp = Compact_Descr_String(Des2)
                 Full_Desc  = FullDescr_Setup(Des1_Comp, Des2_Comp)
+                row_to_view =  [ Checked_Row[IX_SHEET_NROW],
+                                Checked_Row[IX_SHEET_CONTAB],
+                                Checked_Row[IX_SHEET_VALUTA],
+                                Des1,
+                                Checked_Row[IX_SHEET_ACCRED],
+                                Checked_Row[IX_SHEET_ADDEB],
+                                Des2]
+                self._tXlsx_Rows_for_view.append(row_to_view)
+
                 Row_Compact = [ Checked_Row[IX_SHEET_NROW],
                                 Checked_Row[IX_SHEET_CONTAB],
                                 Checked_Row[IX_SHEET_VALUTA],
@@ -112,8 +115,8 @@ class Xlsx_Manager(Codes_db):
     def Get_Length_Xlsx(self):
         return len(self._Xlsx_Rows_From_Sheet_normalized)
 
-    def Get_Xlsx_Rows_From_Sheet_normalized(self):
-        return self._Xlsx_Rows_From_Sheet_normalized
+    def Get_Xlsx_rows_for_view(self):
+        return self._Xlsx_Rows_for_view
 
     # --------------------------------------------------------------------------------------------
     def _Set_Xlsx_Conto_Year_Month(self):
@@ -131,7 +134,8 @@ class Xlsx_Manager(Codes_db):
 
     # --------------------------------------------------------------------------------------------
     def _Init_Xlsx_Data(self):
-        self._tXlsx_Rows_From_Sheet_normalized = []
+        self._tXlsx_Rows_From_Sheet_normalized = []     # exactly as in datasheet
+        self._tXlsx_Rows_for_view              = []     # as in xlsx  None purged
         self._tXlsx_Rows_Compact      = []
         self._tWith_Code_Tree_List    = []
         self._tWihtout_Code_Tree_List = []
@@ -151,8 +155,8 @@ class Xlsx_Manager(Codes_db):
 
     # --------------------------------------------------------------------------------------------
     def _Save_Xlsx_Data(self):
-        self._Xlsx_Rows_From_Sheet_normalized   = self._tXlsx_Rows_From_Sheet_normalized
-
+        self._Xlsx_Rows_From_Sheet_normalized = self._tXlsx_Rows_From_Sheet_normalized
+        self._Xlsx_Rows_for_view              = self._tXlsx_Rows_for_view
         self._Xlsx_Rows_Compact      = self._tXlsx_Rows_Compact
 
         # ------------------------

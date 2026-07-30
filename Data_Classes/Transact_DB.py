@@ -152,8 +152,8 @@ class Transact_Db(Xlsx_Manager):
         for record in self._Transact_Records_as_is:
             nRow       = record[IX_TRANSACT_NROW]
             conto      = record[IX_TRANSACT_CONTO]
-            dateContab = record[IX_TRANSACT_CONTAB] # is string
-            dateValuta = record[IX_TRANSACT_VALUTA] # is string
+            dateContab = record[IX_TRANSACT_CONTAB]     # from xlsx wit/out rows is datetime
+            dateValuta = record[IX_TRANSACT_VALUTA]     # is string
             credit     = record[IX_TRANSACT_ACCRED]
             debit      = record[IX_TRANSACT_ADDEB]
 
@@ -165,8 +165,8 @@ class Transact_Db(Xlsx_Manager):
         for row in self._tWith_Code_Tree_List:
             conto      = self._tXlsx_Conto      # settato nel tirar su .xlsx
             nRow       = row[IX_WITH_CODE_NROW]
-            dateContab = get_year_month_day(row[IX_WITH_CODE_CONTAB])   # convert to str for Db
-            dateValuta = get_year_month_day(row[IX_WITH_CODE_VALUTA])   # convert to str for Db
+            dateContab = get_D_M_Y_H_m_S_for_insert(row[IX_WITH_CODE_CONTAB])   # is datetime
+            dateValuta = get_D_M_Y_H_m_S_for_insert(row[IX_WITH_CODE_VALUTA])         # from Db fullDate
             credit     = row[IX_WITH_CODE_ACCRED]
             debit      = row[IX_WITH_CODE_ADDEB]
             TRdesc     = row[IX_WITH_CODE_TR_DESCR]

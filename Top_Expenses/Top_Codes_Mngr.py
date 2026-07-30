@@ -85,6 +85,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
     def Child_ClkNoCode(self):
         self.Clear_Text_Widg(False)
         self.Txt_StrFullDesc1.Set_Text(self.FullDesc_OnClick_NoCode)
+        pass
 
     # ---------------------------------------------------------------------------------------------
     def Child_ClkWithCode(self):

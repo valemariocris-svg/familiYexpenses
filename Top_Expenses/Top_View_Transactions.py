@@ -152,14 +152,15 @@ class Top_View_Transact(tk.Toplevel):
         FrameText = ('      ' + TR_Name + '     ' + str(len(List)) + str(Title))
         # -------------------------------------------------------------------------------------------------
         #   (auto)  Id, riga, conto, contab, valuta, accred, addeb, TRdesc, TRcode, full_desc
-        template = [INT_TOSTRING, INT_TOSTRING, SIC, YMD, YMD, FLOAT_TOSTR, FLOAT_TOSTR, SIC, INT_TOSTRING, SIC]
+        template = [INT_TOSTRING, INT_TOSTRING, SIC, COMPC_YMD, COMPC_YMD, FLOAT_TOSTR, FLOAT_TOSTR, SIC, INT_TOSTRING, SIC]
         view_list = []
         for Rec in List:
-            rec_toView = convert_record_toView(template, Rec)
+            rec_toView = convert_record_for_View_transact(template, Rec)
             view_list.append(rec_toView)
         #
         self.Frame_Transactions.Frame_Title(FrameText)
         self.Frame_Transactions.Load_Row_Values(view_list)
+        pass
 
     # ---------------------------------------------------------------------------------------------
     def Clk_On_Transaction(self, Values):

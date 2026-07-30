@@ -24,16 +24,24 @@
 # puoi passare tranquillamente int e float, ci pensa Tkinter a convertirli.                         #
 # Per formattare la grafica: se ti servono decimali fissi (es. 2.50 anziché 2.5),                   #
 # conviene formattare prima la stringa in Python (es. f"{prezzo:.2f}").                             #
-# Per ordinare le colonne: ricordati di riconvertire le stringhe in numeri durante l'ordinamento!   #
 # ------------------------------------------------------------------------------------------------- #
-# Quindi nel tree usare solo stringe formattate,                                                    #
-# nel Db movimenti:                                                                                 #
-# date_time = strftime("%m/%d/%Y, %H:%M:%S")         float = float per eseguire calcoli             #
-# nei  tree:                                                                                        #
-# date_time ma contratti nei tree a seconda dei casi float = str_float formattati in italiano ./,   #
-# OKIO la data da xlsx vien tirata su come datetime e quindi va trasformata subito in               #
-# data completa dato che da Db movimenti viene salvata (TEXT) come data completa                    #
+# da xlsx                    si tira su sempre datetime  e float                                    #
+# visualizzioni tree         "GG/MM/AAA"  e float                                                   #
+# click on tree              all is strings  accred/added is not used                               #
+# insert on Db               "AAAA/MM/GG HH:mm:SS"                                                  #
+# per creare rows to nsert   date on xlsx datetime ---->"AAAA/MM/GG HH:mm:SS" as in transact Db     #
 # ------------------------------------------------------------------------------------------------- #
+# row to insert as in transactions Db
+# [1,
+# 'FIDEU',
+# '2026/03/02 04:00:00',
+# '2026/03/02 04:00:00',
+# 0.0,
+# -400.0,
+# 'F.A.S.I. quota trimestrale',
+# 59,
+# 'PAGAMENTO ADUE // COD. DISP.: 6626022030444997 NOME: F.A.S.I. MANDATO: 1972640237768']
+#
 
 # ================================================================================================= #
 #                                ----------     1. windows settings   ----------                    #
@@ -292,7 +300,8 @@ DIRECT_NOCODE = -1
 
 # types of conversion for displaying in frames
 SIC          = 'sic'   # no conversion
-YMD          = 'year_month day' # convert datetime in year-month
+DMY          = 'day mont year day'                 # convert datetime in "year-month-day"
+COMPC_YMD    = "year month day for trnsact view"   # compact date full string
 INT_TOSTRING = 'integer to str'
 FLOAT_TOSTR  = 'float to string'    # convert float to str 1.234,56
 

@@ -72,19 +72,25 @@ class Top_XLSX_Rows_View(tk.Toplevel):
         nRows      = 39
         NcolToDisp = 7
         Headings = ['#0', 'Row', "Contab", "Valuta", "Descrizione 1",
-                    "Credits   ", "Debits   ", "Descrizione 2"]
+                    "Accred   ", "Addeb   ", "Descrizione 2"]
         Anchor = ['c', 'c', 'c', 'c', 'w', 'e', 'e', 'w']
         Width  = [0,    40,  80,  80,  160, 70,  70,  260]
         Form_List = [nRows, NcolToDisp, Headings, Anchor, Width]
         self.Frame_Desc_x2.Tree_Setup(Form_List)
 
     def View_Xlsx_Rows(self):
-        List = self.Data.Get_Xlsx_Rows_From_Sheet_normalized()
+        List = self.Data.Get_Xlsx_rows_for_view()
+        List_to_view = []
+        template =[INT_TOSTRING, DMY, DMY, SIC, FLOAT_TOSTR, FLOAT_TOSTR, SIC]
+        for row in List:
+            row_to_view = convert_row_for_View_xlsx(template, row)
+            List_to_view.append(row_to_view)
+
         XLS_Name  =Get_File_Name(self.Data.Get_sel_dictionary_value(XLSX_FILENAME))
         FrameText = ('     ' + XLS_Name + ':   ')
-        FrameText += str(len(List)) + '   transactions  on  sheet  rows  '
+        FrameText += str(len(List)) + '   rows in xlsx file'
         self.Frame_Desc_x2.Frame_Title(FrameText)
-        self.Frame_Desc_x2.Load_Row_Values(List)
+        self.Frame_Desc_x2.Load_Row_Values(List_to_view)
         self.Frame_Desc_x2.Frame_View()
 
     # # ---------------------------------------------------------------------------------------------

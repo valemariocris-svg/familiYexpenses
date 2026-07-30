@@ -228,29 +228,21 @@ def Set_Month_Day(FullDate, Counts):
     return MonthDay_Date
 
 # -------------------------------------------------------------------------------------------------
-# Transactions_Db
-def get_year_month_day(Date):    # '2026-09-02-12:00:00
-    if isinstance(Date, datetime):
-        str_date = Date.strftime("%m/%d/%Y, %H:%M:%S")
-        return str_date
-    return " "
-
-# -------------------------------------------------------------------------------------------------
 # per visualizzazioni su tree, con record da xlsx, che e' in datetime
-def get_day_month_year_for_view_xlsx(Date):    # '2026-09-02-12:00:00
-    if isinstance(Date, datetime):
-        str_date = Date.strftime("%m/%d/%Y, %H:%M:%S")
+def get_day_month_year_for_view_xlsx(Datetime):    # '2026/09/02
+    if isinstance(Datetime, datetime):
+        str_date = Datetime.strftime("%m/%d/%Y, %H:%M:%S")
         strIt = f"{str_date[3:5]}/{str_date[0:2]}/{str_date[8:10]}"
         return strIt
     return " "
 
 # -------------------------------------------------------------------------------------------------
-def convert_record_toView(template, Rec):
+def convert_row_for_View_xlsx(template, Rec):
     converted_record = []
     for index in range(0, len(template)):
         if template[index] == SIC:
             converted_record.append(Rec[index])
-        elif template[index] == YMD:
+        elif template[index] == DMY:
             conv_value = get_day_month_year_for_view_xlsx(Rec[index])
             converted_record.append(conv_value)
         elif template[index] == FLOAT_TOSTR:
@@ -260,10 +252,42 @@ def convert_record_toView(template, Rec):
             conv_value = str(Rec[index])
             converted_record.append(conv_value)
         else:
-            return '????'
+            return ''
     return converted_record
 
-# ----------------------------------------------------------------------------#
+# -------------------------------------------------------------------------------------------------
+# per inserimento row nel Db movimenti  e compare for xlsx rows to insert
+def get_D_M_Y_H_m_S_for_insert(Datetime):    # '2026/09/02 12:00:00
+    if isinstance(Datetime, datetime):
+        str_date = Datetime.strftime("%m/%d/%Y, %H:%M:%S")
+        strIt = f"{str_date[6:10]}/{str_date[0:2]}/{str_date[3:5]} {str_date[12:14]}:{str_date[15:17]}:{str_date[18:20]}"
+        return strIt
+    return " "
+
+# -------------------------------------------------------------------------------------------------
+def Compact_Date(strFullDate):  # '2026/09/02 12:00:00
+    return f"{strFullDate[8:10]}/{strFullDate[5:7]}/{strFullDate[2:4]}"
+
+# -------------------------------------------------------------------------------------------------
+def convert_record_for_View_transact(template, Rec):
+    converted_record = []
+    for index in range(0, len(template)):
+        if template[index] == SIC:
+            converted_record.append(Rec[index])
+        elif template[index] == COMPC_YMD:
+            conv_value = Compact_Date(Rec[index])
+            converted_record.append(conv_value)
+        elif template[index] == FLOAT_TOSTR:
+            conv_value = convert_float_toString(Rec[index])
+            converted_record.append(conv_value)
+        elif template[index] == INT_TOSTRING:
+            conv_value = str(Rec[index])
+            converted_record.append(conv_value)
+        else:
+            return ''
+    return converted_record
+
+# ---------------------------------------------------------------------------------------
 def TestForSign(Sign, FoundNotZ):
     if Sign and FoundNotZ == 1:
         return '-'

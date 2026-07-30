@@ -67,12 +67,6 @@ class TheFrame(tk.LabelFrame):
             RowValues = self.Tree.item(strId, 'values')
             self.Clk_On_Tree(RowValues)
 
-    # def Get_Index_Of_Click(self):
-    #     strId = self.Tree.focus()
-    #     if strId:
-    #         return int(strId)
-    #     return 0
-
     # -------------------  CHECKED on colunms number  ------------------------
     def Tree_Setup_Strech(self, Form_List, IdStretch_List):
         self.Delete_All_Rows()
