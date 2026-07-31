@@ -113,7 +113,7 @@ class Xlsx_Manager(Codes_db):
 
     # ------------------------------------------------------------------------------------
     def Get_Length_Xlsx(self):
-        return len(self._Xlsx_Rows_From_Sheet_normalized)
+        return len(self._tXlsx_Rows_Compact)
 
     def Get_Xlsx_rows_for_view(self):
         return self._Xlsx_Rows_for_view

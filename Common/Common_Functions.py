@@ -257,7 +257,7 @@ def convert_row_for_View_xlsx(template, Rec):
 
 # -------------------------------------------------------------------------------------------------
 # per inserimento row nel Db movimenti  e compare for xlsx rows to insert
-def get_D_M_Y_H_m_S_for_insert(Datetime):    # '2026/09/02 12:00:00
+def get_D_M_Y_H_m_S_for_insert(Datetime):    # '2026/09/02 12:00:00'
     if isinstance(Datetime, datetime):
         str_date = Datetime.strftime("%m/%d/%Y, %H:%M:%S")
         strIt = f"{str_date[6:10]}/{str_date[0:2]}/{str_date[3:5]} {str_date[12:14]}:{str_date[15:17]}:{str_date[18:20]}"
@@ -306,6 +306,27 @@ def Convert_Str_To_Float(Value):
     except (ValueError, TypeError):
         # Se la conversione fallisce (es: c'è del testo o simboli strani)
         return 0.0
+    finally:
+        pass
+
+# ---------------------------------------------------------------------------------------
+# strVal = '(-)1.234,56   Called from reading Xlsx Rows
+def Convert_It_string_to_float(Value):
+# Gestione immediata del None
+    if Value is None:
+        return 0.0
+    if not isinstance(Value, str):
+        return 9999.99
+
+    if len(Value) <= 3:
+        return 0.00
+    try:
+        us_form_str = Value.replace(".", "").replace(",", ".")
+        # Questo copre int, float e stringhe numeriche pulite (es: "123.45")
+        return float(us_form_str)
+    except (ValueError, TypeError):
+        # Se la conversione fallisce (es: c'è del testo o simboli strani)
+        return 9999.99
     finally:
         pass
 

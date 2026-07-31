@@ -59,8 +59,8 @@ class Modules_Manager:
             # if not self.Check_for_Transact_for_queries():       # check, create transactions Db
             #     return
 
-            # if not self.Load_Transact_Mngr(Origin):           # load transactions records
-            #     return
+            if not self.Load_Transact_Mngr(Origin):           # load transactions records
+                return
         TopLevel = self._Get_TopLev(Top_to_launch)
         TopLevel([])
 

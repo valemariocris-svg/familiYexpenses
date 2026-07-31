@@ -32,14 +32,14 @@
 # per creare rows to insert  date on xlsx datetime ---->"AAAA/MM/GG HH:mm:SS" as in transact Db     #
 # ------------------------------------------------------------------------------------------------- #
 # row to insert as in transactions Db
-# [1,
+# [1,    nRow
 # 'FIDEU',
 # '2026/03/02 04:00:00',
 # '2026/03/02 04:00:00',
 # 0.0,
 # -400.0,
 # 'F.A.S.I. quota trimestrale',
-# 59,
+# 59,  code
 # 'PAGAMENTO ADUE // COD. DISP.: 6626022030444997 NOME: F.A.S.I. MANDATO: 1972640237768']
 # ------------------------------------------------------------------------------------------------- #
 
@@ -263,7 +263,7 @@ IX_ROW_COMP_ACCR    = 3
 IX_ROW_COMP_ADDEB   = 4
 IX_ROW_COMP_FULLDES = 5  # (Descr1/Descr2
 
-# Wihtout_Code_Tree_List     nRow Contabile _Valuta Accred _Addeb FullDesc
+# Wihtout_Code_Tree_List
 IX_NO_CODE_NROW       = 0
 IX_NO_CODE_CONTO      = 1
 IX_NO_CODE_CONTAB     = 2

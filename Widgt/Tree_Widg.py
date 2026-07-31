@@ -76,6 +76,7 @@ class TheFrame(tk.LabelFrame):
         self.Anchor      = Form_List[IX_TREE_ANCHOR]
         self.Width       = Form_List[IX_TREE_WIDTH]
         self.Tree.configure(height=self.Nrows)
+        self.nColToVis = len(self.Headings)
 
         self.nColToVis = len(self.Headings)
         if self.nColToVis != len(self.Anchor) or self.nColToVis != len(self.Width):
@@ -85,19 +86,49 @@ class TheFrame(tk.LabelFrame):
         self.Tree.column("#0", width=0, stretch=False)
 
         for IdStrech in IdStretch_List:
-            nColumn = IdStrech[1:]
+            nColumn = int(IdStrech[1:])
             if nColumn > self.nColToVis:
                 return False, f"stretching out of coluns for:\n\n{self.Headings}{self.Anchor[IdStrech]}"
             self.Tree.heading(IdStrech, text="", anchor='w')
             self.Tree.column(IdStrech, width=0, stretch=False)
 
-        for jj in range(1, self.nColToVis + 1):
-            self.Tree.column(f'#{jj}', width=self.Width[jj], anchor=self.Anchor[jj])
-            self.Tree.heading(f'#{jj}', text=self.Headings[jj], anchor=self.Anchor[jj])
+        # for jj in range(1, self.nColToVis + 1):
+        #     self.Tree.column(f'#{jj}', width=self.Width[jj], anchor=self.Anchor[jj])
+        #     self.Tree.heading(f'#{jj}', text=self.Headings[jj], anchor=self.Anchor[jj])
+        #
+        # self.Tree.tag_configure("oddrow", background="white", )
+        # self.Tree.tag_configure("evenrow", background="lightblue", )
+        # return ''
 
-        self.Tree.tag_configure("oddrow", background="white", )
-        self.Tree.tag_configure("evenrow", background="lightblue", )
+        # 1. Nascondiamo del tutto la colonna '#0' dell'albero (Tree) che non usiamo
+        self.Tree["show"] = "headings"  # <--- Questo elimina la colonna radice ed evita pasticci
+
+        # 2. Definiamo i nomi delle colonne dati (es. ['col1', 'col2', 'col3'...])
+        # Ignoriamo il primo elemento [0] se era riservato all'header '#0'
+        # col_names = [f"col_{i}" for i in range(1, len(self.Headings))]
+        col_names = [f"col_{i}" for i in range(1, self.nColToVis)]
+        self.Tree['columns'] = col_names
+
+        # 3. Ciclo di configurazione usando I NOMI DELLE COLONNE
+        for jj, col_name in enumerate(col_names, start=1):
+            # Configuriamo la colonna usando il suo nome 'col_name'
+            self.Tree.column(
+                col_name,
+                width=self.Width[jj],
+                anchor=self.Anchor[jj],
+                stretch=False
+            )
+            self.Tree.heading(
+                col_name,
+                text=self.Headings[jj],
+                anchor=self.Anchor[jj]
+            )
+
+        self.Tree.tag_configure("oddrow", background="white")
+        self.Tree.tag_configure("evenrow", background="lightblue")
         return ''
+
+
 
     # -------------------  NOT  checked on colunms number  ------------------------
     def Tree_Setup(self, Form_List):

@@ -3,11 +3,6 @@
 # XLS_Row_List : nRow  Contab  Valuta  Descr1  Accred  Addeb  Descr2                #
 # ================================================================================= #
 
-# from Common.Common_Functions import *
-# from Chat import Ms_Chat
-# from Data_Classes.Transact_DB import Data_Manager
-#
-# from Widgt.Dialogs import Print_Received_Message
 from Widgt.Tree_Widg import *
 from Top_Expenses.Modules_Manager import Modul_Mngr
 # from Widgt.Widgets import TheButton, TheText, TheCombo
@@ -164,7 +159,7 @@ class Top_View_Transact(tk.Toplevel):
 
     # ---------------------------------------------------------------------------------------------
     def Clk_On_Transaction(self, Values):
-        Id = 0  #int(Values[IX_TRANSACT_IDENT])
+        Id = int(Values[IX_TRANSACT_IDENT])
         status, data = self.Data.Get_transact_rec_from_id(Id)
         if not status:
             return

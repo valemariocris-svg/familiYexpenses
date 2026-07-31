@@ -198,7 +198,6 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             self.Txt_CAdesc1.Set_Text(TRcode_full_rec[IX_TR_FULL_CA_DESC])
             self.Txt_StrToFind1.Set_Text(TRcode_full_rec[IX_TR_FULL_STR_TO_FIND])
             self.Txt_StrFullDesc1.Set_Text(TRcode_full_rec[IX_TR_FULL_FULL_DESC])
-
         else:
             if not self.View_Without_Code:
                 if not self.Row_WithoutCode:
@@ -209,6 +208,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
             if Result != YES:
                 return
 
+            # contab_date_time, valuta_date_time = self.get_row_datetime(self.Row_WithoutCode)
             nRow    = self.Row_WithoutCode[IX_NO_CODE_NROW]
             Conto   = self.Row_WithoutCode[IX_NO_CODE_CONTO]
             Contab  = self.Row_WithoutCode[IX_NO_CODE_CONTAB]

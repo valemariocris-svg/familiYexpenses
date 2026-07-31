@@ -37,7 +37,8 @@ class Super_Top_Mngr(tk.Toplevel):
         self.FullDesc_OnClick_NoCode   = ""
         self.FullDesc_OnClick_WithCode = ""
         self.View_Without_Code = True
-        self.Row_WithoutCode   = None  # it is the Row clicked on Frame_NoCodes
+        self.noCode_rows_to_be_inserted_list = []    # with full_date as in NoCodes_list (Xlsx_Mngr)
+        self.Row_WithoutCode                 = None  # it is the Row clicked on Frame_NoCodes
 
         # ----------------------   Frames   -------------------------------------------------------------------
         self.Frame_NoCodes_ToIns = TheFrame(self,   10, 20, self.Clk_OnTree_NoCodes)
@@ -82,17 +83,18 @@ class Super_Top_Mngr(tk.Toplevel):
 
     # -------------------------------------------------------------------------------------------------
     def Clk_OnTree_NoCodes(self, Values):
-        #  [nRow, Contab, Valuta, Accred, Addeb, FullDes
+        #    0      1       2       3       4      5      6
+        #  [nRow, Conto, Contab, Valuta, Accred, Addeb, FullDes
         Row       = int(Values[IX_NO_CODE_NROW])
         Conto     = Values[IX_NO_CODE_CONTO]
-        Valuta    = Values[IX_NO_CODE_VALUTA]
+        Contabile, Valuta  = self.get_full_datetime(Values)
         FullDesc  = Values[IX_NO_CODE_FULL_DESCR]
-        self.Txt_StrFullDesc1.Set_Text(Valuta + '  - ' + FullDesc)
+        self.Txt_StrFullDesc1.Set_Text(Values[IX_NO_CODE_CONTAB] + '  - ' + FullDesc)
 
-        flAccred  = Convert_Str_To_Float(Values[IX_NO_CODE_ACCRED])
-        flAddeb   = Convert_Str_To_Float(Values[IX_NO_CODE_ADDEB])
-        intValues = [Row, Conto, Values[IX_NO_CODE_CONTAB], Values[IX_NO_CODE_VALUTA],
-                     flAccred, flAddeb, Values[IX_NO_CODE_FULL_DESCR]]
+        flAccred  = Convert_It_string_to_float(Values[IX_NO_CODE_ACCRED])
+        flAddeb   = Convert_It_string_to_float(Values[IX_NO_CODE_ADDEB])
+        intValues = [Row, Conto, Contabile, Valuta, flAccred, flAddeb, FullDesc]
+
         self.Row_WithoutCode = intValues
         self.Frame_WithCodes_ToIns.Clear_Focus()
         self.FullDesc_OnClick_NoCode = Values[IX_NO_CODE_FULL_DESCR]
@@ -159,8 +161,8 @@ class Super_Top_Mngr(tk.Toplevel):
     # self.noCode_rows_to_be_inserted_list   = []
     # -------------------------------------------------------------------------------------------------
     def Load_Trees(self):
-        noCode_rows_to_be_inserted_list= self.Data.get_noCode_rows_to_be_inserted_list()
-        len_NoCode_to_be_inserted      = len(noCode_rows_to_be_inserted_list)
+        self.noCode_rows_to_be_inserted_list = self.Data.get_noCode_rows_to_be_inserted_list()
+        len_NoCode_to_be_inserted      = len(self.noCode_rows_to_be_inserted_list)
         std_cod_to_be_inserted         = self.Data.get_std_code_rows_to_be_insertd_list()
         len_tot_std_cod_to_be_inserted = len(std_cod_to_be_inserted)
         inserted_len                   = self.Data.get_tot_rows_inserted()
@@ -178,7 +180,7 @@ class Super_Top_Mngr(tk.Toplevel):
         # Wihtout_Code_Tree_List     nRow Conto Contabile Valuta Accred Addeb FullDesc
         noCode_rows_to_view_list = []
         template = [INT_TOSTRING, SIC, DMY, DMY, FLOAT_TOSTR, FLOAT_TOSTR, SIC]
-        for row in noCode_rows_to_be_inserted_list:
+        for row in self.noCode_rows_to_be_inserted_list:
             row_to_view = convert_row_for_View_xlsx(template, row)
             noCode_rows_to_view_list.append(row_to_view)
         result = self.Frame_NoCodes_ToIns.Load_Row_Values(noCode_rows_to_view_list)
@@ -250,4 +252,17 @@ class Super_Top_Mngr(tk.Toplevel):
         msg_dlg = Message_Dlg(MSG_BOX_ERR, error)
         msg_dlg.wait_window()
         pass
+
+    # ---------------------------------------------------------------------------------------------
+    def get_full_datetime(self, Values):
+        nRow = int(Values[IX_NO_CODE_NROW])
+        for row in self.noCode_rows_to_be_inserted_list:
+            if nRow == row[IX_NO_CODE_NROW]:
+                pass
+                full_contab = get_D_M_Y_H_m_S_for_insert(row[IX_NO_CODE_CONTAB])
+                full_valuta = get_D_M_Y_H_m_S_for_insert(row[IX_NO_CODE_VALUTA])
+                return full_contab, full_valuta
+        pass
+        return '???-??-??', '???-??-??'
+
 # =================================================================================================

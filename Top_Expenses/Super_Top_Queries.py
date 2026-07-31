@@ -18,8 +18,6 @@ class Super_Top_Queries(tk.Toplevel):
         self.Chat     = Ms_Chat
         self.Data     = Data_Manager
         self.Mod_Mngr = Modul_Mngr
-        # 1. NASCONDI SUBITO LA FINESTRA PRINCIPALE
-        # self.withdraw()  ma mi ciula un file in FIDEU e TRANSACTIONS
 
         self.Dummy    = 0
         self.geometry('15x15+900+490')
@@ -43,21 +41,22 @@ class Super_Top_Queries(tk.Toplevel):
         if Transact_Filename is UNKNOWN:                                                                #
             Msg_Dlg = Message_Dlg(MSG_BOX_INFO, 'Please select a Transactions db file')                 #
             Msg_Dlg.wait_window()                                                                       #
-            File_Dlg = File_Dialog(TRANSACT_FILENAME)                                                       #
+            File_Dlg = File_Dialog(TRANSACT_FILENAME)                                                   #
             Full_Filename = File_Dlg.FileName                                                           #
             if not Full_Filename:                                                                       #
-                Msg_Dlg = Message_Dlg(MSG_BOX_ERR, 'queries are impossible')                           #
+                Msg_Dlg = Message_Dlg(MSG_BOX_ERR, 'queries are impossible')                            #
                 Msg_Dlg.wait_window()                                                                   #
                 self.Call_OnClose()                                                                     #
             else:                                                                                       #
-                self.Data.Update_key_dictionary(TRANSACT_FILENAME, Full_Filename)
+                self.Data.Update_key_dictionary(TRANSACT_FILENAME, Full_Filename)                       #
                 self.Setup_Year_Conto_Month_Tot_Date()                                                  #
         # --------------------------------------------------------------------------------------------- #
 
-        self.OneYear_Transact_List = self.Data.Get_Transact_Table()
+        self.OneYear_Transact_List = []
+        self._get_transact_rec_date_compact()
+        pass
 
         # This list is created on startup or at each Selection
-        # based on Year, Conto (ValDate/AccDate) TR GR CA for each month
         self.Transact_xMonth_List = [[]] * 12
         self.Tot_Transact_xMonth  = [0]  * 12
         self.DateCount_PerMonth   = [0]  * 12
@@ -122,23 +121,27 @@ class Super_Top_Queries(tk.Toplevel):
         self.Extraord_Text = TheText(self,TXT_DIS_BLACK, self.Widg_PosX, 355, 18, 1, "straord = 16")
 
         # ---------------------------------    Buttons   ----------------------------------------------------------
-        # Remenber:   self.Set_Widgets_PosX()    for Buttons etc. positioning
-        self.Btn_DB_View = TheButton(self, BTN_DEF_EN,self.Widg_PosX,550,15, 'Mostra i movimenti',self.Clk_ViewTransact)
-        self.Btn_Check   = TheButton(self, BTN_DEF_EN,self.Widg_PosX,590,15, 'Chek xlsx / movim.',self.Clk_Check)
-        self.Btn_xlsx_View = TheButton(self,BTN_DEF_EN,self.Widg_PosX,510,15, 'Mostra file Xlsx', self.Clk_XlsxView)
+        self.Btn_DB_View = TheButton(self, BTN_DEF_EN,self.Widg_PosX,550,15, 'visual. movimenti',self.Clk_ViewTransact)
+        self.Btn_xlsx_View = TheButton(self,BTN_DEF_EN,self.Widg_PosX,510,15, 'visual. righe Xlsx', self.Clk_XlsxView)
         self.Btn_Exit      = TheButton(self,BTN_BOL_EN,self.Widg_PosX,936,13, '  E S C I  ',      self.Call_OnClose)
 
-        # self.deiconify()
         self.Set_All_Select()
         pass
+
+    # ----------------------------------------------------------------------
+    def _get_transact_rec_date_compact(self):
+        full_date_rec = self.Data.Get_Transact_Table()
+        self.OneYear_Transact_List = []
+        for RecFull in full_date_rec:
+            RecCompact = self._compact_dates(RecFull)
+            self.OneYear_Transact_List.append(RecCompact)
+            pass
 
     # ----- This  function  is  overridden on Top_Queries  ---------------- #
     def Load_All_Data(self):                                                #
         pass                                                                #
     # --------------------------------------------------------------------- #
 
-
-    # ------ Fill Combos List   and previous selections saved on  Files_Names  ------------------------------
     def Set_All_Selections(self):
         TRdescr_List = []
         GR_List      = []
@@ -274,7 +277,7 @@ class Super_Top_Queries(tk.Toplevel):
             transact_filename = self.Data.Get_sel_dictionary_value(TRANSACT_FILENAME)
             Reply = self.Data.Load_Transact_Table(transact_filename)
             if Reply == OK:
-                self.OneYear_Transact_List = self.Data.Get_Transact_Table()
+                self._get_transact_rec_date_compact()
                 self.Load_All_Data()
             else:
                 self.Call_OnClose()
@@ -410,10 +413,6 @@ class Super_Top_Queries(tk.Toplevel):
                             strCredit, strDebit, Rec[IX_QUERY_IDENT]]
         return [Rec_Queries_List, CreditDebit_List]
 
-    # -----------------------------------------------------------------------------------------------------------
-    def Clk_Check(self):
-        self.Mod_Mngr.Top_Launcher(TOP_TRANSACT_VERIFY, TOP_QUERY, [])
-
     # ----------------------------------------------------------------------------------------------------------
     def Set_Tot_Transact_xMonth(self):
         for Index in range(0, 12):
@@ -421,5 +420,16 @@ class Super_Top_Queries(tk.Toplevel):
             self.Tot_Transact_xMonth[Index] = len(List_xMonth)
             pass
 
-
+    # ------------------------------------------------------------------------------------------------------------
+    def _compact_dates(self, RecFull):
+        self.Dummy = 0
+        myRec = list(RecFull)
+        # '2026/09/02 12:00:00
+        Contab_full    = myRec[IX_TRANSACT_CONTAB]
+        Contab_compact = f"{Contab_full[0:4]}-{Contab_full[5:7]}-{Contab_full[8:10]}"
+        Valuta_full    = myRec[IX_TRANSACT_VALUTA]
+        Valuta_compact = f"{Valuta_full[0:4]}-{Valuta_full[5:7]}-{Valuta_full[8:10]}"
+        myRec[IX_TRANSACT_CONTAB] = Contab_compact
+        myRec[IX_TRANSACT_VALUTA] = Valuta_compact
+        return myRec
 # =================================================================================================================
