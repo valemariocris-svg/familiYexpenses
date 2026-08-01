@@ -247,7 +247,7 @@ class Xlsx_Manager(Codes_db):
                 self.Insert_On_WithCode_List(Row, TRcodeList[0])
 
             elif nCode > 1:                         # Multiple codes found for a xlsx row
-                print(TRcodeList, Row[IX_ROW_COMP_FULLDES])
+                # print(TRcodeList, Row[IX_ROW_COMP_FULLDES])
                 message  = f"la descrizione completa per la riga n.  {str(Row[IX_ROW_COMP_NROW])}\n\n"
                 message += f"Contab: {Row[IX_ROW_COMP_CONTAB]}\nValuta: {Row[IX_ROW_COMP_VAL]}\n"
                 message += f"Accred: {Row[IX_ROW_COMP_ACCR]}\nAddeb: {Row[IX_ROW_COMP_ADDEB]}\n"

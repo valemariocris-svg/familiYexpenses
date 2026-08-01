@@ -16,7 +16,8 @@ from Widgt.Canvas_Frame import *
 # -------------------------------------------------------------------------------------------------------------------
 class Top_Codes_Mngr(Super_Top_Mngr):
     def __init__(self, List):
-        super().__init__(self.Child_ClkNoCode, self.Child_ClkWithCode)
+        super().__init__(self.Child_ClkNoCode, self.Child_ClkWithCode)  # click on wit/without row tree on Super
+        #                                                               # Clicked_On_CodesView from click on codes view
         self.Mod_Mngr    = Modul_Mngr
         self.List         = List        # Not Used. Used on Top_View_Codes
         self.Dummy        = 0
@@ -244,22 +245,6 @@ class Top_Codes_Mngr(Super_Top_Mngr):
         else:
             self.Mod_Mngr.Top_Launcher(TOP_CODES_VIEW, [TOP_CODES_MNGR], [VIEW_ALL_REDUC])
             self.Top_View_Type = VIEW_ALL_REDUC
-
-    # ---------------------------------------------------------------------------------------------
-    # _Wihtout_Code_Tree_List  nRow  Contab Valuta Accr   Addeb  FullDes
-    # _Records_ToInsert_List   Ident Conto  Contab Valuta TRdesc Accred Addeb TR_Code Full_Desc
-    # def Create_RecToFind_From_NoCode(self, Row):
-    #     template = [INT_TOSTRING, SIC, SIC, FLOAT_TOSTR, FLOAT_TOSTR, SIC]
-    #     row_converted =convert_rcord_toView(template, Row)
-    #     Contab = Row[IX_NO_CODE_CONTAB]
-    #     Valuta = Row[IX_NO_CODE_VALUTA]
-    #     Accred = Row[IX_NO_CODE_ACCRED]
-    #     Addeb = Row[IX_NO_CODE_ADDEB]
-    #     flAccred = Convert_Str_To_Float(Accred)
-    #     flAddeb  = Convert_Str_To_Float(Addeb)
-    #     FullDesc = Row[IX_NO_CODE_FULL_DESCR]
-    #     Rec_From_NoCode = [0, self.LocConto, Contab, Valuta, 'TRdesc', flAccred, flAddeb, 0, FullDesc]
-    #     return Rec_From_NoCode
 
     # ------------------------------------------------------------------------------------------- #
     #    ***   Codes in 1-10.000 are the normal code with StrToFind.                              #

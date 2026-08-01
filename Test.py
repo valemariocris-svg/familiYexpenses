@@ -13,14 +13,14 @@ def save_dictionary(dictionary):
         # print("Dizionario salvato con successo su disco!")
         return True
     except Exception as e:
-        print(f"Errore durante il salvataggio: {e}")
+        # print(f"Errore durante il salvataggio: {e}")
         return False
 
 # ----------------------------------------------------------------------------------------
 def Load_dictionary():
     # Se il file non esiste ancora (es. al primissimo avvio), restituiamo un dictionary di default
     if not os.path.exists(DICTIONARY_FILE):
-        print("File di configurazione non trovato. Carico il dictionary di default.")
+        # print("File di configurazione non trovato. Carico il dictionary di default.")
         dizionario_default = {
             "Vitto": "/home/tuo_utente/Documenti/Spese/Transact_Vitto.db",
             "Viaggi": "/home/tuo_utente/Documenti/Spese/Transact_Viaggi.db",

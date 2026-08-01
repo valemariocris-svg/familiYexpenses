@@ -294,7 +294,7 @@ class Modules_Manager:
             # È sempre buona norma verificare prima se il file esiste davvero
             if os.path.exists(Full_transact_filename):
                 os.remove(Full_transact_filename)
-                print(f"file {transact_filename}\neliminato")
+                # print(f"file {transact_filename}\neliminato")
             else:
                 msg_dlg = Message_Dlg(MSG_BOX_ERR, f"file {transact_filename}\nnon esiste per la cancellazione")
                 msg_dlg.wait_window()

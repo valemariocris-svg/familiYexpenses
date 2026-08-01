@@ -257,11 +257,11 @@ def convert_row_for_View_xlsx(template, Rec):
 
 # -------------------------------------------------------------------------------------------------
 # per inserimento row nel Db movimenti  e compare for xlsx rows to insert
-def get_D_M_Y_H_m_S_for_insert(Datetime):    # '2026/09/02 12:00:00'
+def get_Y_M_D_H_m_S_for_insert(Datetime):    # '2026/09/02 12:00:00'
     if isinstance(Datetime, datetime):
         str_date = Datetime.strftime("%m/%d/%Y, %H:%M:%S")
-        strIt = f"{str_date[6:10]}/{str_date[0:2]}/{str_date[3:5]} {str_date[12:14]}:{str_date[15:17]}:{str_date[18:20]}"
-        return strIt
+        strFulldate = f"{str_date[6:10]}/{str_date[0:2]}/{str_date[3:5]} {str_date[12:14]}:{str_date[15:17]}:{str_date[18:20]}"
+        return strFulldate
     return " "
 
 # -------------------------------------------------------------------------------------------------

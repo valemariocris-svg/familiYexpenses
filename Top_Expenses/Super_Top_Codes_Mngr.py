@@ -161,6 +161,7 @@ class Super_Top_Mngr(tk.Toplevel):
     # self.noCode_rows_to_be_inserted_list   = []
     # -------------------------------------------------------------------------------------------------
     def Load_Trees(self):
+        self.Mod_Mngr.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(TOP_CODES_MNGR)
         self.noCode_rows_to_be_inserted_list = self.Data.get_noCode_rows_to_be_inserted_list()
         len_NoCode_to_be_inserted      = len(self.noCode_rows_to_be_inserted_list)
         std_cod_to_be_inserted         = self.Data.get_std_code_rows_to_be_insertd_list()
@@ -259,8 +260,8 @@ class Super_Top_Mngr(tk.Toplevel):
         for row in self.noCode_rows_to_be_inserted_list:
             if nRow == row[IX_NO_CODE_NROW]:
                 pass
-                full_contab = get_D_M_Y_H_m_S_for_insert(row[IX_NO_CODE_CONTAB])
-                full_valuta = get_D_M_Y_H_m_S_for_insert(row[IX_NO_CODE_VALUTA])
+                full_contab = get_Y_M_D_H_m_S_for_insert(row[IX_NO_CODE_CONTAB])
+                full_valuta = get_Y_M_D_H_m_S_for_insert(row[IX_NO_CODE_VALUTA])
                 return full_contab, full_valuta
         pass
         return '???-??-??', '???-??-??'

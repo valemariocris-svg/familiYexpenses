@@ -159,20 +159,23 @@ class Transact_Db(Xlsx_Manager):
 
             # Crea la chiave unica (una tupla) e la inserisce nel dizionario
             key = (nRow, conto, dateContab, dateValuta, credit, debit)
-            self._transactions_map[key] = record[IX_TRANSACT_IDENT]  # numero riga
+            self._transactions_map[key] = record[IX_TRANSACT_IDENT]
+
+        # for row in self._transactions_map:
+        #     print(row)
+
         # creazione della lista dei record caricati da .XLSX ma non presenti nel database
         # esaminando la lista delle righe xlsx, di cui si e' trovato un codice Db
         for row in self._tWith_Code_Tree_List:
             conto      = self._tXlsx_Conto      # settato nel tirar su .xlsx
             nRow       = row[IX_WITH_CODE_NROW]
-            dateContab = get_D_M_Y_H_m_S_for_insert(row[IX_WITH_CODE_CONTAB])   # is datetime
-            dateValuta = get_D_M_Y_H_m_S_for_insert(row[IX_WITH_CODE_VALUTA])         # from Db fullDate
+            dateContab = get_Y_M_D_H_m_S_for_insert(row[IX_WITH_CODE_CONTAB])   # is datetime
+            dateValuta = get_Y_M_D_H_m_S_for_insert(row[IX_WITH_CODE_VALUTA])   # from Db fullDate
             credit     = row[IX_WITH_CODE_ACCRED]
             debit      = row[IX_WITH_CODE_ADDEB]
             TRdesc     = row[IX_WITH_CODE_TR_DESCR]
             TRcode     = row[IX_WITH_CODE_TR_CODE]
             FullDesc   = row[IX_WITH_CODE_FULL_DESCR]
-            pass
             record = [nRow, conto, dateContab, dateValuta, credit, debit, TRdesc,
                       TRcode, FullDesc]
             if (nRow, conto, dateContab, dateValuta, credit, debit) in self._transactions_map:
@@ -184,20 +187,25 @@ class Transact_Db(Xlsx_Manager):
         # ========================================================================================
         # creazione della lista dei record caricati da .XLSX ma non presenti nel database
         # esaminando la lista delle righe xlsx, di cui NON si e' trovato un codice Db
+        # print(f"\nWihtout_Code_Tree_List------------------")
         for row in self._tWihtout_Code_Tree_List:
             conto      = self._tXlsx_Conto      # settato nel tirar su .xlsx
             nRow       = row[IX_NO_CODE_NROW]
-            dateContab = row[IX_NO_CODE_CONTAB]
-            dateValuta = row[IX_NO_CODE_VALUTA]
+            dateContab = get_Y_M_D_H_m_S_for_insert(row[IX_NO_CODE_CONTAB])     # this is 'full date str
+            dateValuta = get_Y_M_D_H_m_S_for_insert(row[IX_NO_CODE_VALUTA])     # for searching in transactions
             credit     = row[IX_NO_CODE_ACCRED]
             debit      = row[IX_NO_CODE_ADDEB]
             FullDesc   = row[IX_NO_CODE_FULL_DESCR]
 
-            record     = [nRow, conto, dateContab, dateValuta, credit, debit, FullDesc]
-            if not (nRow, dateContab, dateValuta, credit, debit) in self._transactions_map:
-                self.noCode_rows_to_be_inserted_list.append(record)
+            # this is for xlsx rows to view that require datetime
+            rec_for_xlsx = [nRow, conto, row[IX_NO_CODE_CONTAB], row[IX_NO_CODE_CONTAB], credit, debit, FullDesc]
+
+            # print(f"{(nRow, conto, dateContab, dateValuta, credit, debit)}")
+            pass
+            if not (nRow, conto, dateContab, dateValuta, credit, debit) in self._transactions_map:
+                self.noCode_rows_to_be_inserted_list.append(rec_for_xlsx)
             else:
-                self.all_rows_inserted_list.append(record)
+                self.all_rows_inserted_list.append(rec_for_xlsx)
             pass
         self.Totals_dict[TOT_ROWS_INSERTED]    = len(self.all_rows_inserted_list)
         self.Totals_dict[TOT_STD_COD_TOBE_INS] = len(self.std_code_rows_to_be_insertd_list)
