@@ -307,7 +307,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
 
     # ------------------------     ***   Update TR code Record      -------------------------------
     def Clk_Update(self):
-        self.Chat.Tx_Request([TOP_CODES_MNGR, [TOP_VIEW_TRANSACT], CODE_TO_CLOSE], [])
+        self.Chat.Tx_Request([TOP_CODES_MNGR, [TOP_VIEW_TRANSACT], CODE_TO_CLOSE, []])
         if not self.Check_TRcode_Desc(BOTH_TR_GR):
             return
         self.Row_WithoutCode = None

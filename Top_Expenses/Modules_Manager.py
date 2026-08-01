@@ -186,7 +186,7 @@ class Modules_Manager:
             Msg_Dlg.wait_window()
             return False
 
-        self.Chat.Tx_Request([Origin, MAIN_WIND, VIEW_SELECTIONS, []])
+        self.Chat.Tx_Request([Origin, [MAIN_WIND], VIEW_SELECTIONS, []])
         return True
 
     # --------------------------------------------------------------------------------------------------

@@ -178,7 +178,7 @@ class Files_Names_Manager:
                 self._sel_dictionary = json.load(f)
             return OK
         except Exception as e:
-            # print(f"New dictionary : {e}")
+            print(f"New dictionary : {e}")
             return NEW
 
 # =======================================================================================

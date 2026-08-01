@@ -161,6 +161,7 @@ class Transact_Db(Xlsx_Manager):
             key = (nRow, conto, dateContab, dateValuta, credit, debit)
             self._transactions_map[key] = record[IX_TRANSACT_IDENT]
 
+        # print(f"\n------  _transactions_map ---------------------")
         # for row in self._transactions_map:
         #     print(row)
 
@@ -198,10 +199,10 @@ class Transact_Db(Xlsx_Manager):
             FullDesc   = row[IX_NO_CODE_FULL_DESCR]
 
             # this is for xlsx rows to view that require datetime
-            rec_for_xlsx = [nRow, conto, row[IX_NO_CODE_CONTAB], row[IX_NO_CODE_CONTAB], credit, debit, FullDesc]
-
-            # print(f"{(nRow, conto, dateContab, dateValuta, credit, debit)}")
-            pass
+            rec_for_xlsx = [nRow, conto, row[IX_NO_CODE_CONTAB], row[IX_NO_CODE_VALUTA], credit, debit, FullDesc]
+            if nRow == 44:
+                # print(f"{(nRow, conto, dateContab, dateValuta, credit, debit)}")
+                pass
             if not (nRow, conto, dateContab, dateValuta, credit, debit) in self._transactions_map:
                 self.noCode_rows_to_be_inserted_list.append(rec_for_xlsx)
             else:
