@@ -219,6 +219,7 @@ class Main_Window(tk.Tk):
         self.Mod_Mngr.Add_Toplevels_Id_List([Top_View_Transact,     TOP_VIEW_TRANSACT])
         self.Mod_Mngr.Add_Toplevels_Id_List([Top_Queries,           TOP_QUERY])
         self.Mod_Mngr.Add_Toplevels_Id_List([View_Message,          TOP_VIEW_MESS])
+        pass
 
 # ================================================================= #
 #                                                                   #

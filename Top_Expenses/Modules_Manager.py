@@ -108,6 +108,7 @@ class Modules_Manager:
             return True
         else:
             self.Chat.Tx_Request([Origin, [MAIN_WIND], VIEW_SELECTIONS, []])
+            # on create bExp_Selections this test is False
             self.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(Origin)
             return True
 
@@ -145,7 +146,8 @@ class Modules_Manager:
         else:
             self.Data.Load_Xlsx_Rows()
             self.Chat.Tx_Request([Origin, [MAIN_WIND], VIEW_SELECTIONS, []])
-            self.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(Origin)
+            if not self.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(Origin):
+                return False
             return True
 
     # --------------------------------------------------------------------------------------------
@@ -194,7 +196,9 @@ class Modules_Manager:
     # /home/mario/bFiles/bXLSX_Files/ TRANSACTIONS/
     def Check_create_transact_database_for_xlsx_filename(self) -> bool:
         full_xlsx_filename, xlsx_Year, xlsx_conto = self.Get_full_xlsx_name_year_conto()
-        # xlsx_filename = Get_File_Name(full_xlsx_filename)
+        if full_xlsx_filename is None:
+            return False
+
         ixConto = full_xlsx_filename.find(xlsx_conto)
         if ixConto == -1:
             msg_dlg = Message_Dlg(MSG_BOX_ERR, "FATAL ERROR 13:\nConto doesn't existin xlsx filename")
@@ -241,6 +245,9 @@ class Modules_Manager:
     def Get_full_xlsx_name_year_conto(self):
         self.Dummy = 0
         Full_xlsx_filename = self.Data.Get_sel_dictionary_value(XLSX_FILENAME)
+        if Full_xlsx_filename == UNKNOWN:
+            return None, None, None
+
         # FIDEU_2024_09-1.xlsx
         xlsx_filename = Get_File_Name(Full_xlsx_filename)
         Year     = xlsx_filename[6:10]

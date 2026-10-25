@@ -75,6 +75,12 @@ class Files_Names_Manager:
                 pass
 
     # -----------------------------------------------------------------------------------
+    def Clear_Xlsx_Conto_Year_Month(self):
+        self._Xlsx_Conto = None
+        self._Xlsx_Year  = None
+        self._Xlsx_Month = None
+
+    # -----------------------------------------------------------------------------------
     def Get_selections_dictionary(self):  # NEW SEL
         self._Load_dictionary()
         return self._sel_dictionary
