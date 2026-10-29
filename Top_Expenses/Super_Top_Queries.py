@@ -135,7 +135,7 @@ class Super_Top_Queries(tk.Toplevel):
         for RecFull in full_date_rec:
             RecCompact = self._compact_dates(RecFull)
             self.OneYear_Transact_List.append(RecCompact)
-            pass
+        pass
 
     # ----- This  function  is  overridden on Top_Queries  ---------------- #
     def Load_All_Data(self):                                                #
@@ -154,7 +154,7 @@ class Super_Top_Queries(tk.Toplevel):
             TRdescr = self.Data.Get_TrDesc_FromCode(TRcode)
             if TRdescr not in TRdescr_List:
                 TRdescr_List.append(TRdescr)
-                pass
+            pass
         try:
             TRdescr_List.sort()
         except Exception as e:

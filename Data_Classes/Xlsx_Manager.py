@@ -12,6 +12,7 @@
 import warnings
 from openpyxl import load_workbook
 from Data_Classes.Codes_DB import *
+from Widgt.Dialogs import Message_Dlg
 
 class Xlsx_Manager(Codes_db):
     def __init__(self):
@@ -29,7 +30,7 @@ class Xlsx_Manager(Codes_db):
         self.SheetName                         = ""
         self._Xlsx_Rows_From_Sheet_normalized  = []
         self._tXlsx_Rows_Compact      = []     # temporaries to not dommage the _list
-        self.tXlsx_Rows_for_view      = []
+        self._Xlsx_Rows_for_view      = []
         self._tWith_Code_Tree_List    = []
         self._tWihtout_Code_Tree_List = []
 
@@ -105,6 +106,9 @@ class Xlsx_Manager(Codes_db):
         if self._tXlsx_Conto == FLASH or self._tXlsx_Conto == AMBRA or self._tXlsx_Conto == POSTA:
             self._tXlsx_Rows_Compact.sort(reverse=True)
 
+        self._Xlsx_Rows_for_view = self._tXlsx_Rows_for_view
+        pass
+
         status, data = self._create_With_Out_codes_lists()
         if not status:
             return False, data
@@ -156,7 +160,6 @@ class Xlsx_Manager(Codes_db):
     # --------------------------------------------------------------------------------------------
     def _Save_Xlsx_Data(self):
         self._Xlsx_Rows_From_Sheet_normalized = self._tXlsx_Rows_From_Sheet_normalized
-        self._Xlsx_Rows_for_view              = self._tXlsx_Rows_for_view
         self._Xlsx_Rows_Compact      = self._tXlsx_Rows_Compact
 
         # ------------------------
@@ -246,22 +249,37 @@ class Xlsx_Manager(Codes_db):
             if nCode == 1:                          # Unic code found for Row
                 self.Insert_On_WithCode_List(Row, TRcodeList[0])
 
-            elif nCode > 1:                         # Multiple codes found for a xlsx row
+            elif nCode > 1:                         # Multiple codes found for an xlsx row
                 # print(TRcodeList, Row[IX_ROW_COMP_FULLDES])
-                message  = f"la descrizione completa per la riga n.  {str(Row[IX_ROW_COMP_NROW])}\n\n"
+                message  = f"{XLSXCHECK}\nla descrizione completa per la riga n.  {str(Row[IX_ROW_COMP_NROW])}\n\n"
                 message += f"Contab: {Row[IX_ROW_COMP_CONTAB]}\nValuta: {Row[IX_ROW_COMP_VAL]}\n"
                 message += f"Accred: {Row[IX_ROW_COMP_ACCR]}\nAddeb: {Row[IX_ROW_COMP_ADDEB]}\n"
                 message += f"{Row[IX_ROW_COMP_FULLDES]}\n\n"
                 message += f"combacia con piu stringhe per la ricerca:\n\n"
                 for code in TRcodeList:
                     strFound =  f"codice: {str(code)}:  descr: {self.Get_TrDesc_FromCode(code)}\n{self.Get_strToFind_FromCode(code)}\n\n"
-                    message += strFound        # dlg_select = View_Messa
-                return False, message
+                    message += strFound
+                message += f"\nInserisci un codice"
+                msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, message)
+                msg_Dlg.wait_window()
+                Code = msg_Dlg.data
+                if Code == NO:
+                        pass            # the row is missed
+                else:
+                    intCode = int(Code)
+                    Found = False
+                    for listCode in TRcodeList:
+                        if intCode == listCode:
+                            Found = True
+                            break
+                    if not Found:
+                        pass            # the row is missed
+                    else:
+                        self.Insert_On_WithCode_List(Row, intCode)
 
             else:  # Code NOT found
                 myRow = [Row[IX_ROW_COMP_NROW], self._tXlsx_Conto, Row[IX_ROW_COMP_CONTAB], Row[IX_ROW_COMP_VAL],
                          Row[IX_ROW_COMP_ACCR], Row[IX_ROW_COMP_ADDEB], Row[IX_ROW_COMP_FULLDES] ]
-
                 self._tWihtout_Code_Tree_List.append(myRow)
                 self._tTotWithout_Code += 1
                 pass

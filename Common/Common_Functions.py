@@ -77,8 +77,9 @@ def Gl_Cek_Xlsx_Name(Full_Filename):
             return True, ''
 
     errMessage = 'xlsx filename ERROR:\n\n'
-    errMessage += filename + '\n' + dirname + '\n' + conto + '\n' + conto1 + '\n' + conto2
-    return True, errMessage
+    # errMessage += filename + '\n' + dirname + '\n' + conto + '\n' + conto1 + '\n' + conto2
+    errMessage += f"filename={filename} \ndirname={dirname} \nconto filename={conto} \nconti: {conto1}  {conto2}"
+    return False, errMessage
 
 # ---------------------------------------------------------------------------------------
 # TRANSACTIONS / Transact_2024.db

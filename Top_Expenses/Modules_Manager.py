@@ -139,12 +139,12 @@ class Modules_Manager:
             Xlsx_Name = self.Data.Get_sel_dictionary_value(XLSX_FILENAME)
             statusA, dataA = Gl_Cek_Xlsx_Name(Xlsx_Name)
             if not statusA:
-                msg_dlg = Message_Dlg(MSG_BOX_ERR, f"{data}\n on selecting xlsx file")
+                msg_dlg = Message_Dlg(MSG_BOX_ERR, f"{data}")
                 msg_dlg.wait_window()
                 return False
             return True
         else:
-            self.Data.Load_Xlsx_Rows()
+            self.Load_xlsx_Mngr(Origin)
             self.Chat.Tx_Request([Origin, [MAIN_WIND], VIEW_SELECTIONS, []])
             if not self.check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(Origin):
                 return False
@@ -158,6 +158,17 @@ class Modules_Manager:
                 return False
         status, data = self.Data.Load_Xlsx_Rows()
         if not status:
+            if XLSXCHECK in data:
+                toRemove = "XLSXCHECK\n"
+                data     = data.replace(toRemove, "")
+                pass
+                data += f"\nInserisci un codice"
+                Msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, data)
+                Msg_Dlg.wait_window()
+                if Msg_Dlg.data == NO:
+                    return False
+                Code = Msg_Dlg.data
+                return True
             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dlg.wait_window()
             return False

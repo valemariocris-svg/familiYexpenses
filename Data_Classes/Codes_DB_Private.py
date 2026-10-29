@@ -100,7 +100,7 @@ class Codes_DB_Private(Files_Names_Manager):
     #  Apre il Codes DB, esegue una query (SELECT o UPDATE) e chiude
     #  la connect se CLOSE_DB   oppure  NO se  KEEP_OPEN
     def _query_execute(self, database, sql, parameters=(), close=True, all_records=False):
-        sql_clean = ''
+        sql_clean = sql.strip().upper()
         # Validazione rapida del database
         if database not in [CODES_FILE, TRANSACT_FILE]:
             return False, f"Error: Database {database} not recognized"
@@ -112,13 +112,16 @@ class Codes_DB_Private(Files_Names_Manager):
             self._database_connect = None
             return True, ''
         # 2. Open
+        if sql_clean.startswith('CREATE'):
+            pass
+
         status, data = self._open_database(database)  # it remains open whith NO_CLOSE request
         if not status:
             return False, data
         try:
             # 3. Esecuzione
             self._database_cursor.execute(sql, parameters)
-            sql_clean = sql.strip().upper()
+
             # Gestione delle SELECT
             if sql_clean.startswith('SELECT'):
                 # CASO A: È una query di verifica EXISTS

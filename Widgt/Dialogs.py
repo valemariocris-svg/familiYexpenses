@@ -44,7 +44,7 @@ class Message_Dlg(tk.Toplevel):
                 self.nLine           += 1
                 if self.nLine        > 80:
                     break
-        self.nLine += 2
+        self.nLine += 4
         VertFlot  = float(self.nLine) * 14.5
         Vert_Delt = int(VertFlot)
         Btn_Xpos  = 280
@@ -80,7 +80,6 @@ class Message_Dlg(tk.Toplevel):
             TheButton(self, BTN_DEF_EN, 150, Btn_Ypos, 14, 'CHANGE', self.Clk_CHANGE)
             pass
 
-
         elif Option == MSG_BOX_ASK_EXIT:
             self.title('YES  NO EXIT Request')
             self.Texto += ' ?'
@@ -88,6 +87,16 @@ class Message_Dlg(tk.Toplevel):
             TheButton(self, BTN_DEF_EN, 320, Btn_Ypos,  9, 'YES',    self.Clk_YES)
             TheButton(self, BTN_DEF_EN,  20, Btn_Ypos,  9, 'NO',     self.Clk_NO)
             TheButton(self, BTN_DEF_EN, 150, Btn_Ypos, 14, 'EXIT', self.Clk_CHANGE)
+
+        elif Option == MSG_BOX_SEL_NUM:
+            self.title('Insert a number')
+            # self.Texto += ' ?'
+            TheText(self, TXT_MSG_WHITE, 10, 10, self.MaxChar_xLine, self.nLine, self.Texto)
+            self.Txt_Num = TheText(self, TXT_ENAB, 150, Btn_Ypos-50, 5, 1, 'num')
+            TheButton(self, BTN_DEF_EN, 320, Btn_Ypos, 9, 'SELECT', self.Clk_SELECT)
+            TheButton(self, BTN_DEF_EN, 20, Btn_Ypos, 9, 'NO', self.Clk_NO)
+            # TheButton(self, BTN_DEF_EN, 150, Btn_Ypos, 14, 'EXIT', self.Clk_CHANGE)
+            pass
             pass
 
         else:
@@ -119,6 +128,11 @@ class Message_Dlg(tk.Toplevel):
         self.grab_release()
         self.destroy()
 
+    def Clk_SELECT(self):
+        Value = self.Txt_Num.Get_Text(STRING)
+        self.data = Value
+        self.grab_release()
+        self.destroy()
     
     def Clk_EXIT(self):
         self.data = EXIT

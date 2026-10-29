@@ -248,7 +248,7 @@ class Top_Queries(Super_Top_Queries):
         # Check for Conto -------------------------------------------------------
         if self.Conto_Selected == FIDFLH:
             ContoInDB = Rec[IX_TRANSACT_CONTO]
-            if ContoInDB == FIDEU or ContoInDB == FLASH or ContoInDB == POSTA:
+            if ContoInDB == FIDEU or ContoInDB == FLASH:   # or ContoInDB == POSTA:
                 pass
             else:
                 return -1

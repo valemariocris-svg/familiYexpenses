@@ -361,7 +361,7 @@ class Top_Codes_Mngr(Super_Top_Mngr):
 
     # ---------------------------------------------------------------------------------------------
     def Get_Confirm(self, strOper):     # "Delete"  "Update"  "add"
-        if type(self.TR_Code) is None or type(self.TR_Code) != int or self.TR_Code <= 0:
+        if type(self.TR_Code) is None or type(self.TR_Code) is not int or self.TR_Code <= 0:
             msg_dlg = Message_Dlg(MSG_BOX_INFO, "select a code number")
             msg_dlg.wait_window()
             return False

@@ -133,6 +133,7 @@ DICTIONARY_FULL_NAME   = '/home/mario/bExp_Selections/Sel_dictionary.json'
 
 CODES_FILENAME       = 'codes_filename'     # sel_dictionary
 XLSX_FILENAME        = 'xlsx_filename'
+XLSXCHECK            = 'XLSXCHECK'
 TRANSACT_FILENAME    = 'transact_filename'
 CODES_DIRECTORY      = 'Codes directory'
 XLSX_DIRECTORY       = 'Xlsx directory'
@@ -550,6 +551,7 @@ MSG_BOX_INFO     = 'Info message'
 MSG_BOX_ASK      = 'Ask Yes No Nomessage'
 MSG_BOX_ASK_YNCH = 'Ask Yes No Change'
 MSG_BOX_ASK_EXIT = 'Ask Yes No Exit'
+MSG_BOX_SEL_NUM  = 'Select num text'
 MSG_BOX_ERR      = 'Err message'
 
 TXT_ENAB      = 'TXT_ENAB'       # Text enable     Black on Mustard
