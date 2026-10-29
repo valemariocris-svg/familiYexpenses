@@ -3,9 +3,9 @@
 # XLS_Row_List : nRow  Contab  Valuta  Descr1  Accred  Addeb  Descr2                #
 # ================================================================================= #
 
+from Chat import Ms_Chat
 from Widgt.Tree_Widg import *
 from Top_Expenses.Modules_Manager import Modul_Mngr
-# from Widgt.Widgets import TheButton, TheText, TheCombo
 from Widgt.Dialogs import *
 
 # ===================================================================================

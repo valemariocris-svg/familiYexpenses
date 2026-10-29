@@ -76,10 +76,10 @@ class Top_Queries(Super_Top_Queries):
     # Three Frames for transactions view
     def Frames_Setup(self):
         Nrows     = 42
-        nColToVis = 7
-        Headings  = ['#0', 'Co', 'Contab', 'Valuta', 'Movimento ', 'Entrate ', 'Uscite   ', 'Id']  # TRcode
-        Anchor    = ['c',  'c',  'c',      'c',      'w',           'e',        'e',         'c']
-        Width     =  [0,    0,    66,       66,       200,           70,         70,          0]
+        nColToVis = 7  #    1        2          3          4            5         6          7
+        Headings  = ['#0', 'Co', 'Contab', 'Valuta', 'Descrizione ', 'Accred ', 'Addeb   ', 'Id']  # TRcode
+        Anchor    = ['c',  'c',  'c',      'c',      'w',            'e',        'e',         'c']
+        Width     =  [0,    0,    66,       66,       200,            70,         70,          0]
 
         Form_List = [Nrows, nColToVis, Headings, Anchor, Width]
         for Frame in self.Frames_List:
@@ -142,23 +142,43 @@ class Top_Queries(Super_Top_Queries):
 
     # -------------------------------------------------------------------------------------------------
     def Click_OnFrame(self, Value):
-        ViewMesg_Text = '\n *****    TRANSACTION   NOT   FOUND    *****'
+        ViewMesg_Text = ''
         if self.Tot_MonSelected != ONE_MONTH:
             Msg_Dlg = Message_Dlg(MSG_BOX_INFO, 'Please select only one month')
             Msg_Dlg.wait_window()
             return
         Ident = int(Value[IX_QUERY_IDENT])
-        RecordFound = self.Data.Get_transact_rec_from_id(Ident)
-        if RecordFound:
-            ViewMesg_Text = '-----   Transaction   found   -----\n'
-            Index = -1
-            for Item in RecordFound:
-                Index = Index + 1
-                if Index == 6:
-                    ViewMesg_Text += "------------------------------------\n"
-                ViewMesg_Text += str(Item) + '\n'
+        RecordFound = list (self.Data.Get_transact_rec_from_id(Ident))
+        if not RecordFound[0]:
+            ViewMesg_Text = '-----   Transaction NOT  found   -----\n'
+        else:
+            RecordList = RecordFound[1]
+            for Index in range(0, 10):
+                if Index == 9:
+                    ViewMesg_Text += f"{TRANSACTION_NAMES[Index]}\n  {str(RecordList[Index])}\n"
+                else:
+                    ViewMesg_Text += f"{TRANSACTION_NAMES[Index]}  {str (RecordList[Index])}\n"
             ViewMesg_Text += ' -----------------------------------\n'
-        self.Mod_Mngr.Top_Launcher(TOP_VIEW_MESS, TOP_QUERY, [ViewMesg_Text])
+            ViewMesg_Text += "Vuoi aggiornare il codice movimento "
+
+            Msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, ViewMesg_Text)
+            Msg_Dlg.wait_window()
+            iCode = int (Msg_Dlg.data)
+
+            if iCode == -1:
+                pass
+            elif iCode > 0:
+                result, data = self.Data.Check_If_Code_Exist(iCode)
+                if not result:
+                    Msg_Dlg = Message_Dlg(MSG_BOX_ERR, f"Code: {iCode}   NON trovato")
+                    Msg_Dlg.wait_window()
+                    pass
+                else:
+                    RecordUpdate = list (RecordList)
+                    RecordUpdate[IX_TRANSACT_TR_CODE] = iCode
+                    self.Data.Update_Transaction_Rec(RecordUpdate)
+                    pass
+        pass
 
    # -------------------------------------------------------------------------------------------------
     def Set_Geometry_Frames(self):
@@ -317,9 +337,10 @@ class Top_Queries(Super_Top_Queries):
                 DateValuta = Set_Month_Day(Valuta, Counts)
                 TRcode   = Rec[IX_TRANSACT_TR_CODE]
                 TRdescr  = self.Data.Get_TrDesc_FromCode(TRcode)
-                Conto = CONTO_RED[Rec[IX_TRANSACT_CONTO]]
-                View_Rec = [Conto, DateContab, DateValuta,  TRdescr, Rec[IX_TRANSACT_ACCRED], Rec[IX_TRANSACT_ADDEB],
-                            Rec[IX_TRANSACT_CONTO]]
+                # Conto = CONTO_RED[Rec[IX_TRANSACT_CONTO]]
+                Conto = Rec[IX_TRANSACT_CONTO]
+                View_Rec = [ Conto, DateContab, DateValuta,  TRdescr, Rec[IX_TRANSACT_ACCRED], Rec[IX_TRANSACT_ADDEB],
+                            Rec[IX_TRANSACT_IDENT] ]
                 self.Transact_xMonth_List[iMonth].append(View_Rec)
                 self.Tot_Transact_xMonth[iMonth] += 1
                 pass

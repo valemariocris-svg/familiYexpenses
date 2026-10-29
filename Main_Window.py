@@ -6,13 +6,13 @@
 # *********************************************************************************************** #
 
 from Top_Expenses.Modules_Manager import Modul_Mngr
+from Chat import Ms_Chat
 from Widgt.Dialogs import *
 from Widgt.Widgets import *
 from Top_Expenses.Top_Codes_Mngr import Top_Codes_Mngr
 from Top_Expenses.Top_Codes_View import Top_View_Codes
 from Top_Expenses.Top_GR_Codes_Mngr import Top_GR_Codes_Mngr
 from Top_Expenses.Top_Xlsx_Rows_View import Top_XLSX_Rows_View
-# from Top_Expenses.Top_Insert import Top_Insert
 from Top_Expenses.Top_View_Transactions import Top_View_Transact
 from Top_Expenses.Top_Queries import Top_Queries
 
@@ -218,7 +218,7 @@ class Main_Window(tk.Tk):
         # self.Mod_Mngr.Add_Toplevels_Id_List([Top_Insert,          TOP_INS])
         self.Mod_Mngr.Add_Toplevels_Id_List([Top_View_Transact,     TOP_VIEW_TRANSACT])
         self.Mod_Mngr.Add_Toplevels_Id_List([Top_Queries,           TOP_QUERY])
-        self.Mod_Mngr.Add_Toplevels_Id_List([View_Message,          TOP_VIEW_MESS])
+        # self.Mod_Mngr.Add_Toplevels_Id_List([View_Message,          TOP_VIEW_MESS])
         pass
 
 # ================================================================= #

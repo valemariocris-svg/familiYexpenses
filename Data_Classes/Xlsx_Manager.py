@@ -11,6 +11,8 @@
 
 import warnings
 from openpyxl import load_workbook
+from openpyxl.workbook import Workbook
+
 from Data_Classes.Codes_DB import *
 from Widgt.Dialogs import Message_Dlg
 
@@ -184,7 +186,7 @@ class Xlsx_Manager(Codes_db):
     # --------------------------------------------------------------------------------- #
     def _Get_Work_Sheet_Rows(self) -> tuple[bool, str]:
         filename = self.Get_sel_dictionary_value(XLSX_FILENAME)
-        Work_Book = None
+        Work_Book = Workbook
         try:
             Work_Book = load_workbook(filename)
         except Exception as e:
@@ -192,8 +194,9 @@ class Xlsx_Manager(Codes_db):
             self._tTot_Rows = -1
             return False, Err
         finally:
-            self.SheetName = Work_Book.sheetnames[0]  # always the first sheet
-            self._Work_Sheet = Work_Book[self.SheetName]
+            # self.SheetName = Work_Book.sheetnames[0]  # always the first sheet
+            self.SheetNames = Work_Book.sheetnames  # always the first sheet
+            self._Work_Sheet = Work_Book[self.SheetNames[0]]
             self._tTot_Rows = self._Work_Sheet.max_row
             return True, ''
 
@@ -262,20 +265,24 @@ class Xlsx_Manager(Codes_db):
                 message += f"\nInserisci un codice"
                 msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, message)
                 msg_Dlg.wait_window()
-                Code = msg_Dlg.data
-                if Code == NO:
-                        pass            # the row is missed
+                iCode = int (msg_Dlg.data)
+                if iCode == -1:
+                    pass            # the row is missed
                 else:
-                    intCode = int(Code)
                     Found = False
                     for listCode in TRcodeList:
-                        if intCode == listCode:
+                        if iCode == listCode:
                             Found = True
                             break
                     if not Found:
                         pass            # the row is missed
                     else:
-                        self.Insert_On_WithCode_List(Row, intCode)
+                        result, data = self.Check_If_Code_Exist(iCode)
+                        if not result:
+                            msg_Dlg = Message_Dlg(MSG_BOX_ERR, "Codice INESISTENTE!")
+                            msg_Dlg.wait_window()
+                        else:
+                            self.Insert_On_WithCode_List(Row, iCode)
 
             else:  # Code NOT found
                 myRow = [Row[IX_ROW_COMP_NROW], self._tXlsx_Conto, Row[IX_ROW_COMP_CONTAB], Row[IX_ROW_COMP_VAL],

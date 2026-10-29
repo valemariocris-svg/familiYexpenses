@@ -493,11 +493,10 @@ import glob
 import os
 
 def Get_Transactions_Years(Transact_Filename_Path):
-    transactions_directory = os.path.dirname(Transact_Filename_Path)
+    transactions_directory = str(os.path.dirname(Transact_Filename_Path))
 
     # 2. Creo il pattern per cercare tutti i file Transact_*.db in QUELLA cartella
-    # pattern = os.path.join(transactions_directory, "Transact_*.db")
-    pattern = transactions_directory + "/Transact_*.db"
+    pattern = os.path.join(transactions_directory, "Transact_*.db")
 
     # 3. Cerco i file sul disco di Linux
     Found_Files = glob.glob(pattern)

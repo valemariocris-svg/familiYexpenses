@@ -281,6 +281,32 @@ class Transact_Db(Xlsx_Manager):
         return True, ''
 
     # -------------------------------------------------------------------------------------------------
+    def Update_Transaction_Rec(self, Record):
+        Ident   = Record[IX_TRANSACT_IDENT]
+        nRow    = Record[IX_TRANSACT_NROW]
+        Conto   = Record[IX_TRANSACT_CONTO]
+        Contab  = Record[IX_TRANSACT_CONTAB]
+        Valuta  = Record[IX_TRANSACT_VALUTA]
+        Accred  = Record[IX_TRANSACT_ACCRED]
+        Addeb   = Record[IX_TRANSACT_ADDEB]
+        TRdesc  = Record[IX_TRANSACT_TR_DESC]
+        FullDes = Record[IX_TRANSACT_FULL_DESC]
+
+        sql = """UPDATE TRANSACT \
+                 SET Ident=?, \
+                     nRow=?, \
+                     Conto=?, \
+                     Contab=?, \
+                     Valuta=?, \
+                     Accred=?, \
+                     Addeb=?, \
+                     TRdesc=?, \
+                     FullDes=?, \
+                 WHERE TRcode==?"""
+        parameters = (Ident, nRow, Conto, Contab, Valuta, Accred, Addeb, TRdesc, FullDes)
+        return self._query_execute(TRANSACT_FILE, sql, parameters, CLOSE_DB)
+
+    # -------------------------------------------------------------------------------------------------
     # Record No Code:     [nRow,   Contab, Valuta, 'Accr', 'Addeb', FullDes]
     # Record to insert :  [(),     nRow, Conto,  Contab, Valuta, TRdesc, 'Accr',  'Addeb', TRcode, FullDes]
     # Record on Database: [Ident,  nRow, Conto,  Contab, Valuta, TRdesc, flAccr,  flAddeb, TRcode, FullDes]

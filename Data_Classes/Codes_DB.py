@@ -16,10 +16,6 @@ class Codes_db(Codes_DB_Private):
         return self._Get_Codes_Alpabetically(String)
 
     # ----------------------------------------------------------------------------------------
-    def Get_MultiCodes_Match_List(self):
-        return self._Multi_Codes_Matching_List
-
-    # ----------------------------------------------------------------------------------------
     def Load_Codes_Tables(self):
         return self._Load_Codes_Tables()
 
@@ -131,6 +127,8 @@ class Codes_db(Codes_DB_Private):
         status, data = self._query_execute(CODES_FILE, sql, (TRcode,), CLOSE_DB)
         if not status:
             return False, 'Fatal error on checking code exists\n'
+        if not data:
+            return False, 'Code NOT found!\n'
         return True, ''
 
     # ------------------------------------------------------------------------------------------- #

@@ -6,8 +6,7 @@
 # --------------------------------------------- #
 
 import time
-from Common.Constants import *
-from Widgt.Dialogs import Message_Dlg
+from Widgt.Dialogs import *
 
 # ---------------------------------------------------------------------------------------
 class Messages_Chat:

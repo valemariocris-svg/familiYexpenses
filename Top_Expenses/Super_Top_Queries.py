@@ -10,6 +10,7 @@
 
 from Top_Expenses.Modules_Manager import Modul_Mngr
 from Widgt.Dialogs import *
+from Chat import Ms_Chat
 
 # =================================================================================================================
 class Super_Top_Queries(tk.Toplevel):

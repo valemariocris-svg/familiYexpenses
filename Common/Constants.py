@@ -101,7 +101,6 @@ TOP_XLSX_VIEW       = 'Xlsx Rows View  '      # Toplevel  xlsx File Viewer
 # TOP_INS             = 'Top_Ins_Tansact '      # Toplevel Insert Transactions on DB
 TOP_VIEW_TRANSACT   = 'Top View Transact'     # Topleveel view transactions
 TOP_QUERY           = 'Top_Queries     '      # Toplevel for Queries
-TOP_VIEW_MESS       = 'Top show messages '    # Toplevel to shaw messages
 TOP_TRANSACT_VERIFY = 'Top Transactions Verify'
 ANY                 = 'All Modules     '
 
@@ -210,7 +209,7 @@ IX_TR_FULL_TR_CODE     = 0
 IX_TR_FULL_GR_CODE     = 1
 IX_TR_FULL_CA_CODE     = 2
 IX_TR_FULL_TR_DESC     = 3
-IX_TR_FULL_GR_DESC     = 4
+IX_TR_FULL_GR_DESC     = 4 # TOP_VIEW_MESS       = 'Top show messages '    # Toplevel to shaw messages#
 IX_TR_FULL_CA_DESC     = 5
 IX_TR_FULL_STR_TO_FIND = 6
 IX_TR_FULL_FULL_DESC   = 7     # The full description of Row when the new code was created
@@ -335,6 +334,10 @@ IX_TRANSACT_TR_DESC  = 7
 IX_TRANSACT_TR_CODE  = 8
 IX_TRANSACT_FULL_DESC= 9  # DESC1 / DESC2
 
+TRANSACTION_NAMES = ["IDENT     :", "NROW      :", "CONTO     :", "CONTAB    : ",
+                     "VALUTA    :", "ACCRED    :", "ADDEB     :",
+                     "DESCR     :", "CODE      :", "FULL_DESC :"]
+
 CONTABILE   = 'contabile'
 VALUTA      = 'valuta'
 
@@ -433,15 +436,13 @@ QUERIES_GEOMETRY_INDEX  = {ONE_MONTH:0, TWO_MONTHS:1, THREE_MONTHS:2, FOUR_MONTH
 #                         -------------------------------    ------------------------   ----------------------
 #                         x1                         Widg    x1   x2             Widg    x1   x2   x3  Widg
 QUERIES_FRAMES_POS_X = [ [10, XY_TO_HIDE, XY_TO_HIDE, 530], [10, 520, XY_TO_HIDE, 1030], [10, 520, 1030, 1540] ]
-
-WIDGETS_POS_Y        = [450, 880, 1310]
-#                          total frames per total months
+#                         IX_TR_TR_CODE total frames per total months
 QUERIES_NR_FRAMES    = {ONE_MONTH:1, TWO_MONTHS:2, THREE_MONTHS:3, FOUR_MONTHS:2, SIX_MONTHS:3, TWELVE_MONTHS:3}
 
 #                          total months per frame
 QUERIES_NR_MONTHS_BY_TREE = {ONE_MONTH:1, TWO_MONTHS:1, THREE_MONTHS:1, FOUR_MONTHS:2, SIX_MONTHS:2, TWELVE_MONTHS:4}
 
-IX_QUERY_CONTO    = 0   # Row on transactions database
+IX_QUERY_CONTO    = 0   # Row on queries Frames
 IX_QUERY_CONTAB   = 1
 IX_QUERY_VALUTA   = 2
 IX_QUERY_DESCR    = 3

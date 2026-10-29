@@ -3,6 +3,7 @@
 #                                                                                    #
 # ---------------------------------------------------------------------------------- #
 from Top_Expenses.Modules_Manager import Modul_Mngr
+from Chat import Ms_Chat
 from Widgt.Widgets import *
 from Widgt.Tree_Widg import *
 from Widgt.Canvas_Frame import *

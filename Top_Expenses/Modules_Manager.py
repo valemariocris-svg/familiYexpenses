@@ -6,6 +6,7 @@
 # ============================================================================= #
 
 from Widgt.Dialogs import *
+from Chat import Ms_Chat
 
 class Modules_Manager:
     def __init__(self):
@@ -165,9 +166,9 @@ class Modules_Manager:
                 data += f"\nInserisci un codice"
                 Msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, data)
                 Msg_Dlg.wait_window()
-                if Msg_Dlg.data == NO:
+                iNum = int (Msg_Dlg.data)
+                if iNum == -1:
                     return False
-                Code = Msg_Dlg.data
                 return True
             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dlg.wait_window()
