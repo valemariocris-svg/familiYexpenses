@@ -133,7 +133,7 @@ DICTIONARY_FULL_NAME   = '/home/mario/bExp_Selections/Sel_dictionary.json'
 
 CODES_FILENAME       = 'codes_filename'     # sel_dictionary
 XLSX_FILENAME        = 'xlsx_filename'
-XLSXCHECK            = 'XLSXCHECK'
+# XLSXCHECK            = 'XLSXCHECK'
 TRANSACT_FILENAME    = 'transact_filename'
 CODES_DIRECTORY      = 'Codes directory'
 XLSX_DIRECTORY       = 'Xlsx directory'

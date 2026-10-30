@@ -159,17 +159,17 @@ class Modules_Manager:
                 return False
         status, data = self.Data.Load_Xlsx_Rows()
         if not status:
-            if XLSXCHECK in data:
-                toRemove = "XLSXCHECK\n"
-                data     = data.replace(toRemove, "")
-                pass
-                data += f"\nInserisci un codice"
-                Msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, data)
-                Msg_Dlg.wait_window()
-                iNum = int (Msg_Dlg.data)
-                if iNum == -1:
-                    return False
-                return True
+            # if XLSXCHECK in data:
+            #     toRemove = "XLSXCHECK\n"
+            #     data     = data.replace(toRemove, "")
+            #     pass
+            #     data += f"\nInserisci un codice"
+            #     Msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, data)
+            #     Msg_Dlg.wait_window()
+            #     iNum = int (Msg_Dlg.data)
+            #     if iNum == -1:
+            #         return False
+            #     return True
             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dlg.wait_window()
             return False
