@@ -119,12 +119,13 @@ class Super_Top_Queries(tk.Toplevel):
         self.Str_Exclude = tk.StringVar
         self.OptExclude  = TheCombo(self,  self.Str_Exclude, self.Widg_PosX,  315, 21, 16,  self.Excl_List,
                                    '', self.Clk_Excl)
-        self.Extraord_Text = TheText(self,TXT_DIS_BLACK, self.Widg_PosX, 355, 18, 1, "straord = 16")
+        self.Extraord_Text = TheText(self,TXT_DIS_BLACK, self.Widg_PosX, 355, 15, 1, "straord = ")
 
         # ---------------------------------    Buttons   ----------------------------------------------------------
-        self.Btn_DB_View = TheButton(self, BTN_DEF_EN,self.Widg_PosX,550,15, 'visual. movimenti',self.Clk_ViewTransact)
-        self.Btn_xlsx_View = TheButton(self,BTN_DEF_EN,self.Widg_PosX,510,15, 'visual. righe Xlsx', self.Clk_XlsxView)
-        self.Btn_Exit      = TheButton(self,BTN_BOL_EN,self.Widg_PosX,936,13, '  E S C I  ',      self.Call_OnClose)
+        self.Btn_Codes_View = TheButton(self,BTN_DEF_EN,self.Widg_PosX,470,15, 'visual. codici mov.', self.Clk_CodesView)
+        self.Btn_xlsx_View  = TheButton(self,BTN_DEF_EN,self.Widg_PosX,510,15, 'visual. righe Xlsx', self.Clk_XlsxView)
+        self.Btn_DB_View    = TheButton(self, BTN_DEF_EN,self.Widg_PosX,550,15, 'visual. movimenti',self.Clk_ViewTransact)
+        self.Btn_Exit       = TheButton(self,BTN_BOL_EN,self.Widg_PosX,936,13, '  E S C I  ',      self.Call_OnClose)
 
         self.Set_All_Select()
         pass
@@ -370,6 +371,9 @@ class Super_Top_Queries(tk.Toplevel):
     def Clk_ViewTransact(self):
         self.Mod_Mngr.Top_Launcher(TOP_VIEW_TRANSACT, TOP_QUERY, [])
 
+    # -------------------------------------------------------------------------------------------------------------
+    def Clk_CodesView(self):
+        self.Mod_Mngr.Top_Launcher(TOP_CODES_VIEW, TOP_QUERY, [])
     # -------------------------------------------------------------------------------------------------------------
     def Clk_XlsxView(self):
         self.Mod_Mngr.Top_Launcher(TOP_XLSX_VIEW, TOP_QUERY, [])

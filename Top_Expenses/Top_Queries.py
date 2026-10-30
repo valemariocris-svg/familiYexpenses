@@ -159,7 +159,7 @@ class Top_Queries(Super_Top_Queries):
                 else:
                     ViewMesg_Text += f"{TRANSACTION_NAMES[Index]}  {str (RecordList[Index])}\n"
             ViewMesg_Text += ' -----------------------------------\n'
-            ViewMesg_Text += "Vuoi aggiornare il codice movimento "
+            ViewMesg_Text += "Vuoi aggiornare il codice movimento\nrestart Queries(!) "
 
             Msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, ViewMesg_Text)
             Msg_Dlg.wait_window()
@@ -176,8 +176,12 @@ class Top_Queries(Super_Top_Queries):
                 else:
                     RecordUpdate = list (RecordList)
                     RecordUpdate[IX_TRANSACT_TR_CODE] = iCode
-                    self.Data.Update_Transaction_Rec(RecordUpdate)
+                    result, data = self.Data.Update_Transaction_Rec(RecordUpdate)
+                    if not result:
+                        Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
+                        Msg_Dlg.wait_window()
                     pass
+        # self.Load_All_Data()    does't work
         pass
 
    # -------------------------------------------------------------------------------------------------
@@ -208,8 +212,9 @@ class Top_Queries(Super_Top_Queries):
         self.OptMenu_CA.PosX(PosXok)
         self.OptExclude.PosX(PosXok)
         self.Extraord_Text.PosX(PosXok)
-        self.Btn_xlsx_View.SetX(PosXok)
 
+        self.Btn_Codes_View.SetX(PosXok)
+        self.Btn_xlsx_View.SetX(PosXok)
         self.Btn_DB_View.SetX(PosXok)
         self.Btn_Exit.SetX(PosXok)
 
