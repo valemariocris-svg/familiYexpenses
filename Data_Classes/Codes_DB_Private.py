@@ -99,69 +99,62 @@ class Codes_DB_Private(Files_Names_Manager):
     # --------------------------------------------------------------------------------------
     #  Apre il Codes DB, esegue una query (SELECT o UPDATE) e chiude
     #  la connect se CLOSE_DB   oppure  NO se  KEEP_OPEN
+
     def _query_execute(self, database, sql, parameters=(), close=True, all_records=False):
         sql_clean = sql.strip().upper()
+
         # Validazione rapida del database
         if database not in [CODES_FILE, TRANSACT_FILE]:
             return False, f"Error: Database {database} not recognized"
+
         # 1. simple request for closing db
         if sql == SQL_CLOSE_DB:
             self._close_db_connection()
-            # IMPORTANTE: resettiamo l'oggetto a None così alla prossima chiamata
-            # il test 'if not self._database_connect' funzionerà correttamente
             self._database_connect = None
             return True, ''
-        # 2. Open
-        if sql_clean.startswith('CREATE'):
-            pass
 
-        status, data = self._open_database(database)  # it remains open whith NO_CLOSE request
+        # 2. Open database
+        status, data = self._open_database(database)
         if not status:
             return False, data
+
+        # Variabile per tracciare il risultato dell'operazione
+        success = True
+        result_data = ''
+
         try:
             # 3. Esecuzione
             self._database_cursor.execute(sql, parameters)
 
             # Gestione delle SELECT
             if sql_clean.startswith('SELECT'):
-                # CASO A: È una query di verifica EXISTS
                 if 'EXISTS' in sql_clean:
                     record = self._database_cursor.fetchone()
-                    # Se riga esiste e il primo elemento è 1, allora esiste
-                    if record and record[0] == 1:
-                        return True, True  # Restituiamo True (successo) e True (esiste)
-                    else:
-                        return True, False  # Restituiamo True (successo) e False (non esiste)
-
-                # CASO B: È una query di estrarre un solo record con Id
-                # Modifichiamo solo questa riga:
-                # Usa fetchone SOLO SE c'è WHERE e NON hai chiesto esplicitamente tutti i record
+                    exists_val = bool(record and record[0] == 1)
+                    result_data = exists_val  # Può essere True o False
                 elif 'WHERE' in sql_clean and not all_records:
-                    data = self._database_cursor.fetchone()     # is  (nCode,)
-                    return True, data
+                    result_data = self._database_cursor.fetchone()  # (nCode,) o None
                 else:
-                    # Cadranno qui tutte le SELECT senza WHERE, E le select con WHERE che hanno all_records=True
-                    data = self._database_cursor.fetchall()
-                    return True, data
+                    result_data = self._database_cursor.fetchall()  # list
             else:
-                # Se è INSERT/UPDATE/DELETE, CREATE  salviamo le modifiche
+                # INSERT / UPDATE / DELETE / CREATE
                 self._database_connect.commit()
-                return True, ''
+                result_data = ''
 
         except sqlite3.Error as e:
-            str_Err = f"FATAL ERROR 24:\nError on {sql_clean}\n{database}\n{e}"
-            return False, str_Err
+            success = False
+            result_data = f"FATAL ERROR 24:\nError on {sql_clean}\n{database}\n{e}"
+
         finally:
-            # 4. Chiusura garantita (anche in caso di errore)
+            # 4. Chiusura garantita (eseguita SEMPRE, sia in caso di successo che di errore)
             if close:
-                status, dataclose = self._close_db_connection()
-                if not status:
+                status_close, dataclose = self._close_db_connection()
+                if not status_close:
                     return False, dataclose
-                # IMPORTANTE: resettiamo l'oggetto a None così alla prossima chiamata
-                # il test 'if not self._database_connect' funzionerà correttamente
                 self._database_connect = None
-                # return True, data
-            pass
+
+        # Unico punto di uscita pulito alla fine: zero warning per l'IDE!
+        return success, result_data
 
     # -------------------------------------------------------------------------------------------
     def _get_codes_tables(self):
