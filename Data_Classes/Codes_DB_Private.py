@@ -119,8 +119,8 @@ class Codes_DB_Private(Files_Names_Manager):
             return False, data
 
         # Variabile per tracciare il risultato dell'operazione
-        success = True
-        result_data = ''
+        success     = True
+        result_data = ' '   # not clear:  local variable not used
 
         try:
             # 3. Esecuzione

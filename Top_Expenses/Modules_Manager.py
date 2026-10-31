@@ -62,8 +62,30 @@ class Modules_Manager:
 
             if not self.Load_Transact_Mngr(Origin):           # load transactions records
                 return
-        TopLevel = self._Get_TopLev(Top_to_launch)
-        TopLevel([])
+
+        foundClass = False
+        for Id in self.Toplevels_Id_List:
+            if Id[IX_TOP_NAME] == Top_to_launch:
+                ClasseToLaunch = Id[IX_TOP_CLASS]
+                foundClass = True
+                ClasseToLaunch([])
+                break
+        if foundClass:
+            pass
+        else:
+            Msg_Dlg = Message_Dlg(MSG_BOX_ERR, f"Modulo {Top_to_launch}\nNOT FOUND! Exit")
+            Msg_Dlg.wait_window()
+            return
+
+
+        # TopLevel_class = self._Get_TopLev(Top_to_launch)
+        # if TopLevel_class == NOK:
+        #     # Ora l'IDE sa per certo che TopLevel_class è valido
+        #     TopLevel_class([])   # Qui PyCharm e' proprio un mulo che non capisce il None
+        # else:
+        #     Msg_Dlg = Message_Dlg(MSG_BOX_ERR, f"Modulo {Top_to_launch}\nNOT FOUND! Exit")
+        #     Msg_Dlg.wait_window()
+        #     return
 
     # -----------------------------------------------------------------------------------------------
     def check_xlsx_transact_filenames_load_transact_create_rows_to_ins_list(self, Origin):
@@ -159,17 +181,6 @@ class Modules_Manager:
                 return False
         status, data = self.Data.Load_Xlsx_Rows()
         if not status:
-            # if XLSXCHECK in data:
-            #     toRemove = "XLSXCHECK\n"
-            #     data     = data.replace(toRemove, "")
-            #     pass
-            #     data += f"\nInserisci un codice"
-            #     Msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, data)
-            #     Msg_Dlg.wait_window()
-            #     iNum = int (Msg_Dlg.data)
-            #     if iNum == -1:
-            #         return False
-            #     return True
             Msg_Dlg = Message_Dlg(MSG_BOX_ERR, data)
             Msg_Dlg.wait_window()
             return False
@@ -275,12 +286,18 @@ class Modules_Manager:
             self.Toplevels_Id_List.append(Id)
         pass
 
+    def Null_Function(self):
+        self.Dummy = 0
+        return False
+
     # ---------------------------------------------------------------------------------------------
     def _Get_TopLev(self, NAME):
+        ClassId = self.Null_Function()
         for Id in self.Toplevels_Id_List:
             if Id[IX_TOP_NAME] == NAME:
-                return Id[IX_TOP_CLASS]
-        return None
+                ClassId = Id[IX_TOP_CLASS]
+                break
+        return ClassId
 
     # ---------------------------------------------------------------------------------------------
     # invoked on  sel_Codes_Db  Delete  Add Update  code   sel_xlsx  Insert  (Queries....)

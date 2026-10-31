@@ -29,7 +29,7 @@ class Xlsx_Manager(Codes_db):
         #  nRow timeContab timeValuta  Des1  Accred  Addeb  Des2
 
         # -------   _tAtt : temporary attributes  that will be copied on _Att  if all OK  -------------
-        self.SheetName                         = ""
+        self.SheetNames                        = []
         self._Xlsx_Rows_From_Sheet_normalized  = []
         self._tXlsx_Rows_Compact      = []     # temporaries to not dommage the _list
         self._Xlsx_Rows_for_view      = []
@@ -196,10 +196,10 @@ class Xlsx_Manager(Codes_db):
             self._tTot_Rows = -1
             return False, Err
         finally:
-            # self.SheetName = Work_Book.sheetnames[0]  # always the first sheet
-            self.SheetNames = Work_Book.sheetnames  # always the first sheet
-            self._Work_Sheet = Work_Book[self.SheetNames[0]]
-            self._tTot_Rows = self._Work_Sheet.max_row
+            self.SheetNames  = Work_Book.sheetnames  # always the first sheet
+            firstSheetName   = self.SheetNames[0]
+            self._Work_Sheet = Work_Book[firstSheetName]
+            self._tTot_Rows  = self._Work_Sheet.max_row
             return True, ''
 
     # -----------------------------------------------------------------------------------
