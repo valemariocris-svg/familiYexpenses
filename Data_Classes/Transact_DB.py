@@ -270,10 +270,6 @@ class Transact_Db(Xlsx_Manager):
             if not status:
                 data = f"{data}\n\non inserting row\n{nRow}  {Contab}  {Valuta}  {Accred}  {Addeb}\n"
                 return False, data
-            # self._query_execute(TRANSACT_FILE, SQL_CLOSE_DB, (), CLOSE_DB)
-            #     messg  = f"FATAL ERROR 41:\non inserting row\n{nRow}  {Contab}  {Valuta}  {Accred}  {Addeb}\n"
-            #     messg += f"{TRdesc}  {TRcode}\n{FullDes}\n"
-            #     return False, messg
 
         self._query_execute(TRANSACT_FILE, SQL_CLOSE_DB, (), CLOSE_DB)
         return True, ''
