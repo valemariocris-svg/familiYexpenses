@@ -255,62 +255,6 @@ class Xlsx_Manager(Codes_db):
             elif nCode > 1:                         # Multiple codes found for an xlsx row
                 self.Multi_matching_row(Row, TRcodeList)
 
-                # conto      = self._tXlsx_Conto
-                # template   = [SIC, YMD, YMD, SIC, SIC, SIC]
-                # row_to_find = convert_row_for_View_xlsx(template, Row)
-                # nRow        = row_to_find[IX_ROW_COMP_NROW]
-                # dateContab  = row_to_find[IX_ROW_COMP_CONTAB]
-                # dateValuta  = row_to_find[IX_ROW_COMP_VAL]
-                # credit      = row_to_find[IX_ROW_COMP_ACCR]
-                # debit       = row_to_find[IX_ROW_COMP_ADDEB]
-                # FullDes     = row_to_find[IX_ROW_COMP_FULLDES]
-                #
-                # parameters = (nRow, conto, dateContab, dateValuta, credit, debit, FullDes)
-                # status, result = self.Get_transactions_with_xlsx_row(parameters)
-                # if status:
-                #     if len(result) > 1:
-                #         # ALARM muti record on transactions Db
-                #         MsgError = f"FATAL ERROR:\n found on trabsactions Db\n"
-                #         MsgError += f"{len(result)} Records with Id:\n"
-                #         for Rec in result:
-                #             MsgError += f"{Rec[IX_TRANSACT_IDENT]}  "
-                #         Dlg_Msg = Message_Dlg(MSG_BOX_ERR, MsgError)
-                #         Dlg_Msg.wait_window()
-                #         return False, ''
-                #     else:
-                #         Code = result[0][IX_TRANSACT_IDENT]
-                #         self.Insert_On_WithCode_List(Row, Code)
-                # else:
-                #     message  = f"la descrizione completa per la riga n.  {str(Row[IX_ROW_COMP_NROW])}\n\n"
-                #     message += f"Contab: {Row[IX_ROW_COMP_CONTAB]}\nValuta: {Row[IX_ROW_COMP_VAL]}\n"
-                #     message += f"Accred: {Row[IX_ROW_COMP_ACCR]}\nAddeb: {Row[IX_ROW_COMP_ADDEB]}\n"
-                #     message += f"{Row[IX_ROW_COMP_FULLDES]}\n\n"
-                #     message += f"combacia con piu stringhe per la ricerca:\n\n"
-                #     for code in TRcodeList:
-                #         strFound =  f"codice: {str(code)}:  descr: {self.Get_TrDesc_FromCode(code)}\n{self.Get_strToFind_FromCode(code)}\n\n"
-                #         message += strFound
-                #     message += f"\nInserisci un codice"
-                #     msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, message)
-                #     msg_Dlg.wait_window()
-                #     iCode = int (msg_Dlg.data)
-                #     if iCode == -1:
-                #         pass            # the row is missed
-                #     else:
-                #         Found = False
-                #         for listCode in TRcodeList:
-                #             if iCode == listCode:
-                #                 Found = True
-                #                 break
-                #         if not Found:
-                #             pass            # the row is missed
-                #         else:
-                #             result, data = self.Check_If_Code_Exist(iCode)
-                #             if not result:  # the row is missed
-                #                 msg_Dlg = Message_Dlg(MSG_BOX_ERR, "Codice INESISTENTE!")
-                #                 msg_Dlg.wait_window()
-                #             else:
-                #               self.Insert_On_WithCode_List(Row, iCode)
-
             else:  # Code NOT found
                 myRow = [Row[IX_ROW_COMP_NROW], self._tXlsx_Conto, Row[IX_ROW_COMP_CONTAB], Row[IX_ROW_COMP_VAL],
                          Row[IX_ROW_COMP_ACCR], Row[IX_ROW_COMP_ADDEB], Row[IX_ROW_COMP_FULLDES] ]

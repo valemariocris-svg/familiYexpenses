@@ -306,7 +306,6 @@ YMD          = 'year month day'
 COMPC_YMD    = "year month day for trnsact view"   # compact date full string
 INT_TOSTRING = 'integer to str'
 FLOAT_TOSTR  = 'float to string'      # convert float to str 1.234,56  or '  '
-# FLOAT_TOSTR_0  = 'float to string'    # convert float to str 1.234,56  or 0.0
 
 # ================================================================================================= #
 #                       ------     5. transactions database settings         -----                  #

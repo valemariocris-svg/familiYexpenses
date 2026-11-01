@@ -238,7 +238,7 @@ def get_day_month_year_for_view_xlsx(Datetime):    # '2026/09/02
     return " "
 
 # -------------------------------------------------------------------------------------------------
-# per visualizzazioni su tree, con record da xlsx, che e' in datetime
+# per visualizzazioni su tree, con record da xlsx, che e' in datetime  N.U.
 def get_year_month_day_from_datetime(Datetime):    # '2026/09/02
     if isinstance(Datetime, datetime):
         str_date = Datetime.strftime("%Y/%m/%d, %H:%M:%S")

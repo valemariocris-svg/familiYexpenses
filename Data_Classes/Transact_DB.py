@@ -200,9 +200,7 @@ class Transact_Db(Xlsx_Manager):
 
             # this is for xlsx rows to view that require datetime
             rec_for_xlsx = [nRow, conto, row[IX_NO_CODE_CONTAB], row[IX_NO_CODE_VALUTA], credit, debit, FullDesc]
-            if nRow == 44:
-                # print(f"{(nRow, conto, dateContab, dateValuta, credit, debit)}")
-                pass
+
             if not (nRow, conto, dateContab, dateValuta, credit, debit) in self._transactions_map:
                 self.noCode_rows_to_be_inserted_list.append(rec_for_xlsx)
             else:
@@ -310,61 +308,6 @@ class Transact_Db(Xlsx_Manager):
         if not status:
             return False, f"record with Ident {Id} not found"
         return True, data
-
-    # # --------------------------------------------------------------------------------------------------
-    # def Get_transactions_with_xlsx_row(self, parameters) -> tuple[bool, list | str]:     #tuple[bool, list | str]:
-    #     #nRow,conto,dateContab,dateValuta,credit,debit,FullDes
-    #     # I dati noti del movimento da cercare
-    #     # parameters = (nRow,conto,dateContab,dateValuta,credit,debit,FullDes)
-    #
-    #     sql_query = """
-    #                 SELECT Ident, \
-    #                        nRow, \
-    #                        Conto, \
-    #                        Contab, \
-    #                        Valuta, \
-    #                        Accred, \
-    #                        Addeb, \
-    #                        TRdesc, \
-    #                        TRcode, \
-    #                        FullDes
-    #                 FROM TRANSACT
-    #                 WHERE nRow = ?
-    #                   AND Conto = ?
-    #                   AND Contab = ?
-    #                   AND Valuta = ?
-    #                   AND Accred = ?
-    #                   AND Addeb = ?
-    #                   AND FullDes = ?; \
-    #                 """
-    #
-    #     # Chiamiamo la funzione chiedendo tutti i record corrispondenti
-    #     success, result = self._query_execute(
-    #         database=TRANSACT_FILE,
-    #         sql=sql_query,
-    #         parameters=parameters,
-    #         close=True,
-    #         all_records=True  # <-- Fondamentale per avere la lista completa
-    #     )
-    #
-    #     if success:
-    #         if result:
-    #             # result è una LISTA di tuple
-    #             print(f"Trovati {len(result)} movimenti corrispondenti:")
-    #
-    #             for record in result:
-    #                 ident_trovato = record[0]  # Il primo elemento è l'Ident
-    #                 print(f" - Trovato Ident: {ident_trovato} (Riga: {record[1]}, Importo Addebito: {record[6]})")
-    #
-    #                 # Qui puoi gestire la tua logica (es. mostrarli in una finestra di scelta se sono multipli)
-    #             return True, result
-    #         else:
-    #             strErr = "Nessun movimento trovato."
-    #             return False, strErr
-    #     else:
-    #         return False, f"Errore query \nGet_transactions_with_xlsx_row"
-
-
 
     def get_all_rows_inserted_list(self):
         return self.all_rows_inserted_list
