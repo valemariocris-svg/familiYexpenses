@@ -238,6 +238,15 @@ def get_day_month_year_for_view_xlsx(Datetime):    # '2026/09/02
     return " "
 
 # -------------------------------------------------------------------------------------------------
+# per visualizzazioni su tree, con record da xlsx, che e' in datetime
+def get_year_month_day_from_datetime(Datetime):    # '2026/09/02
+    if isinstance(Datetime, datetime):
+        str_date = Datetime.strftime("%Y/%m/%d, %H:%M:%S")
+        strIt = f"{str_date[0:4]}/{str_date[5:7]}/{str_date[8:10]}"
+        return strIt
+    return " "
+
+# -------------------------------------------------------------------------------------------------
 def convert_row_for_View_xlsx(template, Rec):
     converted_record = []
     for index in range(0, len(template)):
@@ -246,6 +255,10 @@ def convert_row_for_View_xlsx(template, Rec):
         elif template[index] == DMY:
             conv_value = get_day_month_year_for_view_xlsx(Rec[index])
             converted_record.append(conv_value)
+        elif template[index] == YMD:
+            conv_value = get_Y_M_D_H_m_S_for_insert(Rec[index])
+            converted_record.append(conv_value)
+            pass
         elif template[index] == FLOAT_TOSTR:
             conv_value = convert_float_toString(Rec[index])
             converted_record.append(conv_value)

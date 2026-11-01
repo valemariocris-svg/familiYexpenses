@@ -48,9 +48,6 @@ class Xlsx_Manager(Codes_db):
         self._tTotWithout_Code = 0
         self._tiYear_List      = []
 
-        self._xlsx_rows_map = {}
-
-
         # ------------------------------------------------------------ #
         #  -----  the values  are filled  from  Transact_DB.py  ------ #
         #   but they MUST be here because they are used inside here    #
@@ -247,21 +244,6 @@ class Xlsx_Manager(Codes_db):
         self._tTotWith_Code           = 0
         self._tTotWithout_Code        = 0
 
-        self._xlsx_rows_map = {}        # Create xlsx_rows_map  ======================================
-        for record in self._xlsx_rows_map:
-            nRow       = record[IX_ROW_COMP_NROW]
-            conto      = self._tXlsx_Conto
-            dateContab = record[IX_ROW_COMP_CONTAB]
-            dateValuta = record[IX_ROW_COMP_VAL]
-            credit     = record[IX_ROW_COMP_ACCR]
-            debit      = record[IX_ROW_COMP_ADDEB]
-            FullDes    = record[IX_ROW_COMP_FULLDES]
-
-            # Crea la chiave unica (una tupla) e la inserisce nel dizionario
-            key = (nRow, conto, dateContab, dateValuta, credit, debit, FullDes)
-            self._xlsx_rows_map[key] = record[IX_TRANSACT_IDENT]
-
-
         for Row in self._tXlsx_Rows_Compact:
             Full_Desc  = Row[IX_ROW_COMP_FULLDES]
             TRcodeList  = self._Find_StrToFind_InFullDesc(Full_Desc)
@@ -271,48 +253,63 @@ class Xlsx_Manager(Codes_db):
 
             # Manage  multimatching     ======================================
             elif nCode > 1:                         # Multiple codes found for an xlsx row
-                nRow       = Row[IX_ROW_COMP_NROW]
-                conto      = self._tXlsx_Conto
-                dateContab = Row[IX_ROW_COMP_CONTAB]
-                dateValuta = Row[IX_ROW_COMP_VAL]
-                credit     = Row[IX_ROW_COMP_ACCR]
-                debit      = Row[IX_ROW_COMP_ADDEB]
-                FullDes    = Row[IX_ROW_COMP_FULLDES][IX_ROW_COMP_FULLDES]
+                self.Multi_matching_row(Row, TRcodeList)
 
-                if (nRow, conto, dateContab, dateValuta, credit, debit, FullDes) in self._xlsx_rows_map:
-                    #  get Code from transaction record
-                    Code = 123
-                    self.Insert_On_WithCode_List(Row, Code)
-                else:
-                    message  = f"la descrizione completa per la riga n.  {str(Row[IX_ROW_COMP_NROW])}\n\n"
-                    message += f"Contab: {Row[IX_ROW_COMP_CONTAB]}\nValuta: {Row[IX_ROW_COMP_VAL]}\n"
-                    message += f"Accred: {Row[IX_ROW_COMP_ACCR]}\nAddeb: {Row[IX_ROW_COMP_ADDEB]}\n"
-                    message += f"{Row[IX_ROW_COMP_FULLDES]}\n\n"
-                    message += f"combacia con piu stringhe per la ricerca:\n\n"
-                    for code in TRcodeList:
-                        strFound =  f"codice: {str(code)}:  descr: {self.Get_TrDesc_FromCode(code)}\n{self.Get_strToFind_FromCode(code)}\n\n"
-                        message += strFound
-                    message += f"\nInserisci un codice"
-                    msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, message)
-                    msg_Dlg.wait_window()
-                    iCode = int (msg_Dlg.data)
-                    if iCode == -1:
-                        pass            # the row is missed
-                    else:
-                        Found = False
-                        for listCode in TRcodeList:
-                            if iCode == listCode:
-                                Found = True
-                                break
-                        if not Found:
-                            pass            # the row is missed
-                        else:
-                            result, data = self.Check_If_Code_Exist(iCode)
-                            if not result:  # the row is missed
-                                msg_Dlg = Message_Dlg(MSG_BOX_ERR, "Codice INESISTENTE!")
-                                msg_Dlg.wait_window()
-                            else:
-                              self.Insert_On_WithCode_List(Row, iCode)
+                # conto      = self._tXlsx_Conto
+                # template   = [SIC, YMD, YMD, SIC, SIC, SIC]
+                # row_to_find = convert_row_for_View_xlsx(template, Row)
+                # nRow        = row_to_find[IX_ROW_COMP_NROW]
+                # dateContab  = row_to_find[IX_ROW_COMP_CONTAB]
+                # dateValuta  = row_to_find[IX_ROW_COMP_VAL]
+                # credit      = row_to_find[IX_ROW_COMP_ACCR]
+                # debit       = row_to_find[IX_ROW_COMP_ADDEB]
+                # FullDes     = row_to_find[IX_ROW_COMP_FULLDES]
+                #
+                # parameters = (nRow, conto, dateContab, dateValuta, credit, debit, FullDes)
+                # status, result = self.Get_transactions_with_xlsx_row(parameters)
+                # if status:
+                #     if len(result) > 1:
+                #         # ALARM muti record on transactions Db
+                #         MsgError = f"FATAL ERROR:\n found on trabsactions Db\n"
+                #         MsgError += f"{len(result)} Records with Id:\n"
+                #         for Rec in result:
+                #             MsgError += f"{Rec[IX_TRANSACT_IDENT]}  "
+                #         Dlg_Msg = Message_Dlg(MSG_BOX_ERR, MsgError)
+                #         Dlg_Msg.wait_window()
+                #         return False, ''
+                #     else:
+                #         Code = result[0][IX_TRANSACT_IDENT]
+                #         self.Insert_On_WithCode_List(Row, Code)
+                # else:
+                #     message  = f"la descrizione completa per la riga n.  {str(Row[IX_ROW_COMP_NROW])}\n\n"
+                #     message += f"Contab: {Row[IX_ROW_COMP_CONTAB]}\nValuta: {Row[IX_ROW_COMP_VAL]}\n"
+                #     message += f"Accred: {Row[IX_ROW_COMP_ACCR]}\nAddeb: {Row[IX_ROW_COMP_ADDEB]}\n"
+                #     message += f"{Row[IX_ROW_COMP_FULLDES]}\n\n"
+                #     message += f"combacia con piu stringhe per la ricerca:\n\n"
+                #     for code in TRcodeList:
+                #         strFound =  f"codice: {str(code)}:  descr: {self.Get_TrDesc_FromCode(code)}\n{self.Get_strToFind_FromCode(code)}\n\n"
+                #         message += strFound
+                #     message += f"\nInserisci un codice"
+                #     msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, message)
+                #     msg_Dlg.wait_window()
+                #     iCode = int (msg_Dlg.data)
+                #     if iCode == -1:
+                #         pass            # the row is missed
+                #     else:
+                #         Found = False
+                #         for listCode in TRcodeList:
+                #             if iCode == listCode:
+                #                 Found = True
+                #                 break
+                #         if not Found:
+                #             pass            # the row is missed
+                #         else:
+                #             result, data = self.Check_If_Code_Exist(iCode)
+                #             if not result:  # the row is missed
+                #                 msg_Dlg = Message_Dlg(MSG_BOX_ERR, "Codice INESISTENTE!")
+                #                 msg_Dlg.wait_window()
+                #             else:
+                #               self.Insert_On_WithCode_List(Row, iCode)
 
             else:  # Code NOT found
                 myRow = [Row[IX_ROW_COMP_NROW], self._tXlsx_Conto, Row[IX_ROW_COMP_CONTAB], Row[IX_ROW_COMP_VAL],
@@ -321,6 +318,67 @@ class Xlsx_Manager(Codes_db):
                 self._tTotWithout_Code += 1
                 pass
         return True, ''
+
+    # --------------------------------------------------------------------------------------------------
+    def Multi_matching_row(self, Row, TRcodeList):
+        conto       = self._tXlsx_Conto
+        template    = [SIC, YMD, YMD, SIC, SIC, SIC]
+        row_to_find = convert_row_for_View_xlsx(template, Row)
+        nRow        = row_to_find[IX_ROW_COMP_NROW]
+        dateContab  = row_to_find[IX_ROW_COMP_CONTAB]
+        dateValuta  = row_to_find[IX_ROW_COMP_VAL]
+        credit      = row_to_find[IX_ROW_COMP_ACCR]
+        debit       = row_to_find[IX_ROW_COMP_ADDEB]
+        FullDes     = row_to_find[IX_ROW_COMP_FULLDES]
+
+        parameters = (nRow, conto, dateContab, dateValuta, credit, debit, FullDes)
+        status, result = self.Get_transactions_with_xlsx_row(parameters)
+        if status:
+            if len(result) > 1:
+                # ALARM muti record on transactions Db
+                MsgError = f"FATAL ERROR:\n found on trabsactions Db\n"
+                MsgError += f"{len(result)} Records with Id:\n"
+                for Rec in result:
+                    MsgError += f"{Rec[IX_TRANSACT_IDENT]}  "
+                Dlg_Msg = Message_Dlg(MSG_BOX_ERR, MsgError)
+                Dlg_Msg.wait_window()
+                pass        # The row is missed
+            else:
+                Ident = result[0][IX_TRANSACT_IDENT]
+                Dlg_Msg = Message_Dlg(MSG_BOX_INFO, f"found transact record for multimatching\nId = {Ident}")
+                Dlg_Msg.wait_window()
+                Code = result[0][IX_TRANSACT_IDENT]
+                self.Insert_On_WithCode_List(Row, Code)
+        else:
+            message = f"la descrizione completa per la riga n.  {str(Row[IX_ROW_COMP_NROW])}\n\n"
+            message += f"Contab: {Row[IX_ROW_COMP_CONTAB]}\nValuta: {Row[IX_ROW_COMP_VAL]}\n"
+            message += f"Accred: {Row[IX_ROW_COMP_ACCR]}\nAddeb: {Row[IX_ROW_COMP_ADDEB]}\n"
+            message += f"{Row[IX_ROW_COMP_FULLDES]}\n\n"
+            message += f"combacia con piu stringhe per la ricerca:\n\n"
+            for code in TRcodeList:
+                strFound = f"codice: {str(code)}:  descr: {self.Get_TrDesc_FromCode(code)}\n{self.Get_strToFind_FromCode(code)}\n\n"
+                message += strFound
+            message += f"\nInserisci un codice"
+            msg_Dlg = Message_Dlg(MSG_BOX_SEL_NUM, message)
+            msg_Dlg.wait_window()
+            iCode = int(msg_Dlg.data)
+            if iCode == -1:
+                pass  # the row is missed
+            else:
+                Found = False
+                for listCode in TRcodeList:
+                    if iCode == listCode:
+                        Found = True
+                        break
+                if not Found:
+                    pass  # the row is missed
+                else:
+                    result, data = self.Check_If_Code_Exist(iCode)
+                    if not result:  # the row is missed
+                        msg_Dlg = Message_Dlg(MSG_BOX_ERR, "Codice INESISTENTE!")
+                        msg_Dlg.wait_window()
+                    else:
+                        self.Insert_On_WithCode_List(Row, iCode)
 
     # -----------------------------Code(TRcode)---------------------------------------------------------------
     def Insert_On_WithCode_List(self, Row, TRcode):
@@ -333,6 +391,59 @@ class Xlsx_Manager(Codes_db):
         self._tTotWith_Code += 1
         pass
     pass
+
+    # --------------------------------------------------------------------------------------------------
+    def Get_transactions_with_xlsx_row(self, parameters) -> tuple[bool, list | str]:  # tuple[bool, list | str]:
+        # nRow,conto,dateContab,dateValuta,credit,debit,FullDes
+        # I dati noti del movimento da cercare
+        # parameters = (nRow,conto,dateContab,dateValuta,credit,debit,FullDes)
+
+        sql_query = """
+                    SELECT Ident, \
+                           nRow, \
+                           Conto, \
+                           Contab, \
+                           Valuta, \
+                           Accred, \
+                           Addeb, \
+                           TRdesc, \
+                           TRcode, \
+                           FullDes
+                    FROM TRANSACT
+                    WHERE nRow = ?
+                      AND Conto = ?
+                      AND Contab = ?
+                      AND Valuta = ?
+                      AND Accred = ?
+                      AND Addeb = ?
+                      AND FullDes = ?; \
+                    """
+
+        # Chiamiamo la funzione chiedendo tutti i record corrispondenti
+        success, result = self._query_execute(
+            database=TRANSACT_FILE,
+            sql=sql_query,
+            parameters=parameters,
+            close=True,
+            all_records=True  # <-- Fondamentale per avere la lista completa
+        )
+
+        if success:
+            if result:
+                # result è una LISTA di tuple
+                print(f"Trovati {len(result)} movimenti corrispondenti:")
+
+                for record in result:
+                    ident_trovato = record[0]  # Il primo elemento è l'Ident
+                    print(f" - Trovato Ident: {ident_trovato} (Riga: {record[1]}, Importo Addebito: {record[6]})")
+
+                    # Qui puoi gestire la tua logica (es. mostrarli in una finestra di scelta se sono multipli)
+                return True, result
+            else:
+                strErr = "Nessun movimento trovato."
+                return False, strErr
+        else:
+            return False, f"Errore query \nGet_transactions_with_xlsx_row"
 
     # ---------------------------------------------------------------------------------------------
     def _Check_Values(self, Xlsx_row):

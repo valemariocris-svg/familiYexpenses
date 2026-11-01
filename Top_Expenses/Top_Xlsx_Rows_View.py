@@ -86,7 +86,7 @@ class Top_XLSX_Rows_View(tk.Toplevel):
             row_to_view = convert_row_for_View_xlsx(template, row)
             List_to_view.append(row_to_view)
 
-        XLS_Name  =Get_File_Name(self.Data.Get_sel_dictionary_value(XLSX_FILENAME))
+        XLS_Name  = Get_File_Name(self.Data.Get_sel_dictionary_value(XLSX_FILENAME))
         FrameText = ('     ' + XLS_Name + ':   ')
         FrameText += str(len(List)) + '   rows in xlsx file'
         self.Frame_Desc_x2.Frame_Title(FrameText)
